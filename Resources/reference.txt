@@ -1,0 +1,51 @@
+
+================================================================
+                        Reserved Names
+================================================================
+
+__ZwProgramGeneratedEntity7
+
+__ZwDefaultEntity7Player
+
+================================================================
+                     Triggers (Preliminary)
+================================================================
+
+BeforeDestruction:
+	Argument 1 : Number, time before estimated destruction.
+
+OnDestruction:
+	Takes no arguments.
+
+OnCollision:
+	Takes no arguments.
+
+OnGeneration:
+	Takes no arguments.
+
+================================================================
+                    Triggers (Consequential)
+================================================================
+
+CreateEntity (1 argument) :
+	Argument 1 : String, name of EntityType. Will be created right here.
+CreateEntity (3 arguments) :
+	Argument 1 : String, name of EntityType.
+	Argument 2 : Number, Physics.PosX.
+	Argument 3 : Number, Physics.PosY.
+
+DeductPlayerLife :
+	Argument 1 : Number, the life deducted every phase.
+	Argument 2 : String, name of player:
+		__ZwTrigger7All for all players
+		__ZwTrigger7Nearest for nearest player
+		Otherwise the name of the player
+
+DeployProjectile :
+	Takes no arguments, affects immediately.
+
+TeleportEntity (0 argument) :
+	Takes no arguments, will teleport the owner here.
+TeleportEntity (2 arguments) :
+	Argument 1 : Number, Physics.PosX.
+	Argument 2 : Number, Physics.PosY.
