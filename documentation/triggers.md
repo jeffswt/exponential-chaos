@@ -58,10 +58,10 @@ arguments of the actions.
 
 ### Consequential Actions
 
- * ```CreateEntity``` (1 argument)
+ * ```CreateEntity (1 argument)```
     * Argument 1 : String, name of ```EntityType```. Will be created right here.
 
- * ```CreateEntity``` (3 arguments)
+ * ```CreateEntity (3 arguments)```
     * Argument 1 : String, name of ```EntityType```.
     * Argument 2 : Number, ```Physics.PosX```.
     * Argument 3 : Number, ```Physics.PosY```.
@@ -76,10 +76,10 @@ arguments of the actions.
  * ```DeployProjectile```
     * Takes no arguments, effective immediately if the entity is a projectile.
 
- * ```TeleportEntity``` (0 argument)
+ * ```TeleportEntity (0 argument)```
     * Takes no arguments, will teleport the owner here.
 
- * ```TeleportEntity``` (2 arguments)
+ * ```TeleportEntity (2 arguments)```
     * Teleports the owner to the **specified** destination.
     * Argument 1 : Number, ```Physics.PosX```.
     * Argument 2 : Number, ```Physics.PosY```.
