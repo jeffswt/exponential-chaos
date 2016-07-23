@@ -1,1 +1,14 @@
-Releases
+
+# Folders that ought not appear
+
+.settings
+include
+lib
+Release
+
+# Trivial configuration files
+
+.cproject
+.gitattributes
+.gitignore
+.project

@@ -1,9 +1,4 @@
 eclipse.preferences.version=1
-environment/project/cdt.managedbuild.config.gnu.cross.exe.release.1989397266/PATH/delimiter=;
-environment/project/cdt.managedbuild.config.gnu.cross.exe.release.1989397266/PATH/operation=replace
-environment/project/cdt.managedbuild.config.gnu.cross.exe.release.1989397266/PATH/value=C\:\\Program Files (x86)\\Dev-Cpp\\MinGW64\\bin;${MSYS_HOME}\\bin;D\:/Program Files/Eclipse/jre/bin/server;D\:/Program Files/Eclipse/jre/bin;D\:/Program Files/Eclipse/jre/lib/amd64;C\:\\ProgramData\\Oracle\\Java\\javapath;C\:\\Windows\\system32;C\:\\Windows;C\:\\Windows\\System32\\Wbem;C\:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C\:\\Program Files\\Broadcom\\Broadcom 802.11\\Driver;C\:\\Program Files\\IDM Computer Solutions\\UltraEdit;D\:\\Program Files\\Eclipse
-environment/project/cdt.managedbuild.config.gnu.cross.exe.release.1989397266/append=true
-environment/project/cdt.managedbuild.config.gnu.cross.exe.release.1989397266/appendContributed=true
 org.eclipse.cdt.core.formatter.alignment_for_arguments_in_method_invocation=16
 org.eclipse.cdt.core.formatter.alignment_for_assignment=16
 org.eclipse.cdt.core.formatter.alignment_for_base_clause_in_type_declaration=80

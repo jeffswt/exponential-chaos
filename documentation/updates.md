@@ -1,21 +1,11 @@
 
 # Version History
 
-The following lines contain versions that weren't publicly released, due to
-certain issues, and the codes of previous versions are not preserved, which
-means that only versions since ```0.12.1``` have codes released to public and have
-repository backup.
-
 ## 0.12.x Community Update
 
-### 0.12.2 | --/05/16
- * Removed all map header editing functions in the game save menu. users will
-   have to deal with the code do do so.
- * Fixed multiplayer mode still unavailable on different computers.
- * Added copying and pasting functions by providing structure blocks.
- * Added trigger function ```WorldEdit::SetSelectionSource```.
- * Added trigger function ```WorldEdit::SetSelectionTarget```.
- * Added trigger function ```WorldEdit::PasteSelection```.
+### 0.12.2.1 | 23/07/16
+ * Migrated development workspace to Git repository folder.
+ * Created testing-oriented resource pack (literally useless)
 
 ### 0.12.1 | 22/05/16
  * Fixed people who can't wait can't throw things out.
@@ -25,13 +15,13 @@ repository backup.
 ## 0.11.x Open Source Update
 
 ### 0.11.4 Release Candidate | 22/05/16
- * Updated version numbers to ```0.11.x```.
+ * Updated version numbers to `0.11.x`.
  * Fixed players exporting twice.
  * Arrange the main menu buttons to make them look more friendly.
  * **Added comments for particular functions in GNU style.**
 
 ### 0.11.3 Release Candidate | 22/05/16
- * **Added ```GNU GPL v3``` licenses for all source codes.**
+ * **Added `GNU GPL v3` licenses for all source codes.**
 
 ### 0.11.2 Release Candidate | 22/05/16
  * Checked resource manager intactness and is proper.
@@ -50,7 +40,7 @@ repository backup.
  * **This project is now functional complete**.
 
 ### 0.10.43 Zeta | 22/05/16
- * Fixed backspace not usable in ```GuiInputDialog```.
+ * Fixed backspace not usable in `GuiInputDialog`.
  * Fixed chat available when game is paused.
 
 ### 0.10.42 Zeta | 22/05/16
@@ -73,12 +63,12 @@ repository backup.
  * Added "saving" information when saving maps.
 
 ### 0.10.36 Zeta | 22/05/16
- * Fixed ```SIGSEGV``` when deleting an invalid entity.
- * Added world boundaries for ```GameMap```.
+ * Fixed `SIGSEGV` when deleting an invalid entity.
+ * Added world boundaries for `GameMap`.
 
 ### 0.10.35 Zeta | 22/05/16
  * Fixed not importing configuration data upon boot.
- * Fixed textures not loading which throws ```GL_INVALID_OPERATION```.
+ * Fixed textures not loading which throws `GL_INVALID_OPERATION`.
  * Designed a new loading interface which is quite visually competitive.
 
 ### 0.10.29 Zeta | 22/05/16
@@ -87,7 +77,7 @@ repository backup.
    are fixed on the inventory) any more.
 
 ### 0.10.17 Zeta | 21/05/16
- * Fixed ```SIGSEGV``` when changing pages through inventory pages.
+ * Fixed `SIGSEGV` when changing pages through inventory pages.
  * Added resource pack support by putting entities and textures into
    different folders and loading them distinctly.
  * Inventory now displays description instead of hashed name.
@@ -98,7 +88,7 @@ repository backup.
  * Updated entity generation procedure.
 
 ### 0.10.13 Zeta | 21/05/16
- * Fixed ```TUSNIL``` not working when crossing different computers. This is caused
+ * Fixed `TUSNIL` not working when crossing different computers. This is caused
    by a flaw that when creating UDP servers clients attempt to create
    servers on the target machine, which is not proper.
 
@@ -112,11 +102,11 @@ repository backup.
  * Added recursive directory iteration for entities.
 
 ### 0.10.3.15 Zeta | 17/05/16
- * Updated a few JSON-related functions in ```GameMap```.
+ * Updated a few JSON-related functions in `GameMap`.
  * Game headers are now broadcasted through the network.
 
 ### 0.10.3.11 Zeta | 17/05/16
- * Fixed a ```std::bad_alloc``` when exiting game in deflate library.
+ * Fixed a `std::bad_alloc` when exiting game in deflate library.
  * Improved network consumption by over 96% through compression of network
    data and flow. Duplicate information is surpressed.
  * Supported lagless multiplayer!
@@ -139,7 +129,7 @@ repository backup.
 
 ### 0.9.32.103 Epsilon | 15/05/16
  * Fixed projectiles disappearing mysteriously in server end.
- * Fixed ```SIGSEGV``` when client first joining server.
+ * Fixed `SIGSEGV` when client first joining server.
 
 ### 0.9.32.101 Epsilon | 15/05/16
  * Re-written data-intactness checking in procedures (coding related). This
@@ -151,7 +141,7 @@ repository backup.
 ### 0.9.32.93 Epsilon | 15/05/16
  * Fixed players falling into the void after chunk synchoronise.
  * Fixed players' life not changing if not synchoronising.
- * Added ```<class_table.h>``` for debugging easiness.
+ * Added `<class_table.h>` for debugging easiness.
  * Added debugging information for entities and entity types.
  * **Change for loops to foreach loops.**
 
@@ -159,8 +149,8 @@ repository backup.
  * **Now the multiplayer support is extended from 2-player to n-players!**
  * Fixed a small lag when players are moving because of a problem in broadcasting,
    this is fixed through a small trick in the forest of codes.
- * Fixed potential ```SIGSEGV``` when saving game.
- * Fixed always throwing ```GUID = 0``` entities in multiplayer.
+ * Fixed potential `SIGSEGV` when saving game.
+ * Fixed always throwing `GUID = 0` entities in multiplayer.
  * Fixed particles not disappearing after lifetime reached.
 
 ### 0.9.32.76 Epsilon | 15/05/16
@@ -169,9 +159,9 @@ repository backup.
 
 ### 0.9.32.69 Epsilon | 15/05/16
  * New GUI for paused menu for multiplayer (Save & Exit removed).
- * Fixed ```SIGSEGV``` when directly leaving from multiplayer by delimiting termination
+ * Fixed `SIGSEGV` when directly leaving from multiplayer by delimiting termination
    procedures upon closing windows.
- * Fixed ```SIGSEGV``` when opening a world immediately after leaving another by also
+ * Fixed `SIGSEGV` when opening a world immediately after leaving another by also
    imposing memory locking techniques upon events.
 
 ### 0.9.32.63 Epsilon | 15/05/16
@@ -179,8 +169,8 @@ repository backup.
  * Fixed players mysteriously disappearing in multiplayer.
 
 ### 0.9.32.61 Epsilon | 15/05/16
- * Fixed ```SIGSEGV``` when importing unknown entity types in singleplayer.
- * Fixed ```SIGSEGV``` when importing unknown entity types in multiplayer.
+ * Fixed `SIGSEGV` when importing unknown entity types in singleplayer.
+ * Fixed `SIGSEGV` when importing unknown entity types in multiplayer.
  * Greatly improved physics simulation performance by using an algorithm that
    was previously used, with a higher (*O(n)*) time complexity compared to
    the last algorithm (*O(logn)*), but *1/10* the constant processing speed
@@ -193,23 +183,23 @@ repository backup.
  * Now chunk data is announced immediately a client is joined into the server.
 
 ### 0.9.32.51 Epsilon | 15/05/16
- * Data intactness verification now includes ```NullPointerException```, so ```NULL```
+ * Data intactness verification now includes `NullPointerException`, so `NULL`
    pointers are not necessarily detected alongside with data intactness
    outside the intactness verification procedure.
- * Fixed ```SIGSEGV``` when inserting a player into multiplayer mode for the first time.
+ * Fixed `SIGSEGV` when inserting a player into multiplayer mode for the first time.
    However, the whether the fix was proper or not is not known yet.
 
 ### 0.9.32.47 Epsilon | 15/05/16
  * Fixed entities not synchronising between clients and servers.
  * Fixed players can't be pushed against.
- * Fixed player ```GUID```s not syncing between ```<netsync.cpp>``` and ```<engine.cpp>```.
+ * Fixed player `GUID`s not syncing between `<netsync.cpp>` and `<engine.cpp>`.
  * Fixed client player inventory restoring to default state every time the chunk
    data is broadcasted.
 
 ### 0.9.32.41 Epsilon | 14/05/16
- * Fixed ```SIGSEGV``` when leaving game if any of the players triggered entity
+ * Fixed `SIGSEGV` when leaving game if any of the players triggered entity
    deletions in multiplayer mode.
- * Fixed ```SIGSEGV``` when playing game, in many places.
+ * Fixed `SIGSEGV` when playing game, in many places.
  * Fixed entities mysteriously disappearing when placing things.
 
 ### 0.9.32.34 Epsilon | 14/05/16
@@ -217,16 +207,16 @@ repository backup.
  * Fixed server termination immediately after a client disconnection.
 
 ### 0.9.32.33 Epsilon | 14/05/16
- * Fixed not updating ```GUID``` in ```InsertEntity```.
- * Fixed ```SIGSEGV``` when importing entity JSON data in ```<netsync.h>```.
- * Fixed ```SIGSEGV``` when invoking player in ```<engine.cpp>```.
+ * Fixed not updating `GUID` in `InsertEntity`.
+ * Fixed `SIGSEGV` when importing entity JSON data in `<netsync.h>`.
+ * Fixed `SIGSEGV` when invoking player in `<engine.cpp>`.
  * No longer mandatory to use spaces between numbers when inputting resolution.
  * Added game exit if connection failed between clients and servers.
  * Added synchoronisation back-end.
 
 ### 0.9.32.11 Epsilon | 14/05/16
  * Restored the MULTIPLAYER button that was supposed to be enabled.
- * The ```GameMap.IsHost``` value finally becomes useful!
+ * The `GameMap.IsHost` value finally becomes useful!
  * Added support for server list storage.
  * Added multiplayer graphics interface.
 
@@ -270,7 +260,7 @@ repository backup.
    realtime simulation.
 
 ### 0.9.17.4 Epsilon | 10/05/16
- * Mysteriously fixed a flaw: Creative inventory open causes ```SIGSEGV``` after entering
+ * Mysteriously fixed a flaw: Creative inventory open causes `SIGSEGV` after entering
    a Survival map regardless of the player opened the survival inventory
    or not.
 
@@ -283,7 +273,7 @@ repository backup.
    multiplayer communication engine.
 
 ### 0.9.5 Epsilon | 03/05/16
- * Added ```CNL``` (Cross Network Library) sockets.
+ * Added `CNL` (Cross Network Library) sockets.
 
 ### 0.9.2.1 Epsilon | 02/05/16
  * Fixed full-screen toggle not working properly in options menu.
@@ -300,14 +290,14 @@ repository backup.
 
 ### 0.8.29.3 Delta | 02/05/16
  * Fixed GUI tooltip not drawing very right.
- * Fixed that ```CurrentDirectory``` is a fixed string, now it can be dynamically
+ * Fixed that `CurrentDirectory` is a fixed string, now it can be dynamically
    indexed and queried.
  * Added map sorting according to last modified time.
 
 ### 0.8.29.1 Delta | 02/05/16
- * Added last modified time to ```GameMap```.
- * Added system time functions to ```<native/time.h>```.
- * Added forbidden layers to ```GameMap```.
+ * Added last modified time to `GameMap`.
+ * Added system time functions to `<native/time.h>`.
+ * Added forbidden layers to `GameMap`.
  * Added layer jumping functions (Using W/S/Up/Down)
 
 ### 0.8.29.0 Delta | 02/05/16
@@ -321,34 +311,34 @@ repository backup.
  * Fixed sometimes teleportation does not work in trigger.
 
 ### 0.8.26.6 Delta | 02/05/16
- * Fixed ```SIGSEGV``` appears when deploying projectiles or attempting to process
+ * Fixed `SIGSEGV` appears when deploying projectiles or attempting to process
    consequences through triggers.
  * Integrated pending operations into physics renderer.
- * Added thread-safe Insert and Remove operations for ```Chunk``` and ```GameMap```.
- * Added ```DeployProjectile``` action for triggers.
+ * Added thread-safe Insert and Remove operations for `Chunk` and `GameMap`.
+ * Added `DeployProjectile` action for triggers.
 
 ### 0.8.26.3 Delta | 02/05/16
  * Added inline class functions for data intact checking.
  * Added pended operations for entity insertion and removals. These will guarantee
    then intactness of the data. If not pended, iterators will behave in a
-   strange manner. And mostly they will ```SIGSEGV```.
+   strange manner. And mostly they will `SIGSEGV`.
 
 ### 0.8.23.7 Delta | 02/05/16
- * Added trigger preliminary action ```OnGeneration```.
- * Added trigger preliminary action ```OnDestruction```.
- * Added trigger preliminary action ```Always```.
+ * Added trigger preliminary action `OnGeneration`.
+ * Added trigger preliminary action `OnDestruction`.
+ * Added trigger preliminary action `Always`.
  * Trigger actions are now complete.
 
 ### 0.8.23.6 Delta | 02/05/16
  * Fixed an improper comparison between time in DEPLOYMENT so that animations
    display too many times.
- * Fixed ```EntityType``` not importing trigger data.
+ * Fixed `EntityType` not importing trigger data.
  * Now animations are displayed when projectiles explode. (These settings are
    defined by the configuration files themselves, not the program. You can
    define which to deploy.
 
 ### 0.8.23.0 Delta | 01/05/16
- * Fixed an improper inheritance function in ```Entity``` which causes different
+ * Fixed an improper inheritance function in `Entity` which causes different
    entities to share the same triggers.
 
 ### 0.8.20.16 Delta | 01/05/16
@@ -390,7 +380,7 @@ repository backup.
 
 ### 0.8.17.2 Delta | 01/05/16
  * Added multi-page inventory support.  
- * Fixed an indexer ignorance on font types in ```<graphics/gui.cpp>```.
+ * Fixed an indexer ignorance on font types in `<graphics/gui.cpp>`.
 
 ### 0.8.17.1 Delta | 01/05/16
  * 0.8.17.x are trivial updates that add small functions.
@@ -402,7 +392,7 @@ repository backup.
    creative player tabs aren't actually ready yet.
 
 ### 0.8.14.10 Delta | 01/05/16
- * Added on-hand texture for ```EntityType```.
+ * Added on-hand texture for `EntityType`.
 
 ### 0.8.14.2 Delta | 01/05/16
  * Added creative player support.
@@ -418,9 +408,9 @@ repository backup.
    when setting properties for a font-spec, it will generate a new area of
    memory to assign the bitmaps for the font. We now index it so that no
    duplicate assignments would be made.
- * Fixed ```SIGSEGV``` after changing resolution. This is due to a downside when,
+ * Fixed `SIGSEGV` after changing resolution. This is due to a downside when,
    the pointer indexes are not removed from the indexer after destruction.
-   Also, defining R-B trees in the public area causes ```std::rb_tree::decrement_pointer```
+   Also, defining R-B trees in the public area causes `std::rb_tree::decrement_pointer`
    to malfunction.
 
 ### 0.8.9.8 Delta | 30/04/16
@@ -446,8 +436,8 @@ repository backup.
  * Fixed entity count doubles every time you save the map.
  * Fixed removed entities are not removed when you save the map.
    The abovementioned problems all come from the same issue.
- * Added particle class in ```EntityType```.
- * Added delay time in ```Trigger```.
+ * Added particle class in `EntityType`.
+ * Added delay time in `Trigger`.
 
 ## 0.7.x Performance Update
 
@@ -456,7 +446,7 @@ repository backup.
  * Changed obfuscating iterators to AUTO.
 
 ### 0.7.33 Gamma | 30/04/16
- * Removed ```CollisionOverride``` to improve physics simulation efficiency: The
+ * Removed `CollisionOverride` to improve physics simulation efficiency: The
    computational complexity was reduced from *O(n^2)* to *O(n)*.
 
 ### 0.7.32 Gamma | 30/04/16
@@ -465,7 +455,7 @@ repository backup.
 ### 0.7.31 Gamma | 30/04/16
  * Fully re-written the physics collision system, all previously displayed
    physics simulation problems have been solved.
- * Restored some functionalities disabled during ```0.7.20.x``` development which
+ * Restored some functionalities disabled during `0.7.20.x` development which
    were used to simplify the development phase.
  * Updated a few functions to comply to the new standards.
 
@@ -491,9 +481,9 @@ repository backup.
 
 ### 0.7.20.14 Gamma | 29/04/16
  * Improved performance for special collision definitions,
-   i.e. ```CollisionOverride```, ```CollisionIgnore```.
+   i.e. `CollisionOverride`, `CollisionIgnore`.
  * Added more convenient functions for function availability judging,
-   e.g. ```bool PhysicsEnabled(...)```...
+   e.g. `bool PhysicsEnabled(...)`...
  * Implemented special collision availability detection system.
 
 ### 0.7.20.11 Gamma | 29/04/16
@@ -506,21 +496,21 @@ repository backup.
  * Added l/r/u/b boundaries position sorting in chunks.
 
 ### 0.7.19 Gamma | 28/04/16
- * **Fixed alpha textures import by removing ```glAlphaTest(GL_GREATER, 0.1)```.**
- * Further modularized ```graphics/render``` and ```physics/engine``` modules.
+ * **Fixed alpha textures import by removing `glAlphaTest(GL_GREATER, 0.1)`.**
+ * Further modularized `graphics/render` and `physics/engine` modules.
    These modules were originally integrated in main functions, which made
    the code extremely obfuscated. Now they are separated into several
    source codes, which made the code nice-looking.
 
 ### 0.7.16 Gamma | 23/04/16
- * Fixed ```SIGSEGV``` when invoking ```graphicsRenderGame(...)``` (invalid Chunks).
- * Fixed ```SIGSEGV``` (in GDB) when invoking ```GameMap::Clear(...)```.
- * Fixed ```NullPointerException``` in ```Entity::InheritFrom(...,...)```.
+ * Fixed `SIGSEGV` when invoking `graphicsRenderGame(...)` (invalid Chunks).
+ * Fixed `SIGSEGV` (in GDB) when invoking `GameMap::Clear(...)`.
+ * Fixed `NullPointerException` in `Entity::InheritFrom(...,...)`.
  * Added animation function such animation begins from (Generation time).
  * Added player insertion for later multiplayer use.
 
 ### 0.7.14 Gamma | 23/04/16
- * **Fixed ```SIGSEGV``` when invoking ```UpdateProjectileDeployment``` (for now).**
+ * **Fixed `SIGSEGV` when invoking `UpdateProjectileDeployment` (for now).**
  * Fixed viewport not moving when mouse is out of window.
  * **Fixed chunk-edge snapping (or literally, bug) by integrating all rendering chunks.**
  * Fixed projectiles sometimes run at extremely high speed with the same trajectory.
@@ -529,16 +519,16 @@ repository backup.
    Therefore there is a batch process to delete entities marked as deleted. However,
    when it was first implemented, those that are marked as deleted weren't regarded
    as deleted by the engine itself.
- * Fixed not entirely deleting entities when invoking ```GameMap::RemoveEntity(...)```.
+ * Fixed not entirely deleting entities when invoking `GameMap::RemoveEntity(...)`.
  * Removed 10m/s limit due to most related bugs' fix.
- * **Migrated ```WINTHREADAPI``` to ```C++11``` ```<thread>```.**
+ * **Migrated `WINTHREADAPI` to `C++11` `<thread>`.**
 
 ### 0.7.6 Gamma | 23/04/16
  * **Added custom sleep function for this project.**
  * Added nanosecond-precision sleep functions for this project.
  * Frame rate no longer dynamically change with the render burden. It is mostly fixed.
  * Physics rendering made more smoothly.
- * **Migrated to ```TDM-GCC``` in favour of ```GTHREAD``` from ```MinGW```.**
+ * **Migrated to `TDM-GCC` in favour of `GTHREAD` from `MinGW`.**
 
 ## 0.6.x GUI Update
 
@@ -550,17 +540,17 @@ repository backup.
  * Fixed not updating after renaming or editing description.
  * Fixed not turning page after pressing relevant buttons.
  * Fixed not updating item selection after page switching.
- * Added parameter inclusion support for ```graphics/gui.h```.
+ * Added parameter inclusion support for `graphics/gui.h`.
  * Added game map invocation support for single player.
  * Added disabled button mode for game selection menus.
  * Added complete support for game selection menus.
  * Given a mode for object rendering support when textures are not provided.
 
 ### 0.6.23 Beta | 22/04/16
- * Fixed invalid type name assignment in ```Entity::InheritFrom(...)```.
- * Fixed not properly exporting Inventory in ```Entity::ExportToJson(...)```.
- * Added save ```level.json``` function.
- * Added save ```chunk_*.JSON``` function.
+ * Fixed invalid type name assignment in `Entity::InheritFrom(...)`.
+ * Fixed not properly exporting Inventory in `Entity::ExportToJson(...)`.
+ * Added save `level.json` function.
+ * Added save `chunk_*.JSON` function.
  * Added game map saving function.
  * Game map saving does not save computer-generated entities (i.e. new Projectiles).
  * Temporarily disabled projectile deployment due to further Runtime Errors (Fix in 0.7.x).
@@ -586,25 +576,25 @@ repository backup.
  * Ignoring physics render for unimportant (Non-player) entities when chunk is too full (>4096 entities).
 
 ### 0.6.11 Beta | 17/04/16
- * **Removed ```operator=``` due to ```std::move``` and ```std::forward``` operators
-   in ```C++11``` from ```rapidjson/document.h```**
+ * **Removed `operator=` due to `std::move` and `std::forward` operators
+   in `C++11` from `rapidjson/document.h`**
  * Updated the options interface to further improve scalability.
- * Updated the ```ToString()``` function for better compatibility.
- * Updated ```native/keystate2ascii.h``` for better compatibility.
+ * Updated the `ToString()` function for better compatibility.
+ * Updated `native/keystate2ascii.h` for better compatibility.
 
 ### 0.6.10 Beta | 17/04/16
- * Fixed stall and improper debugging information in ```OptionsGui```.
- * **Added ```GenericValue::GenericValue(std::string)``` function
-   in ```rapidjson/document.h```**
+ * Fixed stall and improper debugging information in `OptionsGui`.
+ * **Added `GenericValue::GenericValue(std::string)` function
+   in `rapidjson/document.h`**
  * Added full screen mode.
  * Added main configuration import procedure.
  * Added main configuration export procedure.
 
 ### 0.6.6 Beta | 17/04/16
- * **Fixed improper leaving procedures in ```glutMainLoop()```.**
+ * **Fixed improper leaving procedures in `glutMainLoop()`.**
  * Added game background.
  * Added options menus.
- * **Migrated obsolete ```GLUT``` (x86) to ```FreeGLUT``` (x86/x86_64)**
+ * **Migrated obsolete `GLUT` (x86) to `FreeGLUT` (x86/x86_64)**
 
 ### 0.6.5 Beta | 17/04/16
  * Added Loading GUI.
@@ -655,8 +645,8 @@ repository backup.
 
 ### 0.5.17.4 Alpha | 13/04/16
  * Fixed Runtime Error when invoking more than 16 blocks at one chunk file.
- * Fixed Runtime Error when invoking ```rapidjson``` commands.
- * Redesigned the ```ImportJsonData()``` functions.
+ * Fixed Runtime Error when invoking `rapidjson` commands.
+ * Redesigned the `ImportJsonData()` functions.
  * Added a global header where things used by everyone are declared.
 
 ### 0.5.17.3 Alpha | 13/04/16
@@ -667,9 +657,9 @@ repository backup.
 
 ### 0.5.17.1 Alpha | 13/04/16
  * Fixed not correctly ignoring entities on X-axis.
- * Fixed ```NullPointerException``` when loading large amount of entities.
+ * Fixed `NullPointerException` when loading large amount of entities.
  * Fixed dead loop when crashing on entities because of
-   small ```CollidingIgnoranceValue``` in ```<physics/engine.cpp>```.
+   small `CollidingIgnoranceValue` in `<physics/engine.cpp>`.
 
 ### 0.5.16 Alpha | 13/04/16
  * Fixed a reserved code snippet remained when changing map format.
@@ -683,7 +673,7 @@ repository backup.
 
 ### 0.5.15 Alpha | 12/04/16
  * Fixed JSON readers not reading things other than the first key.
- * Fixed ```SIGSEGV``` when reaching outer chunks initially out of view distance.
+ * Fixed `SIGSEGV` when reaching outer chunks initially out of view distance.
  * Added individual settings for entity classes { Player, Projectile }.
  * Improved overall performance by knocking most things from *O(n)* to *O(logn)*.
  * Improved graphics performance by ignoring out-of-view objects when posting render.

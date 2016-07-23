@@ -82,7 +82,7 @@ crowd-based map creations and PvP events.
 
 [Controls](./documentation/controls.md)
 
-[Entities](./documentation/entitytypes.md)
+[Entities](./documentation/entities.md)
 
 [Entity Types](./documentation/entitytypes.md)
 
@@ -91,6 +91,21 @@ crowd-based map creations and PvP events.
 [Resource Packs](./documentation/resourcepacks.md)
 
 [Triggers](./documentation/triggers.md)
+
+## Todo List
+
+ - [ ] Add position indicator to find all players.
+ - [ ] Add key mapping for users to customize.
+ - [ ] Move chat window to another area.
+ - [ ] Remove 5 seconds limit for input dialogues, make them transparent and individually renderable by the global renderer.
+ - [ ] Typeset fonts without the reliability on native APIs.
+ - [ ] Remove all platform-dependent functions to move to Linux.
+ - [ ] Remove all map header editing functions in the game save menu. users will have to deal with the code to do so.
+ - [ ] Fix multiplayer mode inaccessible on different computers.
+ - [ ] Add copying and pasting functions by providing structure blocks.
+ - [ ] Added trigger function `WorldEdit::SetSelectionSource`.
+ - [ ] Added trigger function `WorldEdit::SetSelectionTarget`.
+ - [ ] Added trigger function `WorldEdit::PasteSelection`.
 
 ## Special Thanks
 
