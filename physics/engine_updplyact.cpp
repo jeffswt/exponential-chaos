@@ -38,18 +38,24 @@ bool	PhEngine::UpdatePlayerActivity(
 	spcProp = (PlayerEntityType*)playerEntity->Properties.Type->Properties.SpecificProperties;
 	playerExt = (PlayerEntity*)playerEntity->Physics.ExtendedTags;
 //	Move leftwards
-	if (kGetKeyState('A') || kGetKeyState(VK_LEFT)) {
+	if (kGetKeyState('a') ||
+			kGetKeyState('A') ||
+			kGetKeyState(KNUM_LEFT)) {
 		playerEntity->Physics.VelX -= spcProp->MoveSpeed * DeltaTime;
 //		Sprinting and fast leaping
-		if (kGetKeyState(VK_CONTROL))
+		if (kGetKeyState(KNUM_LCTRL) ||
+				kGetKeyState(KNUM_RCTRL))
 			playerEntity->Physics.VelX -= spcProp->MoveSpeed * 0.45 * DeltaTime;
 		flagRequireUpdatePosition = true;
 	}
 //	Move rightwards
-	if (kGetKeyState('D') || kGetKeyState(VK_RIGHT)) {
-		playerEntity->Physics.VelX += spcProp->MoveSpeed * DeltaTime;
+	if (kGetKeyState('d') ||
+				kGetKeyState('D') ||
+				kGetKeyState(KNUM_RIGHT)) {
+			playerEntity->Physics.VelX += spcProp->MoveSpeed * DeltaTime;
 //		Sprinting and fast leaping
-		if (kGetKeyState(VK_CONTROL))
+		if (kGetKeyState(KNUM_LCTRL) ||
+				kGetKeyState(KNUM_RCTRL))
 			playerEntity->Physics.VelX += spcProp->MoveSpeed * 0.45 * DeltaTime;
 		flagRequireUpdatePosition = true;
 	}
@@ -64,20 +70,23 @@ bool	PhEngine::UpdatePlayerActivity(
 		flagRequireUpdatePosition = true;
 	}
 //	Sneaking and holding X-axis position
-	if (kGetKeyState(VK_SHIFT)) {
+	if (kGetKeyState(KNUM_LSHIFT) ||
+			kGetKeyState(KNUM_RSHIFT)) {
 		playerEntity->Physics.VelX *= 0.87;
 		playerEntity->Physics.VelY -= spcProp->JumpSpeed * 0.006 * MainMap->GravityConst;
 		flagRequireUpdatePosition = true;
 	}
 //	Changing between layers
-	if (kGetKeyOnpress('W') || kGetKeyOnpress(VK_UP)) {
+	if (kGetKeyOnpress('W') ||
+			kGetKeyOnpress(KNUM_UP)) {
 		if (MainMap->ForbiddenLayers.find(playerEntity->Properties.Layer - 1)
 				== MainMap->ForbiddenLayers.end())
 			MainMap->InsertEntityPended(playerEntity,
 				playerEntity->Properties.Layer - 1);
 		flagRequireUpdatePosition = true;
 	}
-	if (kGetKeyOnpress('S') || kGetKeyOnpress(VK_DOWN)) {
+	if (kGetKeyOnpress('S') ||
+			kGetKeyOnpress(KNUM_DOWN)) {
 		if (MainMap->ForbiddenLayers.find(playerEntity->Properties.Layer + 1)
 				== MainMap->ForbiddenLayers.end())
 			MainMap->InsertEntityPended(playerEntity,
@@ -91,9 +100,9 @@ bool	PhEngine::UpdatePlayerActivity(
 			flagRequireUpdateDefinition = true;
 		}
 //	Special buttons
-	if (kGetKeyOnpress(VK_ESCAPE))
+	if (kGetKeyOnpress(0x1b))
 		PhEngine::PhEngineState = PhEngine::Paused;
-	if (kGetKeyOnpress('E'))
+	if (kGetKeyOnpress('e'))
 		PhEngine::PhEngineState = PhEngine::InventoryOpen;
 //	Upload player data to server
 	if (flagRequireUpdateDefinition)

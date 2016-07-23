@@ -3,6 +3,15 @@
 
 ## 0.12.x Community Update
 
+### 0.12.2.6 | 24/07/16
+ * Got rid of `GetAsyncKeyState()` and a couple other functions in favour of
+   freeGLUT APIs. This may further ensure the portability of this project.
+ * Removed deprecated and unused functions `kGetKeyLastPressedTime()` and other
+   sort of things.
+ * Fixed sometimes inventory menu closing immediately after opening. This is a
+   direct yet unintended result of the fix of the keyboard API (Reserving a
+   self-defined API has such benefits, you see).
+
 ### 0.12.2.1 | 23/07/16
  * Migrated development workspace to Git repository folder.
  * Created testing-oriented resource pack (literally useless)

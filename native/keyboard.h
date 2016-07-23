@@ -24,32 +24,71 @@
 #include "include/public.h"
 
 /**
+ *  @brief  Some definitions of virtual key numbers.
+ *  @param  to invoke, see kGet.*.
+ */
+enum KNUM {
+	KNUM_LEFT,
+	KNUM_RIGHT,
+	KNUM_UP,
+	KNUM_DOWN,
+	KNUM_PGUP,
+	KNUM_PGDN,
+	KNUM_HOME,
+	KNUM_END,
+	KNUM_INSERT,
+	KNUM_F1,
+	KNUM_F2,
+	KNUM_F3,
+	KNUM_F4,
+	KNUM_F5,
+	KNUM_F6,
+	KNUM_F7,
+	KNUM_F8,
+	KNUM_F9,
+	KNUM_F10,
+	KNUM_LCTRL,
+	KNUM_RCTRL,
+	KNUM_LALT,
+	KNUM_RALT,
+	KNUM_LSHIFT,
+	KNUM_RSHIFT
+};
+
+/**
+ *  @brief  kApi transformation functions
+ *  @param  the inputted character / enumeration.
+ */
+int		kApiSpecialInterpret(KNUM);
+KNUM	kApiSpecialInterpret(int);
+char	kApiDecapitalize(char);
+
+/**
+ *  @brief  freeGlut entry functions
+ *  @param  Defined by freeGlut APIs.
+ */
+void	kApiKeyboardFunc(unsigned char, int, int);
+void	kApiKeyboardUpFunc(unsigned char, int, int);
+void	kApiSpecialFunc(int, int, int);
+void	kApiSpecialUpFunc(int, int, int);
+
+/**
  *  @brief  query whether this key was just pressed
- *  @param  VirtualKey: the VK number of the key (defined on MSDN).
+ *  @param  VirtualKey: the ASCII number indication.
+ *                      or the given indication in keyboard.h.
  */
 bool	kGetKeyOnpress(
-		int	VirtualKey);
+		int		VirtualKey);
+bool	kGetKeyOnpress(
+		KNUM	VirtualKey);
 
 /**
  *  @brief  query whether this key is pressed
  *  @param  VirtualKey: the VK number of the key (defined on MSDN).
  */
 bool	kGetKeyState(
-		int	VirtualKey);
-
-/**
- *  @brief  query whether this key is pressed
- *  @param  VirtualKey: the VK number of the key (defined on MSDN).
- *  This function does not provide up-to-date results.
- */
-bool	kGetKeyStateUnsynced(
-		int	VirtualKey);
-
-/**
- *  @brief  query the last time this key was pressed
- *  @param  VirtualKey: the VK number of the key (defined on MSDN).
- */
-double	kGetKeyLastPressedTime(
-		int	VirtualKey);
+		int		VirtualKey);
+bool	kGetKeyState(
+		KNUM	VirtualKey);
 
 #endif /* NATIVE_KEYBOARD_H_ */

@@ -21,7 +21,7 @@
 #include "graphics/entry.h"
 
 #include "physics/config.h"
-#include <windows.h>
+#include "native/keyboard.h"
 
 extern	ConfigType	GameConfig;
 
@@ -51,10 +51,14 @@ bool graphicsEntry(int &argc, char** argv)
 	glutInitWindowSize(GameConfig.WindowWidth, GameConfig.WindowHeight);
 //	glutInitWindowPosition(0, 0);
 	glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE);
-	glutCreateWindow("Exponential Chaos 0.12.1");
+	glutCreateWindow("Exponential Chaos");
 	if (GameConfig.WindowFullScreen)
 		glutFullScreen();
 //	Set movement functions below
+	glutKeyboardFunc(kApiKeyboardFunc);
+	glutKeyboardUpFunc(kApiKeyboardUpFunc);
+	glutSpecialFunc(kApiSpecialFunc);
+	glutSpecialUpFunc(kApiSpecialUpFunc);
 	glutMouseFunc(graphicsMouseClick);
 	glutMotionFunc(graphicsMouseMotionActive);
 	glutPassiveMotionFunc(graphicsMouseMotionPassive);
