@@ -1,7 +1,8 @@
 
-# Folders that ought not appear
+# Folders that might not appear
 
 .settings
+.settings/*
 include
 lib
 Release
@@ -9,6 +10,4 @@ Release
 # Trivial configuration files
 
 .cproject
-.gitattributes
-.gitignore
 .project
