@@ -94,18 +94,10 @@ crowd-based map creations and PvP events.
 
 ## Todo List
 
- - [x] Add position indicator to find all players.
  - [ ] Add key mapping for users to customize.
- - [x] Move chat window to another area.
- - [x] Remove 5 seconds limit for input dialogues, make them transparent and individually renderable by the global renderer.
  - [ ] Typeset fonts without the reliability on native APIs.
  - [ ] Remove all platform-dependent functions to move to Linux.
- - [x] Remove all map header editing functions in the game save menu. users will have to deal with the code to do so.
  - [x] Fix multiplayer mode inaccessible on different computers.
- - [ ] Add copying and pasting functions by providing structure blocks.
- - [ ] Added trigger function `WorldEdit::SetSelectionSource`.
- - [ ] Added trigger function `WorldEdit::SetSelectionTarget`.
- - [ ] Added trigger function `WorldEdit::PasteSelection`.
 
 ## Special Thanks
 

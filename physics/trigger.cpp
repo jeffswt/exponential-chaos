@@ -22,6 +22,7 @@
 
 #include "physics/trigger.h"
 
+#include <cmath>
 #include <map>
 #include <set>
 #include <sstream>
@@ -159,7 +160,6 @@ bool	Trigger::tpcDeployProjectile(
 		void*	vMainMap,
 		void*	vThisEntity)
 {
-	GameMap*	MainMap = (GameMap*)vMainMap;
 	Entity*		ThisEntity = (Entity*)vThisEntity;
 	EntityType*	EntTyp = ThisEntity->Properties.Type;
 	if (EntTyp->Properties.Type == "Projectile") {
@@ -206,6 +206,110 @@ bool	Trigger::tpcTeleportEntity(
 	return true;
 }
 
+double	tpcWorldEdit_Fill_Pos[3];
+double	tpcWorldEdit_Copy_Pos[3];
+bool	tpcWorldEdit_Fill_Grant;
+bool	tpcWorldEdit_Copy_Grant;
+
+bool	tpcWorldEdit_IsWorldEditBlock(
+		Entity*	tEntity)
+{
+	if (tEntity->Properties.TypeName == "WorldEdit::Fill.Begin") return true;
+	if (tEntity->Properties.TypeName == "WorldEdit::Fill.End") return true;
+	if (tEntity->Properties.TypeName == "WorldEdit::Copy.Begin") return true;
+	if (tEntity->Properties.TypeName == "WorldEdit::Copy.End") return true;
+	if (tEntity->Properties.TypeName == "WorldEdit::Copy.ApplyCopy") return true;
+	if (tEntity->Properties.TypeName == "WorldEdit::Copy.ApplyMove") return true;
+	return false;
+}
+
+bool	Trigger::tpcWorldEdit_Fill_Begin(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	tpcWorldEdit_Fill_Grant = true;
+	tpcWorldEdit_Fill_Pos[0] = ThisEntity->Physics.PosX;
+	tpcWorldEdit_Fill_Pos[1] = ThisEntity->Physics.PosY;
+	tpcWorldEdit_Fill_Pos[2] = ThisEntity->Properties.Layer;
+	return true;
+}
+
+bool	Trigger::tpcWorldEdit_Fill_End(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	GameMap*	MainMap = (GameMap*)vMainMap;
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (!tpcWorldEdit_Fill_Grant)
+		return false;
+	tpcWorldEdit_Fill_Grant = false;
+//	Pre-define options to make code shorter (I know my code is long...)
+	int	x1 = ceil(tpcWorldEdit_Fill_Pos[0]),
+		x2 = floor(ThisEntity->Physics.PosX),
+		y1 = ceil(tpcWorldEdit_Fill_Pos[1]),
+		y2 = floor(ThisEntity->Physics.PosY),
+		z1 = (int)tpcWorldEdit_Fill_Pos[2],
+		z2 = ThisEntity->Properties.Layer;
+	if (x1 > x2) std::swap(x1, x2);
+	if (y1 > y2) std::swap(y1, y2);
+	if (z1 > z2) std::swap(z1, z2);
+//	Find an appropriate block to use...
+	Entity*		EntInherit = NULL;
+	MainMap->RemoveEntityPended(ThisEntity);
+	NetmgrRemoveEntity(ThisEntity);
+#define my_get_arr_pos(a,b,c) (((a)-x1)*(y2-y1+1)*(z2-z1+1)+((b)-y1)*(z2-z1+1)+((c)-z1))
+#define my_get_arr_size() ((x2-x1+1)*(y2-y1+1)*(z2-z1+1))
+//	It might be astonishing, but short takes less memory than bool
+	short*	IndexArr = new short[my_get_arr_size()];
+	memset(IndexArr, 0, sizeof(short) * my_get_arr_size());
+	for (auto itert : MainMap->EntityList) {
+		Entity*	EntFind = itert.second;
+//		A worldedit block should **NEVER** appear here as another fill object...
+		if (!EntFind->DataIntact()) continue;
+		if (tpcWorldEdit_IsWorldEditBlock(EntFind)) {
+			MainMap->RemoveEntityPended(EntFind);
+			NetmgrRemoveEntity(EntFind);
+			continue;
+		}
+		if (EntFind->Physics.PosX < x1) continue;
+		if (EntFind->Physics.PosX > x2) continue;
+		if (EntFind->Physics.PosY < y1) continue;
+		if (EntFind->Physics.PosY > y2) continue;
+		if (EntFind->Properties.Layer < z1) continue;
+		if (EntFind->Properties.Layer > z2) continue;
+		if (EntFind->Properties.Type->Properties.Type != "Block") continue;
+		IndexArr[my_get_arr_pos((int)EntFind->Physics.PosX,
+				(int)EntFind->Physics.PosY,
+				EntFind->Properties.Layer)] = 1;
+		if (EntInherit == NULL)
+			EntInherit = EntFind;
+	}
+	if (!EntInherit) {
+		delete IndexArr;
+		return false; // I've found nothing! How am I supposed to do it?
+	}
+//	Now it's time to fill up our area!
+	for (int x = (int)ceil(x1); x <= x2; x++)
+		for (int y = (int)ceil(y1); y <= y2; y++)
+			for (int z = z1; z <= z2; z++) {
+				if (IndexArr[my_get_arr_pos(x, y, z)])
+					continue; // Marked used
+				Entity*	EntMake = new Entity;
+				EntMake->InheritFrom(EntInherit);
+				EntMake->Physics.PosX = (double)x;
+				EntMake->Physics.PosY = (double)y;
+				EntMake->Properties.Layer = z;
+				if (!EntMake->DataIntact())
+					throw RuntimeErrorException();
+				MainMap->InsertEntity(EntMake);
+				NetmgrInsertEntity(EntMake);
+			}
+//	What a nice, happy ending!
+	delete IndexArr;
+	return true;
+}
+
 bool	Trigger::ProcessConsequence(
 		std::vector<void*>	Args)
 {
@@ -233,6 +337,10 @@ bool	Trigger::ProcessConsequence(
 		return this->tpcDeployProjectile(vMainMap, vThisEntity);
 	if (ConsequentialAction == "TeleportEntity")
 		return this->tpcTeleportEntity(vMainMap, vThisEntity);
+	if (ConsequentialAction == "WorldEdit.Fill.Begin")
+		return this->tpcWorldEdit_Fill_Begin(vMainMap, vThisEntity);
+	if (ConsequentialAction == "WorldEdit.Fill.End")
+		return this->tpcWorldEdit_Fill_End(vMainMap, vThisEntity);
 	return false;
 }
 

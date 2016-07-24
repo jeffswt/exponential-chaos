@@ -3,6 +3,15 @@
 
 ## 0.12.x Community Update
 
+### 0.12.4.21 | 24/07/16
+ * Add block filling functions by providing structure blocks.
+ * Added trigger function `WorldEdit.Fill.Begin`.
+ * Added trigger function `WorldEdit.Fill.End`.
+ * Fixed texture load fail when using multi texture packs.
+ * Fixed worldedit not filling everywhere desired.
+ * Fixed worldedit remaining `WorldEdit::Fill.End` after fill.
+ * WorldEdit now fills places covered with air, not something else.
+
 ### 0.12.4.6 | 24/07/16
  * Rewritten the structure of Trigger and thoroughly tested.
 

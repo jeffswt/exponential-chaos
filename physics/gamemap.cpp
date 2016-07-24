@@ -227,6 +227,14 @@ bool	GameMap::RemoveEntityPended(
 {
 	if (!InsEnt->DataIntact())
 		return false;
+	if (PendInsertList.find(InsEnt) != PendInsertList.end()) {
+		PendInsertList.erase(InsEnt);
+		return true;
+	}
+	if (PendInsertForceList.find(InsEnt) != PendInsertForceList.find(InsEnt)) {
+		PendInsertForceList.erase(InsEnt);
+		return true;
+	}
 	if (PendRemoveList.find(InsEnt) == PendRemoveList.end())
 		PendRemoveList.insert(InsEnt);
 	return true;

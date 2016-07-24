@@ -78,10 +78,9 @@ bool	ImportGameEntityTypes(
 		JConfig.Parse(JStream.c_str());
 		if (!JConfig.IsObject()) continue;
 		ImportJsonData(ResourceName, JConfig["Name"]);
-		CurrentTextureDirectory = PathPrefix + "textures/";
 //		Finished reading resource configuration.
 		EntityJsonTmp.clear();
-		IterateDirectory(8, false, PathPrefix + "entities/", EntityJsonTmp);
+		IterateDirectory(12, false, PathPrefix + "entities/", EntityJsonTmp);
 		for (auto itert : EntityJsonTmp) {
 			ResourceNameIdx[itert] = ResourceName;
 			PathPrefixIdx[itert] = PathPrefix;
@@ -96,6 +95,7 @@ bool	ImportGameEntityTypes(
 		std::string	configName;
 		for (unsigned int j = origName.length(); j < i.length(); j++)
 			configName += i[j];
+		CurrentTextureDirectory = PathPrefixIdx[i] + "textures/";
 //		This is the main procedure...
 		Stream.open(i.c_str());
 		if (!Stream)
