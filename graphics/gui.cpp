@@ -52,13 +52,16 @@ bool	RenderUpdater(
 	return true;
 }
 
-std::string	GuiInputDialog(
-		std::string	Notice)
+std::string				GuiInputDialogNotice;
+GuiFunction				GuiInputDialogPostFunc;
+GuiCtrl::GuiStateType	GuiInputDialogLastState;
+void	GuiInputDialogWorker(
+		void)
 {
 	GuiDeclareObject(GuiObject, pictBackground,
-		- GameConfig.WindowWidth / 2, GameConfig.WindowWidth / 2,
-		GameConfig.WindowHeight / 2, - GameConfig.WindowHeight / 2,
-		"gui/misc/bg.png");
+			- GameConfig.WindowWidth / 2, GameConfig.WindowWidth / 2,
+			GameConfig.WindowHeight / 2, - GameConfig.WindowHeight / 2,
+			"gui/misc/bg.png");
 	GuiDeclareObject(GuiObject, pictBanner,
 			-480, 480, 32, -32,
 			"gui/misc/tooltip.png");
@@ -70,40 +73,53 @@ std::string	GuiInputDialog(
 			- 480, -12, 1.0, 1.0, 1.0,
 			50, ANSI_CHARSET, "OCR A Std",
 			"null");
+	std::string	Notice = GuiInputDialogNotice;
 	fontTitle.SetContent(Notice);
-	std::string	Ret = "";
-	double	beginTime = GetProcessTime();
-	double	endTime = beginTime;
-	while (true) {
-		glClear(GL_COLOR_BUFFER_BIT);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		fontCurEnter.SetContent(Ret);
-		int	CurKey = KeystateToAscii();
-		if (CurKey == '\r') {
-			std::string Newer = "";
-			for (unsigned int i = 0; i < Ret.length() - 1; i++)
-				Newer += Ret[i];
-			Ret = Newer;
-		} else if (CurKey == '\n') {
-			break;
-		} else if (CurKey != 0) {
-			Ret += (char)CurKey;
-		}
-		pictBackground.RenderObject();
-		pictBanner.RenderObject();
-		fontTitle.RenderObject();
-		fontCurEnter.RenderObject();
-		glFlush();
-		if (kGetKeyOnpress(VK_ESCAPE))
-			return "";
-//		Set timeout, that will cause unresponsiveness
-		endTime = GetProcessTime();
-		if (endTime - beginTime > 5.0)
-			return "";
-		SleepForTime(0.015);
+	static	std::string	Ret = "";
+//	Main input dialogue worker
+	fontCurEnter.SetContent(Ret);
+	int	CurKey = kGetKeyInput();
+	if (CurKey == 8) { // Similar to a CHOMP.
+		std::string Newer = "";
+		for (int i = 0; i < (int)Ret.length() - 1; i++)
+			Newer += Ret[i];
+		Ret = Newer;
+	} else if (CurKey == 13) {
+		std::string*	RetPtr = &Ret;
+		if (GuiInputDialogPostFunc)
+			GuiInputDialogPostFunc((void*)RetPtr); // Post processing.
+		Ret = ""; // For restoration purposes, in case...
+		GuiCtrl::GuiState = GuiInputDialogLastState;
+		return ;
+	} else if (CurKey != 0) { // Add key.
+		Ret += (char)CurKey;
 	}
-	return Ret;
+	// Render objects in worker.
+	pictBackground.RenderObject();
+	pictBanner.RenderObject();
+	fontTitle.RenderObject();
+	fontCurEnter.RenderObject();
+	if (kGetKeyOnpress(0x1b)) {
+		// Process a cleanup, this should be implemented in the post worker
+		Ret = "";
+		std::string*	RetPtr = &Ret;
+		if (GuiInputDialogPostFunc)
+			GuiInputDialogPostFunc((void*)RetPtr);
+		GuiCtrl::GuiState = GuiInputDialogLastState;
+		return ;
+	}
+	// That shouldn't have done anything, theoretically.
+	return ;
+}
+void	GuiInputDialog(
+		std::string	Notice,
+		GuiFunction	PostFunc)
+{
+	GuiInputDialogNotice = Notice;
+	GuiInputDialogPostFunc = PostFunc;
+	GuiInputDialogLastState = GuiCtrl::GuiState;
+	GuiCtrl::GuiState = GuiCtrl::MiscInputDialog;
+	return ;
 }
 
 bool	GuiDrawTooltip(

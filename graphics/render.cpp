@@ -124,6 +124,9 @@ void	graphicsRender(
 	case MiscLoadDialog:
 		GuiDrawLoadingDialogWorker();
 		break;
+	case MiscInputDialog:
+		GuiInputDialogWorker();
+		break;
 	case Game:
 		graphicsRenderGame(workMainMap);
 		if (PhEngine::PhEngineState == PhEngine::Paused)

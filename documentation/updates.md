@@ -3,6 +3,18 @@
 
 ## 0.12.x Community Update
 
+### 0.12.2.16 | 24/07/16
+ * Integrated input modules into main pipeline. Users no longer have to receive
+   ANR (Application Not Responding) dialogues while loading.
+ * Input dialogues have a wider range of input characters.
+ * Input dialogues now support continuous input (i.e. generating large numbers
+   of characters while pressing a key and holding).
+ * Removed rename and description editing in local saves screen.
+ * Fixed when input area is null, SIGSEGV will occur when entering backspace.
+ * Fixed 5 seconds limit when inputting things.
+ * Fixed escape sends null message in chat window.
+ <!-- * Fixed SIGSEGV when sending a chat message. -->
+
 ### 0.12.2.11 | 24/07/16
  * Integrated loading modules into main pipeline. Users no longer have to receive
    ANR (Application Not Responding) dialogues while loading.

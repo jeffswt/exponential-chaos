@@ -29,8 +29,11 @@
 
 typedef void (*GuiFunction) (void*);
 
-std::string	GuiInputDialog(
-		std::string	Notice);
+void	GuiInputDialogWorker(
+		void);
+void	GuiInputDialog(
+		std::string	Notice,
+		GuiFunction	PostFunc);
 
 bool	GuiDrawTooltip(
 		std::string	Notice);

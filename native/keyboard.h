@@ -91,4 +91,11 @@ bool	kGetKeyState(
 bool	kGetKeyState(
 		KNUM	VirtualKey);
 
+/**
+ *  @brief  Get last inputted ASCII key
+ *  @param  sans parameters.
+ */
+char	kGetKeyInput(
+		void);
+
 #endif /* NATIVE_KEYBOARD_H_ */

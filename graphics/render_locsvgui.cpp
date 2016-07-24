@@ -106,36 +106,6 @@ namespace graphicsRenderLocalSaveGuiInternals
 		if (!hWorker) throw STLException();
 		return ;
 	}
-	void	SetRename(
-			void*	Param)
-	{
-		Loaded = false;
-		int	Idx = CurPage * PageCapacity + CurSelection;
-		GameMap*	playMap = MapList[Idx];
-		if (!playMap) return ;
-		playMap->Clear();
-		playMap->ReimportFromJson();
-		std::string	sWorker = GuiInputDialog("Enter new name:");
-		if (sWorker.length() > 0)
-			playMap->Name = sWorker;
-		playMap->ExportToJson();
-		return ;
-	}
-	void	SetEditDesc(
-			void*	Param)
-	{
-		Loaded = false;
-		int	Idx = CurPage * PageCapacity + CurSelection;
-		GameMap*	playMap = MapList[Idx];
-		if (!playMap) return ;
-		playMap->Clear();
-		playMap->ReimportFromJson();
-		std::string	sWorker = GuiInputDialog("Enter new description:");
-		if (sWorker.length() > 0)
-			playMap->Description = sWorker;
-		playMap->ExportToJson();
-		return ;
-	}
 	bool	my_sort_map_time(GameMap* __x, GameMap* __y)
 		{ return __x->ModifyTime > __y->ModifyTime; };
 	void	PostUpdateMapInfo(
@@ -212,8 +182,6 @@ bool	graphicsRenderLocalSaveGui(
 			"gui/button_vanilla/normal.png", "gui/button_vanilla/hovering.png", "gui/button_vanilla/pressed.png",
 			NULL, SetReturnToMenu);
 	static	GuiButton	buttonPlayMap;
-	static	GuiButton	buttonRename;
-	static	GuiButton	buttonEditDesc;
 	static	GuiButton	buttonPrevPage;
 	static	GuiButton	buttonNextPage;
 	GuiDeclareObject(GuiFont, fontTitle,
@@ -228,14 +196,6 @@ bool	graphicsRenderLocalSaveGui(
 			44, GameConfig.WindowHeight / 2 - 248, 1.0, 1.0, 1.0,
 			28, ANSI_CHARSET, "OCR A Std",
 			"Play with selected save");
-	GuiDeclareObject(GuiFont, fontRename,
-			44, GameConfig.WindowHeight / 2 - 324, 1.0, 1.0, 1.0,
-			28, ANSI_CHARSET, "OCR A Std",
-			"Rename");
-	GuiDeclareObject(GuiFont, fontEditDesc,
-			264, GameConfig.WindowHeight / 2 - 324, 1.0, 1.0, 1.0,
-			28, ANSI_CHARSET, "OCR A Std",
-			"Edit Description");
 	GuiDeclareObject(GuiFont, fontPrevPage,
 			44, GameConfig.WindowHeight / 2 - 400, 1.0, 1.0, 1.0,
 			28, ANSI_CHARSET, "OCR A Std",
@@ -252,28 +212,12 @@ bool	graphicsRenderLocalSaveGui(
 				24, GameConfig.WindowWidth / 2 - 60, GameConfig.WindowHeight / 2 - 204, GameConfig.WindowHeight / 2 - 268,
 				"gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png",
 				NULL, NULL, NULL, NULL);
-		buttonRename.SetProperties(
-				24, 220, GameConfig.WindowHeight / 2 - 280, GameConfig.WindowHeight / 2 - 344,
-				"gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png",
-				NULL, NULL, NULL, NULL);
-		buttonEditDesc.SetProperties(
-				244, GameConfig.WindowWidth / 2 - 60, GameConfig.WindowHeight / 2 - 280, GameConfig.WindowHeight / 2 - 344,
-				"gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png",
-				NULL, NULL, NULL, NULL);
 		buttonUseMapLastSet = 0;
 	} else if (CurPageCapacity > 0 && (buttonUseMapLastSet != 1 || RequireUpdate)) {
 		buttonPlayMap.SetProperties(
 				24, GameConfig.WindowWidth / 2 - 60, GameConfig.WindowHeight / 2 - 204, GameConfig.WindowHeight / 2 - 268,
 				"gui/button_vanilla/normal.png", "gui/button_vanilla/hovering.png", "gui/button_vanilla/pressed.png",
 				NULL, SetPlayMap, NULL, NULL);
-		buttonRename.SetProperties(
-				24, 220, GameConfig.WindowHeight / 2 - 280, GameConfig.WindowHeight / 2 - 344,
-				"gui/button_vanilla/normal.png", "gui/button_vanilla/hovering.png", "gui/button_vanilla/pressed.png",
-				NULL, SetRename, NULL, NULL);
-		buttonEditDesc.SetProperties(
-				244, GameConfig.WindowWidth / 2 - 60, GameConfig.WindowHeight / 2 - 280, GameConfig.WindowHeight / 2 - 344,
-				"gui/button_vanilla/normal.png", "gui/button_vanilla/hovering.png", "gui/button_vanilla/pressed.png",
-				NULL, SetEditDesc, NULL, NULL);
 		buttonUseMapLastSet = 1;
 	}
 	if (CurPage <= 0 && (buttonPrevPageLastSet != 0 || RequireUpdate)) {
@@ -306,8 +250,6 @@ bool	graphicsRenderLocalSaveGui(
 	pictBackground.RenderObject();
 	buttonReturnToMenu.RenderObject();
 	buttonPlayMap.RenderObject();
-	buttonRename.RenderObject();
-	buttonEditDesc.RenderObject();
 	buttonPrevPage.RenderObject();
 	buttonNextPage.RenderObject();
 	for (int i = 0; i < CurPageCapacity; i++)
@@ -316,8 +258,6 @@ bool	graphicsRenderLocalSaveGui(
 	fontTitle.RenderObject();
 	fontReturnToMenu.RenderObject();
 	fontPlayMap.RenderObject();
-	fontRename.RenderObject();
-	fontEditDesc.RenderObject();
 	fontPrevPage.RenderObject();
 	fontNextPage.RenderObject();
 	for (int i = 0; i < CurPageCapacity; i++)

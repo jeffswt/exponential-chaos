@@ -266,6 +266,24 @@ bool	graphicsRenderInventory(
 	return true;
 }
 
+GameMap*	gRGOCW_MainMap;
+void	graphicsRenderGameOverlayChatWorker(
+		void*	Params)
+{
+	std::string	UpdMsg = *((std::string*)Params);
+	GameMap*	MainMap = gRGOCW_MainMap;
+	MainMap->LockMemory();
+	if (UpdMsg.length() > 0) {
+		UpdMsg = "[" + GameConfig.PlayerName + "] " + UpdMsg;
+		if (MainMap->IsHost)
+			chatInsertMessage(UpdMsg);
+		NetmgrPostMessage(UpdMsg);
+	}
+	MainMap->UnlockMemory();
+	PhEngine::PhEngineState = PhEngine::Running;
+	return ;
+}
+
 bool	graphicsRenderGameOverlay(
 		GameMap*	MainMap)
 {
@@ -358,23 +376,17 @@ bool	graphicsRenderGameOverlay(
 	graphicsRenderChatMsg();
 	if (PhEngine::PhEngineState == PhEngine::InventoryOpen) {
 		graphicsRenderInventory(MainMap, PlayerEnt, PlayerExt);
-		if (kGetKeyOnpress('E') || kGetKeyOnpress(VK_ESCAPE))
+		if (kGetKeyOnpress('e') || kGetKeyOnpress(27))
 			PhEngine::PhEngineState = PhEngine::Running;
 	}
 	if (PhEngine::PhEngineState == PhEngine::Running
-			&& kGetKeyOnpress('T')) {
+			&& kGetKeyOnpress('t')) {
 		PhEngine::PhEngineState = PhEngine::InventoryOpen;
 		std::string	UpdMsg = "";
 		MainMap->UnlockMemory();
-		UpdMsg = GuiInputDialog("Broadcast chat message:");
-		MainMap->LockMemory();
-		UpdMsg = "[" + GameConfig.PlayerName + "] " + UpdMsg;
-		if (UpdMsg.length() > 0) {
-			if (MainMap->IsHost)
-				chatInsertMessage(UpdMsg);
-			NetmgrPostMessage(UpdMsg);
-		}
-		PhEngine::PhEngineState = PhEngine::Running;
+		gRGOCW_MainMap = MainMap;
+		GuiInputDialog("Broadcast chat message:",
+				graphicsRenderGameOverlayChatWorker);
 	}
 	return true;
 }

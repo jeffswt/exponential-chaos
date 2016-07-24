@@ -32,18 +32,25 @@ namespace graphicsRenderOptionsGuiInternals
 		Stream >> Ret;
 		return Ret;
 	}
-	void	SetName(
+	void	SetNameWorker(
 			void*	Param)
 	{
-		std::string	NewName = GuiInputDialog("Player name (Return to commit):");
+		std::string	NewName = *((std::string*)Param);
 		if (NewName.length() > 0)
 			GameConfig.PlayerName = NewName;
 		return ;
 	}
-	void	SetViewDistance(
+	void	SetName(
 			void*	Param)
 	{
-		std::string			NewRes = GuiInputDialog("Specify view distance in Chunks (x 16.0m):");
+		GuiInputDialog("Player name:",
+				SetNameWorker);
+		return ;
+	}
+	void	SetViewDistanceWorker(
+			void*	Param)
+	{
+		std::string			NewRes = *((std::string*)Param);
 		std::stringstream	sStream;
 		int					nDist;
 		sStream << NewRes;
@@ -52,10 +59,17 @@ namespace graphicsRenderOptionsGuiInternals
 			GameConfig.ViewDistance = nDist;
 		return ;
 	}
-	void	SetPixelRatio(
+	void	SetViewDistance(
 			void*	Param)
 	{
-		std::string			NewRes = GuiInputDialog("Specify pixel ratio (pixels / 1.0m):");
+		GuiInputDialog("Specify view distance in chunks (x16.0m):",
+				SetViewDistanceWorker);
+		return ;
+	}
+	void	SetPixelRatioWorker(
+			void*	Param)
+	{
+		std::string			NewRes = *((std::string*)Param);
 		std::stringstream	sStream;
 		double				nRatio;
 		sStream << NewRes;
@@ -64,10 +78,17 @@ namespace graphicsRenderOptionsGuiInternals
 			GameConfig.PixelRatio = nRatio;
 		return ;
 	}
-	void	SetCameraDistTolerance(
+	void	SetPixelRatio(
 			void*	Param)
 	{
-		std::string			NewRes = GuiInputDialog("Specify maximum distance from Camera to player (in pixels):");
+		GuiInputDialog("Specify pixel ratio (pixels / 1.0m):",
+				SetPixelRatioWorker);
+		return ;
+	}
+	void	SetCameraDistToleranceWorker(
+			void*	Param)
+	{
+		std::string			NewRes = *((std::string*)Param);
 		std::stringstream	sStream;
 		int					nDist;
 		sStream << NewRes;
@@ -76,10 +97,17 @@ namespace graphicsRenderOptionsGuiInternals
 			GameConfig.CameraDistTolerance = nDist;
 		return ;
 	}
-	void	SetCameraSpeed(
+	void	SetCameraDistTolerance(
 			void*	Param)
 	{
-		std::string			NewRes = GuiInputDialog("Specify pixel ratio (pixels / 1.0m):");
+		GuiInputDialog("Specify maximum distance from Camera to player (in pixels):",
+				SetCameraDistToleranceWorker);
+		return ;
+	}
+	void	SetCameraSpeedWorker(
+			void*	Param)
+	{
+		std::string			NewRes = *((std::string*)Param);
 		std::stringstream	sStream;
 		double				nSpeed;
 		sStream << NewRes;
@@ -88,26 +116,11 @@ namespace graphicsRenderOptionsGuiInternals
 			GameConfig.CameraSpeed = nSpeed;
 		return ;
 	}
-	void	SetResolution(
-				void*	Param)
+	void	SetCameraSpeed(
+			void*	Param)
 	{
-//		Don't attempt to try large data on this... You'll certainly crash your PC.
-		std::string			NewRes = GuiInputDialog("Resolution (Width Height)");
-		std::stringstream	sStream;
-		int					nWid, nHei;
-//		Avoiding someone using multiplication signs and e.t.c.
-		for (char& i : NewRes)
-			if (i == 'x' || i == 'X' || i == '*')
-				i = ' ';
-		sStream << NewRes;
-		sStream >> nWid >> nHei;
-		if (nWid <= 16384 && nWid >= 640 && nHei <= 16384 && nHei >= 480) {
-			GameConfig.WindowWidth = nWid + 1;
-			GameConfig.WindowHeight = nHei + 1;
-			if (GameConfig.WindowFullScreen)
-				GameConfig.WindowFullScreen = false;
-			glutReshapeWindow(nWid, nHei);
-		}
+		GuiInputDialog("Set camera movement speed:",
+				SetCameraSpeedWorker);
 		return ;
 	}
 	void	SetFullscreen(
@@ -161,8 +174,8 @@ bool	graphicsRenderOptionsGui(
 			NULL, SetCameraSpeed);
 	GuiDeclareObject(GuiButton, buttonResolution,
 			-540, -10, -12, -76,
-			"gui/button_vanilla/normal.png", "gui/button_vanilla/hovering.png", "gui/button_vanilla/pressed.png",
-			NULL, SetResolution);
+			"gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png",
+			NULL, NULL);
 	GuiDeclareObject(GuiButton, buttonFullscreen,
 			10, 540, -12, -76,
 			"gui/button_vanilla/normal.png", "gui/button_vanilla/hovering.png", "gui/button_vanilla/pressed.png",

@@ -113,12 +113,15 @@ namespace graphicsRenderServerGuiInternals
 		if (!hThread) throw STLException();
 		return ;
 	}
-	void	SetAddServer(
+	void	SetAddServerWorker(
 			void*	Param)
 	{
-		std::string			Addr = GuiInputDialog("IPv4 address:");
+		std::string			Addr = *((std::string*)Param);
 		std::string			NumAddr = "";
 		std::stringstream	Stream;
+		if (Addr.length() <= 0)
+			return ;
+		// We've just ensured that this is a valid input.
 		int	p_a = 0, p_b = 0, p_c = 0, p_d = 0;
 		for (char i : Addr)
 			NumAddr += i == '.' ? ' ' : i;
@@ -131,6 +134,12 @@ namespace graphicsRenderServerGuiInternals
 		getline(Stream, Addr);
 		GameConfig.ServerList.push_back(Addr);
 		PostUpdateMapInfo();
+		return ;
+	}
+	void	SetAddServer(
+			void*	Param)
+	{
+		GuiInputDialog("IPv4 address:", SetAddServerWorker);
 		return ;
 	}
 	void	PostUpdateMapInfo(
