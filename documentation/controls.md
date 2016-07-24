@@ -29,6 +29,7 @@ and therefore is vulnerable to hacks, lag and related events.
 | 1-9             | Switch inventory focused item   |
 | E               | Open inventory                  |
 | T               | Send chat message               |
+| F3              | Open debugging window           |
 | Escape          | Pause game                      |
 
 ## Inventory

@@ -3,6 +3,12 @@
 
 ## 0.12.x Community Update
 
+### 0.12.3.21 | 24/07/16
+ * Adding "radar" debugging view for players to locate other players, sorted
+   in the order of health points from high to low. (Activate with F3)
+ * Rearrangement of local save menu interface.
+ * Now in survival mode, health points no longer flicker (flash rapidly).
+
 ### 0.12.2.16 | 24/07/16
  * Integrated input modules into main pipeline. Users no longer have to receive
    ANR (Application Not Responding) dialogues while loading.
@@ -13,7 +19,7 @@
  * Fixed when input area is null, SIGSEGV will occur when entering backspace.
  * Fixed 5 seconds limit when inputting things.
  * Fixed escape sends null message in chat window.
- <!-- * Fixed SIGSEGV when sending a chat message. -->
+ * Fixed SIGSEGV when sending a chat message.
 
 ### 0.12.2.11 | 24/07/16
  * Integrated loading modules into main pipeline. Users no longer have to receive

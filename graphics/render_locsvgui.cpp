@@ -197,11 +197,11 @@ bool	graphicsRenderLocalSaveGui(
 			28, ANSI_CHARSET, "OCR A Std",
 			"Play with selected save");
 	GuiDeclareObject(GuiFont, fontPrevPage,
-			44, GameConfig.WindowHeight / 2 - 400, 1.0, 1.0, 1.0,
+			44, GameConfig.WindowHeight / 2 - 324, 1.0, 1.0, 1.0,
 			28, ANSI_CHARSET, "OCR A Std",
 			"Last Page");
 	GuiDeclareObject(GuiFont, fontNextPage,
-			324, GameConfig.WindowHeight / 2 - 400, 1.0, 1.0, 1.0,
+			324, GameConfig.WindowHeight / 2 - 324, 1.0, 1.0, 1.0,
 			28, ANSI_CHARSET, "OCR A Std",
 			"Next Page");
 //	Set specific data
@@ -222,26 +222,26 @@ bool	graphicsRenderLocalSaveGui(
 	}
 	if (CurPage <= 0 && (buttonPrevPageLastSet != 0 || RequireUpdate)) {
 		buttonPrevPage.SetProperties(
-				24, 280, GameConfig.WindowHeight / 2 - 356, GameConfig.WindowHeight / 2 - 420,
+				24, 280, GameConfig.WindowHeight / 2 - 280, GameConfig.WindowHeight / 2 - 324,
 				"gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png",
 				NULL, NULL, NULL, NULL);
 		buttonPrevPageLastSet = 0;
 	} else if (CurPage > 0 && (buttonPrevPageLastSet != 1 || RequireUpdate)) {
 		buttonPrevPage.SetProperties(
-				24, 280, GameConfig.WindowHeight / 2 - 356, GameConfig.WindowHeight / 2 - 420,
+				24, 280, GameConfig.WindowHeight / 2 - 280, GameConfig.WindowHeight / 2 - 324,
 				"gui/button_vanilla/normal.png", "gui/button_vanilla/hovering.png", "gui/button_vanilla/pressed.png",
 				NULL, SetPageSelection, NULL, (void*)1);
 		buttonPrevPageLastSet = 1;
 	}
 	if ((CurPage + 1) * PageCapacity >= (int)MapList.size() && (buttonNextPageLastSet != 0 || RequireUpdate)) {
 		buttonNextPage.SetProperties(
-				304, GameConfig.WindowWidth / 2 - 60, GameConfig.WindowHeight / 2 - 356, GameConfig.WindowHeight / 2 - 420,
+				304, GameConfig.WindowWidth / 2 - 60, GameConfig.WindowHeight / 2 - 280, GameConfig.WindowHeight / 2 - 324,
 				"gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png", "gui/button_vanilla/disabled.png",
 				NULL, NULL, NULL, NULL);
 		buttonNextPageLastSet = 0;
 	} else if ((CurPage + 1) * PageCapacity < (int)MapList.size() && (buttonNextPageLastSet != 1 || RequireUpdate)){
 		buttonNextPage.SetProperties(
-				304, GameConfig.WindowWidth / 2 - 60, GameConfig.WindowHeight / 2 - 356, GameConfig.WindowHeight / 2 - 420,
+				304, GameConfig.WindowWidth / 2 - 60, GameConfig.WindowHeight / 2 - 280, GameConfig.WindowHeight / 2 - 324,
 				"gui/button_vanilla/normal.png", "gui/button_vanilla/hovering.png", "gui/button_vanilla/pressed.png",
 				NULL, SetPageSelection, NULL, (void*)2);
 		buttonNextPageLastSet = 1;
@@ -271,6 +271,6 @@ bool	graphicsRenderLocalSaveGui(
 		if (i % len == 0) mapDesc += '\n';
 		mapDesc += MainMap->Description[i];
 	}
-	GuiDrawTooltip(24, GameConfig.WindowHeight / 2 - 432, mapDesc);
+	GuiDrawTooltip(24, GameConfig.WindowHeight / 2 - 356, mapDesc);
 	return true;
 }

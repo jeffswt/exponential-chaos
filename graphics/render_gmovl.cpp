@@ -18,10 +18,11 @@
 //	You should have received a copy of the GNU General Public License
 //	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <iomanip>
+
 #include "network/netsync.h"
-
 #include "graphics/render_private.h"
-
+#include "native/guid.h"
 #include "native/keyboard.h"
 #include "network/chat.h"
 
@@ -176,12 +177,12 @@ namespace graphicsRenderInventoryInternals
 bool	graphicsRenderChatMsg(
 		void)
 {
+	return true;
 #define	my_define_font(_x, _y)\
 	GuiDeclareObject(GuiFont, _x,\
 		-GameConfig.WindowWidth / 2 + 20, GameConfig.WindowHeight / 2 - _y * 28,\
 		0.251, 0.349, 0.596, 20, ANSI_CHARSET, "OCR A Std");
 	std::vector<std::string>	Vec;
-	using namespace std;
 	chatRetrieveMessageList(Vec);
 	for (int i = 0; i < 5; i++) Vec.push_back("");
 	my_define_font(fontLine1, 1);
@@ -201,6 +202,87 @@ bool	graphicsRenderChatMsg(
 	fontLine3.RenderObject();
 	fontLine4.RenderObject();
 	fontLine5.RenderObject();
+	return true;
+}
+
+std::vector<GuiFont>	gRDM_FVec;
+bool					gRDM_Show = true;
+bool	graphicsRenderDebugMsg(
+		GameMap*	MainMap)
+{
+	if (!gRDM_Show) return true;
+#define my_get_tiny_guid(_a) (_a * 1.0842021724855044340074528008699e-19)
+	std::vector<std::string>	Vec;
+	std::map<double, Entity*>	LifeIdx;
+//	Initializing initial font database
+	if (gRDM_FVec.size() < 11)
+		for (int i = 0; i < 11; i++) {
+			gRDM_FVec.push_back(GuiFont());
+			gRDM_FVec[i].SetProperties(
+					-GameConfig.WindowWidth / 2 + 20, GameConfig.WindowHeight / 2 - (i + 1) * 28,
+					0.251, 0.349, 0.596, 20, ANSI_CHARSET, "OCR A Std");
+		}
+//	Loading player information
+	Entity*	SelfPlyr = MainMap->EntityList[InputControl.PlayerGuid];
+	if (!SelfPlyr) throw RuntimeErrorException(); // That should ultimately not happen!
+	for (auto itert : MainMap->PlayerEntityList) {
+		Entity*			PlayerEnt = itert.second;
+		PlayerEntity*	PlayerExt = NULL;
+		if (!PlayerEnt->DataIntact()) continue;
+		PlayerExt = (PlayerEntity*)PlayerEnt->Physics.ExtendedTags;
+		double			PlayerLif = PlayerExt->IsCreative ?
+				0.0 + my_get_tiny_guid(itert.first) :
+				PlayerExt->Life + my_get_tiny_guid(itert.first);
+		LifeIdx[- PlayerLif] = PlayerEnt; // Notice the minus, it's a trick for replacement of std::greater
+	}
+//	Converting player data into strings
+	for (auto itert : LifeIdx) {
+		Entity*				PlayerEnt = itert.second;
+		PlayerEntity*		PlayerExt = NULL;
+		if (!PlayerEnt->DataIntact()) continue;
+		PlayerExt = (PlayerEntity*)PlayerEnt->Physics.ExtendedTags;
+//		The default player which never ought to be discovered
+		if (PlayerEnt->Properties.Name == "__ZwDefaultEntity7Player") continue;
+		if (PlayerEnt == SelfPlyr) continue; // How funny 233333
+//		The disconnected players which should not by now discovered
+		if (!PlayerEnt->PhysicsEnabled() && !PlayerEnt->RenderEnabled()) continue;
+		std::stringstream	SStream, StreamTmp;
+		std::string			SName, SOutput;
+//		Define the player's life indicator
+		if (PlayerExt->IsCreative) {
+			SOutput = "[CREATIVE]";
+		} else {
+			StreamTmp << "[" << (int)PlayerExt->Life << "]";
+			StreamTmp >> SOutput;
+		}
+//		Define the player's name
+		if (PlayerEnt->Properties.Name.length() <= 15) {
+			SName = PlayerEnt->Properties.Name;
+		} else {
+			SName = "";
+			for (unsigned int i = 0; i < 12; i++)
+				SName += PlayerEnt->Properties.Name[i];
+			SName += "...";
+		}
+//		Send into pipeline to concatenate
+		SStream << std::left << std::setw(16) << SName << std::setw(11) << SOutput <<
+				"(" << (int)(PlayerEnt->Physics.PosX - SelfPlyr->Physics.PosX) <<
+				", " <<	(int)(PlayerEnt->Physics.PosY - SelfPlyr->Physics.PosY) <<
+				", " << (int)(PlayerEnt->Properties.Layer - SelfPlyr->Properties.Layer) << ")";
+		SOutput = "";
+		getline(SStream, SOutput);
+		Vec.push_back(SOutput);
+	}
+//	Projecting all pre-processed strings to display
+	for (int i = 0; i < 9; i++)
+		Vec.push_back("");
+	gRDM_FVec[0].SetContent("Player Name     Health     Relative Position");
+	gRDM_FVec[1].SetContent("==================================================");
+	for (int i = 0; i < 9; i++)
+		gRDM_FVec[i + 2].SetContent(Vec[i]);
+//	Typesetting all pre-defined fonts
+	for (int i = 0; i < 11; i++)
+		gRDM_FVec[i].RenderObject();
 	return true;
 }
 
@@ -331,23 +413,16 @@ bool	graphicsRenderGameOverlay(
 			20, ANSI_CHARSET, "OCR A Std");
 	if (true) {
 		std::stringstream	Stream;
-		std::string			NewStr = "";
-		Stream << "(" << (int)PlayerEnt->Physics.PosX
-			   << ", " << (int)PlayerEnt->Physics.PosY
-			   << ", " << PlayerEnt->Properties.Layer
-			   << ")";
-		getline(Stream, NewStr);
+		std::string			WorkStr;
 		if (!PlayerExt->IsCreative) {
 			std::stringstream	Stream;
-			std::string			WorkStr;
-			Stream << PlayerExt->Life;
+			Stream << (int)PlayerExt->Life;
 			Stream >> WorkStr;
-			WorkStr = "Life Remaining: " + WorkStr;
+			WorkStr = "Health Points: " + WorkStr;
 			if (PlayerExt->Life < 0)
 				WorkStr = "You died!";
-			NewStr = WorkStr + " " + NewStr;
 		}
-		fontPlayerLife.SetContent(NewStr);
+		fontPlayerLife.SetContent(WorkStr);
 	}
 	for (int i = 0; i < hotBarItems; i++) {
 		std::stringstream	Stream;
@@ -373,7 +448,9 @@ bool	graphicsRenderGameOverlay(
 	for (int i = 0; i < hotBarItems; i++)
 		fontItemCount[i].RenderObject();
 	fontPlayerLife.RenderObject();
-	graphicsRenderChatMsg();
+//	graphicsRenderChatMsg();
+	graphicsRenderDebugMsg(MainMap);
+//	Some useful shortcut keys
 	if (PhEngine::PhEngineState == PhEngine::InventoryOpen) {
 		graphicsRenderInventory(MainMap, PlayerEnt, PlayerExt);
 		if (kGetKeyOnpress('e') || kGetKeyOnpress(27))
@@ -388,5 +465,8 @@ bool	graphicsRenderGameOverlay(
 		GuiInputDialog("Broadcast chat message:",
 				graphicsRenderGameOverlayChatWorker);
 	}
+	if (PhEngine::PhEngineState == PhEngine::Running
+			&& kGetKeyOnpress(KNUM_F3))
+		gRDM_Show ^= 1;
 	return true;
 }
