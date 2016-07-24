@@ -84,6 +84,32 @@ arguments of the actions.
     * Argument 1 : Number, ```Physics.PosX```.
     * Argument 2 : Number, ```Physics.PosY```.
 
+ * WorldEdit.Fill.Begin (no argument)
+    * Takes no arguments, pended fill operation will begin here.
+
+ * WorldEdit.Fill.End (no argument)
+    * Takes no arguments, pended fill operation will start upon this trigger. The
+      worldedit manager will consider the first occured block in this area as
+      the fill object. Therefore it is wise to have only one block in this area.
+
+ * WorldEdit.Copy.Begin (no argument)
+    * Takes no arguments, pended copy / move operation will begin here.
+
+ * WorldEdit.Copy.End (no argument)
+    * Takes no arguments, pended copy / move operation will stop sampling here.
+      Id est, this area would be marked as the target to be copied.
+
+ * WorldEdit.Copy.ApplyCopy (no argument)
+    * Takes no arguments, pended copy operation will start upon this trigger. The
+      worldedit manager will consider this point positional equivalent to the
+      'begin' position. Areas shall not overlap, otherwise the operation would
+      be cancelled.
+
+ * WorldEdit.Copy.ApplyMove (no argument)
+    * Takes no arguments, pended move operation will start upon this trigger. The
+      worldedit manager will consider this point positional equivalent to the
+      'begin' position. Areas may overlap.
+
 ## Techniques
 
 However, **scripting triggers can be a nuisance**. As entities are abundant in the

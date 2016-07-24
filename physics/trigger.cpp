@@ -70,6 +70,142 @@ bool	Trigger::ExportToJson(
 	return true;
 }
 
+bool	Trigger::tpcCreateEntity(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	GameMap*	MainMap = (GameMap*)vMainMap;
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	std::string	LookupName = ConsequentialObject[0];
+	Entity*		NewEnt = new Entity;
+	EntityType*	NewTyp = EntityTypes[LookupName];
+//	Failure, then we abandon it
+	if (!NewEnt->InheritFrom(NewTyp)) {
+		delete NewEnt;
+		return false;
+	}
+	if (ConsequentialObject.size() == 1) {
+		NewEnt->Physics.PosX = ThisEntity->Physics.PosX;
+		NewEnt->Physics.PosY = ThisEntity->Physics.PosY;
+	} else if (ConsequentialObject.size() == 3) {
+		std::stringstream	Stream;
+		Stream << ConsequentialObject[1];
+		Stream >> NewEnt->Physics.PosX;
+		Stream << ConsequentialObject[2];
+		Stream >> NewEnt->Physics.PosY;
+	}
+	NewEnt->Properties.Owner = ThisEntity->Properties.Owner;
+	NetmgrInsertEntity(NewEnt);
+	MainMap->InsertEntityPendedForce(NewEnt);
+//	Insertion of entity complete.
+	return true;
+}
+
+bool	Trigger::tpcDeductPlayerLife(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	GameMap*	MainMap = (GameMap*)vMainMap;
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	double		DeductVal = 0.0;
+	std::string	LookupName = ConsequentialObject[1];
+	std::stringstream	Stream;
+	Stream << ConsequentialObject[0];
+	Stream >> DeductVal;
+	if (LookupName == "__ZwTrigger7All") {
+		for (auto itert : MainMap->PlayerEntityList)
+		if (itert.second->DataIntact()) {
+			PlayerEntity*	PlayerExt = (PlayerEntity*)itert.second->
+					Physics.ExtendedTags;
+			PlayerExt->Life -= DeductVal;
+		}
+	} else if (LookupName == "__ZwTrigger7Nearest") {
+		Entity*	NearestEnt = NULL;
+		double	NearestVal = 32767.0;
+		for (auto itert : MainMap->PlayerEntityList)
+		if (itert.second->DataIntact()) {
+//			Here we use manhattan distance for ease of computation
+			double	Dist = abs(itert.second->Physics.PosX - ThisEntity->Physics.PosX) +
+					abs(itert.second->Physics.PosY - ThisEntity->Physics.PosY);
+			if (Dist < NearestVal) {
+				NearestEnt = itert.second;
+				NearestVal = Dist;
+			}
+			NetmgrSetEntityLife(itert.second);
+		}
+		if (NearestEnt->DataIntact()) {
+			PlayerEntity*	PlayerExt = (PlayerEntity*)NearestEnt->Physics.ExtendedTags;
+			NetmgrSetEntityLife(NearestEnt);
+			PlayerExt->Life -= DeductVal;
+		}
+	} else {
+		for (auto itert : MainMap->PlayerEntityList) {
+			if (!itert.second->DataIntact())
+				continue;
+			if (itert.second->Properties.Name != LookupName)
+				continue;
+			PlayerEntity*	PlayerExt = (PlayerEntity*)itert.second->
+					Physics.ExtendedTags;
+			PlayerExt->Life -= DeductVal;
+			NetmgrSetEntityLife(itert.second);
+			break;
+		}
+	}
+//	Deduction of player life complete.
+	return true;
+}
+
+bool	Trigger::tpcDeployProjectile(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	GameMap*	MainMap = (GameMap*)vMainMap;
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	EntityType*	EntTyp = ThisEntity->Properties.Type;
+	if (EntTyp->Properties.Type == "Projectile") {
+		ProjectileEntityType*	EntExt = (ProjectileEntityType*)
+				EntTyp->Properties.SpecificProperties;
+		ThisEntity->Properties.GenTime = GetProcessTimeUnsynced() -
+				EntExt->DeployDelay;
+	}
+//	Deployment of projectile complete. The rest of the job are
+//	dedicated to the physics renderers to complete.
+	return true;
+}
+
+bool	Trigger::tpcTeleportEntity(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	GameMap*	MainMap = (GameMap*)vMainMap;
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	double	tgX = 0.0, tgY = 0.0; // TargetX, TargetY
+	if (ThisEntity->Properties.Owner != "") {
+		Entity*		OwnrEnt = NULL;
+//		Find this owner among the players
+		for (auto itert : MainMap->PlayerEntityList)
+			if (itert.second && itert.second->Properties.Name ==
+					ThisEntity->Properties.Owner)
+				{ OwnrEnt = itert.second; break; }
+		tgX = ThisEntity->Physics.PosX;
+		tgY = ThisEntity->Physics.PosY;
+		if (ConsequentialObject.size() == 2) {
+			std::stringstream	Stream;
+			Stream << ConsequentialObject[0];
+			Stream >> tgX;
+			Stream << ConsequentialObject[1];
+			Stream >> tgY;
+		}
+		if (OwnrEnt && OwnrEnt->DataIntact()) {
+			PlayerEntity*	PlyrTyp = (PlayerEntity*)OwnrEnt->Physics.ExtendedTags;
+			PlyrTyp->LastJumpHeight = tgY;
+			MainMap->InsertEntityPended(OwnrEnt, tgX, tgY);
+		}
+	}
+//	Teleportation of player entity complete.
+	return true;
+}
+
 bool	Trigger::ProcessConsequence(
 		std::vector<void*>	Args)
 {
@@ -87,114 +223,17 @@ bool	Trigger::ProcessConsequence(
 	if (Args.size() >= 2) ThisEntity = (Entity*)Args[1];
 	if (MainMap == NULL) return false;
 	if (!ThisEntity->DataIntact()) return false;
-	if (ConsequentialAction == "CreateEntity") {
-		std::string	LookupName = ConsequentialObject[0];
-		Entity*		NewEnt = new Entity;
-		EntityType*	NewTyp = EntityTypes[LookupName];
-//		Failure, then we abandon it
-		if (!NewEnt->InheritFrom(NewTyp)) {
-			delete NewEnt;
-			return false;
-		}
-		if (ConsequentialObject.size() == 1) {
-			NewEnt->Physics.PosX = ThisEntity->Physics.PosX;
-			NewEnt->Physics.PosY = ThisEntity->Physics.PosY;
-		} else if (ConsequentialObject.size() == 3) {
-			std::stringstream	Stream;
-			Stream << ConsequentialObject[1];
-			Stream >> NewEnt->Physics.PosX;
-			Stream << ConsequentialObject[2];
-			Stream >> NewEnt->Physics.PosY;
-		}
-		NewEnt->Properties.Owner = ThisEntity->Properties.Owner;
-		NetmgrInsertEntity(NewEnt);
-		MainMap->InsertEntityPendedForce(NewEnt);
-//		Insertion of entity complete.
-	} else if (ConsequentialAction == "DeductPlayerLife") {
-		double		DeductVal = 0.0;
-		std::string	LookupName = ConsequentialObject[1];
-		std::stringstream	Stream;
-		Stream << ConsequentialObject[0];
-		Stream >> DeductVal;
-		if (LookupName == "__ZwTrigger7All") {
-			for (auto itert : MainMap->PlayerEntityList)
-			if (itert.second->DataIntact()) {
-				PlayerEntity*	PlayerExt = (PlayerEntity*)itert.second->
-						Physics.ExtendedTags;
-				PlayerExt->Life -= DeductVal;
-			}
-		} else if (LookupName == "__ZwTrigger7Nearest") {
-			Entity*	NearestEnt = NULL;
-			double	NearestVal = 32767.0;
-			for (auto itert : MainMap->PlayerEntityList)
-			if (itert.second->DataIntact()) {
-//				Here we use manhattan distance for ease of computation
-				double	Dist = abs(itert.second->Physics.PosX - ThisEntity->Physics.PosX) +
-						abs(itert.second->Physics.PosY - ThisEntity->Physics.PosY);
-				if (Dist < NearestVal) {
-					NearestEnt = itert.second;
-					NearestVal = Dist;
-				}
-				NetmgrSetEntityLife(itert.second);
-			}
-			if (NearestEnt->DataIntact()) {
-				PlayerEntity*	PlayerExt = (PlayerEntity*)NearestEnt->Physics.ExtendedTags;
-				NetmgrSetEntityLife(NearestEnt);
-				PlayerExt->Life -= DeductVal;
-			}
-		} else {
-			for (auto itert : MainMap->PlayerEntityList) {
-				if (!itert.second->DataIntact())
-					continue;
-				if (itert.second->Properties.Name != LookupName)
-					continue;
-				PlayerEntity*	PlayerExt = (PlayerEntity*)itert.second->
-						Physics.ExtendedTags;
-				PlayerExt->Life -= DeductVal;
-				NetmgrSetEntityLife(itert.second);
-				break;
-			}
-		}
-//		Deduction of player life complete.
-	} else if (ConsequentialAction == "DeployProjectile") {
-		EntityType*	EntTyp = ThisEntity->Properties.Type;
-		if (EntTyp->Properties.Type == "Projectile") {
-			ProjectileEntityType*	EntExt = (ProjectileEntityType*)
-					EntTyp->Properties.SpecificProperties;
-			ThisEntity->Properties.GenTime = GetProcessTimeUnsynced() -
-					EntExt->DeployDelay;
-		}
-//		Deployment of projectile complete. The rest of the job are
-//		dedicated to the physics renderers to complete.
-	} else if (ConsequentialAction == "TeleportEntity") {
-		double	tgX = 0.0, tgY = 0.0; // TargetX, TargetY
-		if (ThisEntity->Properties.Owner != "") {
-			Entity*		OwnrEnt = NULL;
-//			Find this owner among the players
-			for (auto itert : MainMap->PlayerEntityList)
-				if (itert.second && itert.second->Properties.Name ==
-						ThisEntity->Properties.Owner)
-					{ OwnrEnt = itert.second; break; }
-			tgX = ThisEntity->Physics.PosX;
-			tgY = ThisEntity->Physics.PosY;
-			if (ConsequentialObject.size() == 2) {
-				std::stringstream	Stream;
-				Stream << ConsequentialObject[0];
-				Stream >> tgX;
-				Stream << ConsequentialObject[1];
-				Stream >> tgY;
-			}
-			if (OwnrEnt && OwnrEnt->DataIntact()) {
-				PlayerEntity*	PlyrTyp = (PlayerEntity*)OwnrEnt->Physics.ExtendedTags;
-				PlyrTyp->LastJumpHeight = tgY;
-				MainMap->InsertEntityPended(OwnrEnt, tgX, tgY);
-			}
-		}
-//		Teleportation of player entity complete.
-	} else {
-		return false;
-	}
-	return true;
+	void*	vMainMap = (void*)MainMap;
+	void*	vThisEntity = (void*)ThisEntity;
+	if (ConsequentialAction == "CreateEntity")
+		return this->tpcCreateEntity(vMainMap, vThisEntity);
+	if (ConsequentialAction == "DeductPlayerLife")
+		return this->tpcDeductPlayerLife(vMainMap, vThisEntity);
+	if (ConsequentialAction == "DeployProjectile")
+		return this->tpcDeployProjectile(vMainMap, vThisEntity);
+	if (ConsequentialAction == "TeleportEntity")
+		return this->tpcTeleportEntity(vMainMap, vThisEntity);
+	return false;
 }
 
 Trigger::Trigger(

@@ -94,9 +94,9 @@ crowd-based map creations and PvP events.
 
 ## Todo List
 
- - [ ] Add position indicator to find all players.
+ - [x] Add position indicator to find all players.
  - [ ] Add key mapping for users to customize.
- - [ ] Move chat window to another area.
+ - [x] Move chat window to another area.
  - [x] Remove 5 seconds limit for input dialogues, make them transparent and individually renderable by the global renderer.
  - [ ] Typeset fonts without the reliability on native APIs.
  - [ ] Remove all platform-dependent functions to move to Linux.

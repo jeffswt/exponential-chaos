@@ -3,6 +3,9 @@
 
 ## 0.12.x Community Update
 
+### 0.12.4.6 | 24/07/16
+ * Rewritten the structure of Trigger and thoroughly tested.
+
 ### 0.12.3.32 | 24/07/16
  * Updated decease message list.
 

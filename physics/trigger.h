@@ -29,6 +29,22 @@
 
 class Trigger
 {
+protected:
+	/**
+	 *  @brief  All the consequences are deliberately given here
+	 *  Re-compile is needed after addition of ProcessConsequence. Item should
+	 *  be indexed in this->ProcessConsequence(Args).
+	 */
+	bool	tpcCreateEntity(void*, void*);
+	bool	tpcDeductPlayerLife(void*, void*);
+	bool	tpcDeployProjectile(void*, void*);
+	bool	tpcTeleportEntity(void*, void*);
+	bool	tpcWorldEdit_Fill_Begin(void*, void*);
+	bool	tpcWorldEdit_Fill_End(void*, void*);
+	bool	tpcWorldEdit_Copy_Begin(void*, void*);
+	bool	tpcWorldEdit_Copy_End(void*, void*);
+	bool	tpcWorldEdit_Copy_ApplyCopy(void*, void*);
+	bool	tpcWorldEdit_Copy_ApplyMove(void*, void*);
 public:
 	double						LastTriggerTime;
 	double						DelayTime;
