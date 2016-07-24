@@ -45,6 +45,8 @@ namespace	GuiCtrl
 		OptionsGui,
 		LocalSaveGui,
 		ServerGui,
+		MiscLoadDialog,
+		MiscInputDialog,
 		Game,
 		GamePaused
 	};

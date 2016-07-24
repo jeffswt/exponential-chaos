@@ -40,6 +40,8 @@ bool	GuiDrawTooltip(
 		int			UBound,
 		std::string	Notice);
 
+void	GuiDrawLoadingDialogWorker(
+		void);
 bool	GuiDrawLoadingDialog(
 		std::string	Notice);
 

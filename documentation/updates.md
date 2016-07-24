@@ -3,6 +3,12 @@
 
 ## 0.12.x Community Update
 
+### 0.12.2.11 | 24/07/16
+ * Integrated loading modules into main pipeline. Users no longer have to receive
+   ANR (Application Not Responding) dialogues while loading.
+ * While loading, users may now resize the windows.
+ * Loading dialogues now have better appearances.
+
 ### 0.12.2.6 | 24/07/16
  * Got rid of `GetAsyncKeyState()` and a couple other functions in favour of
    freeGLUT APIs. This may further ensure the portability of this project.

@@ -125,6 +125,7 @@ void	kApiKeyboardFunc(unsigned char x, int y, int z)
 {
 	using namespace KeyboardInternals;
 	x = kApiDecapitalize(x);
+	printf("kApiKeyboardFunc %d", x);
 	if (Onpress[x] == 0)
 		Onpress[x] = 1;
 	else if (Onpress[x] == 1)
@@ -140,7 +141,6 @@ void	kApiKeyboardUpFunc(unsigned char x, int y, int z)
 }
 void	kApiSpecialFunc(int x, int y, int z)
 {
-	printf("%d\n", x);
 	using namespace KeyboardInternals;
 	int	w = (int)((KNUM)kApiSpecialInterpret(x));
 	if (OnpressSpecial[w] == 0)
@@ -161,8 +161,9 @@ bool	kGetKeyOnpress(
 		int	vkey)
 {
 	using namespace KeyboardInternals;
-	if (Onpress[(int)kApiDecapitalize(vkey)] == 1) {
-		Onpress[(int)kApiDecapitalize(vkey)] = 2;
+	vkey = (int)kApiDecapitalize(vkey);
+	if (Onpress[vkey] == 1) {
+		Onpress[vkey] = 2;
 		return true;
 	}
 	return false;
@@ -179,6 +180,6 @@ bool	kGetKeyOnpress(
 }
 
 bool	kGetKeyState(int vkey)
-	{ return KeyboardInternals::Onpress[(int)kApiDecapitalize(vkey)]; }
+	{ return KeyboardInternals::Onpress[(int)kApiDecapitalize(vkey)] > 0; }
 bool	kGetKeyState(KNUM vkey)
-	{ return KeyboardInternals::OnpressSpecial[(int)vkey]; }
+	{ return KeyboardInternals::OnpressSpecial[(int)vkey] > 0; }

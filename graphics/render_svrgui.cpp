@@ -83,17 +83,9 @@ namespace graphicsRenderServerGuiInternals
 			fontsGameMap[i].SetContent(GameConfig.ServerList[CurPage * PageCapacity + i]);
 		return ;
 	}
-	void	SetPlayMap(
-			void*	Param)
+	void	SetPlayMapWorker(
+			GameMap*	playMap)
 	{
-		Loaded = false;
-		int	Idx = CurPage * PageCapacity + CurSelection;
-		GameMap*	playMap = new GameMap;
-		playMap->IsHost = false;
-		playMap->Name = GameConfig.ServerList[Idx];
-		if (!playMap) return ;
-		GuiDrawLoadingDialog("Connecting server, please wait...");
-		GuiCtrl::GuiState = GuiCtrl::Game;
 		GuiCtrl::workMainMap = playMap;
 		playMap->Clear();
 		if (!BeginClientNetworkManager(playMap->Name, playMap)) {
@@ -104,6 +96,21 @@ namespace graphicsRenderServerGuiInternals
 		NetmgrQueryLoadComplete();
 		BeginPhysicsEngine(playMap);
 		WaitForEngineEvent();
+		GuiCtrl::GuiState = GuiCtrl::Game;
+		return ;
+	}
+	void	SetPlayMap(
+			void*	Param)
+	{
+		Loaded = false;
+		int	Idx = CurPage * PageCapacity + CurSelection;
+		GameMap*	playMap = new GameMap;
+		playMap->IsHost = false;
+		playMap->Name = GameConfig.ServerList[Idx];
+		if (!playMap) return ;
+		GuiDrawLoadingDialog("Connecting server, please wait...");
+		std::thread*	hThread = new std::thread(SetPlayMapWorker, playMap);
+		if (!hThread) throw STLException();
 		return ;
 	}
 	void	SetAddServer(

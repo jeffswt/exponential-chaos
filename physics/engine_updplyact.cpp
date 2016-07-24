@@ -39,7 +39,6 @@ bool	PhEngine::UpdatePlayerActivity(
 	playerExt = (PlayerEntity*)playerEntity->Physics.ExtendedTags;
 //	Move leftwards
 	if (kGetKeyState('a') ||
-			kGetKeyState('A') ||
 			kGetKeyState(KNUM_LEFT)) {
 		playerEntity->Physics.VelX -= spcProp->MoveSpeed * DeltaTime;
 //		Sprinting and fast leaping
@@ -50,9 +49,8 @@ bool	PhEngine::UpdatePlayerActivity(
 	}
 //	Move rightwards
 	if (kGetKeyState('d') ||
-				kGetKeyState('D') ||
-				kGetKeyState(KNUM_RIGHT)) {
-			playerEntity->Physics.VelX += spcProp->MoveSpeed * DeltaTime;
+			kGetKeyState(KNUM_RIGHT)) {
+		playerEntity->Physics.VelX += spcProp->MoveSpeed * DeltaTime;
 //		Sprinting and fast leaping
 		if (kGetKeyState(KNUM_LCTRL) ||
 				kGetKeyState(KNUM_RCTRL))
@@ -77,7 +75,7 @@ bool	PhEngine::UpdatePlayerActivity(
 		flagRequireUpdatePosition = true;
 	}
 //	Changing between layers
-	if (kGetKeyOnpress('W') ||
+	if (kGetKeyOnpress('w') ||
 			kGetKeyOnpress(KNUM_UP)) {
 		if (MainMap->ForbiddenLayers.find(playerEntity->Properties.Layer - 1)
 				== MainMap->ForbiddenLayers.end())
@@ -85,7 +83,7 @@ bool	PhEngine::UpdatePlayerActivity(
 				playerEntity->Properties.Layer - 1);
 		flagRequireUpdatePosition = true;
 	}
-	if (kGetKeyOnpress('S') ||
+	if (kGetKeyOnpress('s') ||
 			kGetKeyOnpress(KNUM_DOWN)) {
 		if (MainMap->ForbiddenLayers.find(playerEntity->Properties.Layer + 1)
 				== MainMap->ForbiddenLayers.end())

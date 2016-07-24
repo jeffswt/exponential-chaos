@@ -21,6 +21,7 @@
 #include "graphics/render_private.h"
 
 #include <algorithm>
+#include <thread>
 
 namespace graphicsRenderLocalSaveGuiInternals
 {
@@ -81,6 +82,17 @@ namespace graphicsRenderLocalSaveGuiInternals
 			fontsGameMap[i].SetContent(MapList[CurPage * PageCapacity + i]->Name);
 		return ;
 	}
+	void	SetPlayMapWorker(
+			GameMap*	playMap)
+	{
+		GuiCtrl::workMainMap = playMap;
+		playMap->Clear();
+		playMap->ReimportFromJson();
+		BeginPhysicsEngine(playMap);
+		WaitForEngineEvent();
+		GuiCtrl::GuiState = GuiCtrl::Game;
+		return ;
+	}
 	void	SetPlayMap(
 			void*	Param)
 	{
@@ -90,12 +102,8 @@ namespace graphicsRenderLocalSaveGuiInternals
 		playMap->IsHost = true;
 		if (!playMap) return ;
 		GuiDrawLoadingDialog("Loading world, please wait...");
-		GuiCtrl::GuiState = GuiCtrl::Game;
-		GuiCtrl::workMainMap = playMap;
-		playMap->Clear();
-		playMap->ReimportFromJson();
-		BeginPhysicsEngine(playMap);
-		WaitForEngineEvent();
+		std::thread*	hWorker = new std::thread(SetPlayMapWorker, playMap);
+		if (!hWorker) throw STLException();
 		return ;
 	}
 	void	SetRename(

@@ -20,6 +20,8 @@
 
 #include "graphics/render_private.h"
 
+#include <thread>
+
 #include "native/keyboard.h"
 
 namespace	graphicsRenderGamePausedGuiInternals
@@ -32,13 +34,29 @@ namespace	graphicsRenderGamePausedGuiInternals
 		GuiCtrl::GuiState = GuiCtrl::Game;
 		return ;
 	}
+	void	beginSaveExitWorker(
+			void)
+	{
+		// Parallel worker for beginSaveExit.
+		PhEngine::PhEngineState = PhEngine::SaveExit;
+		WaitForEngineEvent();
+		GuiCtrl::GuiState = GuiCtrl::MainGui;
+		return ;
+	}
 	void	beginSaveExit(
 			void*	Param)
 	{
 		GuiDrawLoadingDialog("Saving world, please wait...");
-		PhEngine::PhEngineState = PhEngine::SaveExit;
-		GuiCtrl::GuiState = GuiCtrl::MainGui;
+		std::thread*	hWorker = new std::thread(beginSaveExitWorker);
+		if (!hWorker) throw STLException();
+		return ;
+	}
+	void	beginDiscardExitWorker(
+			void)
+	{
+		PhEngine::PhEngineState = PhEngine::Stopped;
 		WaitForEngineEvent();
+		GuiCtrl::GuiState = GuiCtrl::MainGui;
 		return ;
 	}
 	void	beginDiscardExit(
@@ -48,9 +66,8 @@ namespace	graphicsRenderGamePausedGuiInternals
 			GuiDrawLoadingDialog("Please wait...");
 		else if (!thisIsHost)
 			GuiDrawLoadingDialog("Disconnecting, please wait...");
-		PhEngine::PhEngineState = PhEngine::Stopped;
-		GuiCtrl::GuiState = GuiCtrl::MainGui;
-		WaitForEngineEvent();
+		std::thread*	hWorker = new std::thread(beginDiscardExitWorker);
+		if (!hWorker) throw STLException();
 		return ;
 	}
 }

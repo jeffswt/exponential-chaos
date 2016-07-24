@@ -19,8 +19,8 @@
 //	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "graphics/render_private.h"
-
 #include "graphics/entry.h"
+#include "graphics/gui.h"
 
 namespace	GuiCtrl {
 	GuiStateType	GuiState(LoadGui);
@@ -120,6 +120,9 @@ void	graphicsRender(
 		break;
 	case ServerGui:
 		graphicsRenderServerGui();
+		break;
+	case MiscLoadDialog:
+		GuiDrawLoadingDialogWorker();
 		break;
 	case Game:
 		graphicsRenderGame(workMainMap);

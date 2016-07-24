@@ -20,42 +20,43 @@
 
 #include "native/keystate2ascii.h"
 
-#include <windows.h>
-
 #include "native/keyboard.h"
 
 int	KeystateToAscii(void)
 {
-#define MapTo(_begin_,_end_) if(kGetKeyOnpress(_begin_)){return _end_;}
-#define	MapToC(_begin_,_end_) if(kGetKeyState(VK_SHIFT)){MapTo(_begin_,_end_)}
+#define MapTo(_begin_,_end_) if(kGetKeyOnpress((int)(_begin_))){return _end_;}
+#define	MapToC(_begin_,_end_) if(kGetKeyState(KNUM_LSHIFT)||kGetKeyState(KNUM_RSHIFT)){MapTo(_begin_,_end_)}
 #define	MapToA(_begin_,_end1_,_end2_) MapToC(_begin_,_end2_);MapTo(_begin_,_end1_);
 //	Functional keys
-	MapTo(VK_SPACE, ' ');
-	MapTo(VK_BACK, '\r'); // Backspace
-	MapTo(VK_RETURN, '\n');
+	printf("Keystate to asciiing.\n");
+//	MapTo(VK_SPACE, ' ');
+//	MapTo(VK_BACK, '\r'); // Backspace
+//	MapTo(VK_RETURN, '\n');
 //	Alphabetical keys
 	for (short int i = 0; i < 26; i++) {
-		MapToA(i + 'A', i + 'a', i + 'A');
+//		MapToA(i + 'a', i + 'a', i + 'A');
+//		MapTo(i + 'a', i + 'a');
+		if (kGetKeyOnpress(i + 'a'))
+			printf("kGetKeyOnpress %d\n", i);
 	}
 //	Numerical keys
 	const char*	NumMap = ")!@#$%^&*(";
 	for (short int i = 0; i < 10; i++) {
 		MapToA(i + '0', i + '0', NumMap[i]);
-		MapTo(i + VK_NUMPAD0, i + '0');
 	}
 //	Symbolic keys
-	MapToA(VK_OEM_1, ';', ':');
-	MapToA(VK_OEM_2, '/', '?');
-	MapTo(VK_OEM_3, '~');
-	MapToA(VK_OEM_4, '[', '{');
-	MapToA(VK_OEM_5, '\\', '|');
-	MapToA(VK_OEM_6, ']', '}');
-	MapTo(VK_ADD, '+');
-	MapTo(VK_SUBTRACT, '-');
-	MapTo(VK_DIVIDE, '/');
-	MapTo(106, '*');
-	MapToA(188, ',', '<');
-	MapToA(190, '.', '>');
-	MapTo(110, '.');
+//	MapToA(VK_OEM_1, ';', ':');
+//	MapToA(VK_OEM_2, '/', '?');
+//	MapTo(VK_OEM_3, '~');
+//	MapToA(VK_OEM_4, '[', '{');
+//	MapToA(VK_OEM_5, '\\', '|');
+//	MapToA(VK_OEM_6, ']', '}');
+//	MapTo(VK_ADD, '+');
+//	MapTo(VK_SUBTRACT, '-');
+//	MapTo(VK_DIVIDE, '/');
+//	MapTo(106, '*');
+//	MapToA(188, ',', '<');
+//	MapToA(190, '.', '>');
+//	MapTo(110, '.');
 	return 0;
 }

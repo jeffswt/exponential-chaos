@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "algo/triple_pair.h"
+#include "graphics/render_private.h"
 #include "native/keyboard.h"
 #include "native/keystate2ascii.h"
 #include "native/inputctrl.h"
@@ -149,25 +150,50 @@ bool	GuiDrawTooltip(
 	return GuiDrawTooltip(begX, begY, Content);
 }
 
-bool	GuiDrawLoadingDialog(
-		std::string	Notice)
+std::string	GuiDrawLoadingDialogNotice;
+void	GuiDrawLoadingDialogWorker(
+		void)
 {
+	static	int	LPLi = 0;
+	static	int	LPRi = 0;
+//	To define the loading percentages...
+	if (LPLi == 20 && LPRi == 20) LPLi = 0, LPRi = 0;
+	else if (LPRi < 20) LPRi++;
+	else LPLi++;
+	double	LoadPercentageL = 0.05 * LPLi;
+	double	LoadPercentageR = 0.05 * LPRi;
+//	Now it comes to draw the items...
 	GuiDeclareObject(GuiObject, pictBackground,
-		- GameConfig.WindowWidth / 2, GameConfig.WindowWidth / 2,
-		GameConfig.WindowHeight / 2, - GameConfig.WindowHeight / 2,
-		"gui/misc/bg.png");
+			- GameConfig.WindowWidth / 2, GameConfig.WindowWidth / 2,
+			GameConfig.WindowHeight / 2, - GameConfig.WindowHeight / 2,
+			"gui/misc/bg.png");
 	GuiDeclareObject(GuiFont, fontTitle,
 			- 480, 60, 1.0, 1.0, 1.0,
 			30, ANSI_CHARSET, "OCR A Std",
 			"null");
+	GuiDeclareObject(GuiObject, objPercentInactive,
+			-GameConfig.WindowWidth / 2 + 128, GameConfig.WindowWidth / 2 - 128,
+			-GameConfig.WindowHeight / 2 + 120, -GameConfig.WindowHeight / 2 + 80,
+			"gui/load/bar_inactive.png");
+	static	GuiObject	objPercentActive;
+	objPercentActive.SetProperties(
+			(GameConfig.WindowWidth - 256) * LoadPercentageL - GameConfig.WindowWidth / 2 + 128,
+			(GameConfig.WindowWidth - 256) * LoadPercentageR - GameConfig.WindowWidth / 2 + 128,
+			-GameConfig.WindowHeight / 2 + 120, -GameConfig.WindowHeight / 2 + 80,
+			"gui/load/bar_active.png");
+	std::string	Notice = GuiDrawLoadingDialogNotice;
 	fontTitle.SetContent(Notice);
-	glFlush();
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 	pictBackground.RenderObject();
 	fontTitle.RenderObject();
-	glFlush();
+	objPercentInactive.RenderObject();
+	objPercentActive.RenderObject();
+	return ;
+}
+bool	GuiDrawLoadingDialog(
+		std::string	Notice)
+{
+	GuiDrawLoadingDialogNotice = Notice;
+	GuiCtrl::GuiState = GuiCtrl::MiscLoadDialog;
 	return true;
 }
 
