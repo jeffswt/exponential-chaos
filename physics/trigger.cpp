@@ -206,10 +206,10 @@ bool	Trigger::tpcTeleportEntity(
 	return true;
 }
 
-double	tpcWorldEdit_Fill_Pos[3];
-double	tpcWorldEdit_Copy_Pos[3];
+int		tpcWorldEdit_Fill_Pos[3];
+int		tpcWorldEdit_Copy_Pos[6];
 bool	tpcWorldEdit_Fill_Grant;
-bool	tpcWorldEdit_Copy_Grant;
+int		tpcWorldEdit_Copy_Grant;
 
 bool	tpcWorldEdit_IsWorldEditBlock(
 		Entity*	tEntity)
@@ -229,8 +229,8 @@ bool	Trigger::tpcWorldEdit_Fill_Begin(
 {
 	Entity*		ThisEntity = (Entity*)vThisEntity;
 	tpcWorldEdit_Fill_Grant = true;
-	tpcWorldEdit_Fill_Pos[0] = ThisEntity->Physics.PosX;
-	tpcWorldEdit_Fill_Pos[1] = ThisEntity->Physics.PosY;
+	tpcWorldEdit_Fill_Pos[0] = (int)ceil(ThisEntity->Physics.PosX);
+	tpcWorldEdit_Fill_Pos[1] = (int)ceil(ThisEntity->Physics.PosY);
 	tpcWorldEdit_Fill_Pos[2] = ThisEntity->Properties.Layer;
 	return true;
 }
@@ -245,11 +245,11 @@ bool	Trigger::tpcWorldEdit_Fill_End(
 		return false;
 	tpcWorldEdit_Fill_Grant = false;
 //	Pre-define options to make code shorter (I know my code is long...)
-	int	x1 = ceil(tpcWorldEdit_Fill_Pos[0]),
+	int	x1 = tpcWorldEdit_Fill_Pos[0],
 		x2 = floor(ThisEntity->Physics.PosX),
-		y1 = ceil(tpcWorldEdit_Fill_Pos[1]),
+		y1 = tpcWorldEdit_Fill_Pos[1],
 		y2 = floor(ThisEntity->Physics.PosY),
-		z1 = (int)tpcWorldEdit_Fill_Pos[2],
+		z1 = tpcWorldEdit_Fill_Pos[2],
 		z2 = ThisEntity->Properties.Layer;
 	if (x1 > x2) std::swap(x1, x2);
 	if (y1 > y2) std::swap(y1, y2);
@@ -310,6 +310,158 @@ bool	Trigger::tpcWorldEdit_Fill_End(
 	return true;
 }
 
+bool	Trigger::tpcWorldEdit_Copy_Begin(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	tpcWorldEdit_Copy_Grant = 1;
+	tpcWorldEdit_Copy_Pos[0] = (int)ceil(ThisEntity->Physics.PosX);
+	tpcWorldEdit_Copy_Pos[1] = (int)ceil(ThisEntity->Physics.PosY);
+	tpcWorldEdit_Copy_Pos[2] = ThisEntity->Properties.Layer;
+	return true;
+}
+
+bool	Trigger::tpcWorldEdit_Copy_End(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (tpcWorldEdit_Copy_Grant != 1)
+		return false;
+	tpcWorldEdit_Copy_Grant = 2;
+	tpcWorldEdit_Copy_Pos[3] = (int)floor(ThisEntity->Physics.PosX);
+	tpcWorldEdit_Copy_Pos[4] = (int)floor(ThisEntity->Physics.PosY);
+	tpcWorldEdit_Copy_Pos[5] = ThisEntity->Properties.Layer;
+	return true;
+}
+
+bool	Trigger::tpcWorldEdit_Copy_ApplyMove(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	GameMap*	MainMap = (GameMap*)vMainMap;
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (tpcWorldEdit_Copy_Grant != 2)
+		return false;
+//	Moving shall be allowed merely once
+	tpcWorldEdit_Copy_Grant = 0;
+	int	x1 = tpcWorldEdit_Copy_Pos[0],
+		x2 = tpcWorldEdit_Copy_Pos[3],
+		x3 = floor(ThisEntity->Physics.PosX),
+		y1 = tpcWorldEdit_Copy_Pos[1],
+		y2 = tpcWorldEdit_Copy_Pos[4],
+		y3 = floor(ThisEntity->Physics.PosY),
+		z1 = tpcWorldEdit_Copy_Pos[2],
+		z2 = tpcWorldEdit_Copy_Pos[5],
+		z3 = ThisEntity->Properties.Layer;
+	int	dx = x3 - x1,
+		dy = y3 - y1,
+		dz = z3 - z1;
+	if (x1 > x2) std::swap(x1, x2);
+	if (y1 > y2) std::swap(y1, y2);
+	if (z1 > z2) std::swap(z1, z2);
+	std::vector<Entity*>	mvVec;
+	mvVec.clear();
+	MainMap->RemoveEntityPended(ThisEntity);
+	NetmgrRemoveEntity(ThisEntity);
+//	Finding the objects satisfies the prerequisites to move
+	for (auto itert : MainMap->EntityList) {
+		Entity*	EntFind = itert.second;
+//		A worldedit block should **NEVER** appear here as another fill object...
+		if (!EntFind->DataIntact()) continue;
+		if (tpcWorldEdit_IsWorldEditBlock(EntFind)) {
+			MainMap->RemoveEntityPended(EntFind);
+			NetmgrRemoveEntity(EntFind);
+			continue;
+		}
+		if (EntFind->Physics.PosX < x1) continue;
+		if (EntFind->Physics.PosX > x2) continue;
+		if (EntFind->Physics.PosY < y1) continue;
+		if (EntFind->Physics.PosY > y2) continue;
+		if (EntFind->Properties.Layer < z1) continue;
+		if (EntFind->Properties.Layer > z2) continue;
+		if (EntFind->Properties.Type->Properties.Type != "Block") continue;
+		mvVec.push_back(EntFind);
+	}
+//	Applying move operations to the objects
+	for (Entity* mvEnt : mvVec) {
+		MainMap->RemoveEntity(mvEnt);
+		mvEnt->Properties.Layer += dz;
+		mvEnt->Physics.PosX += dx;
+		mvEnt->Physics.PosY += dy;
+		NetmgrMoveEntity(mvEnt);
+		MainMap->InsertEntity(mvEnt);
+	}
+	return true;
+}
+
+bool	Trigger::tpcWorldEdit_Copy_ApplyCopy(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	GameMap*	MainMap = (GameMap*)vMainMap;
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (tpcWorldEdit_Copy_Grant != 2
+			&& tpcWorldEdit_Copy_Grant != 3)
+		return false;
+//	To ensure that we may have the right to copy more duplicates, hitherto will
+//	not make the state resetted. However, moving would be disabled, due to
+//	certain explicit and understandable issues.
+	tpcWorldEdit_Copy_Grant = 3;
+	int	x1 = tpcWorldEdit_Copy_Pos[0],
+		x2 = tpcWorldEdit_Copy_Pos[3],
+		x3 = floor(ThisEntity->Physics.PosX),
+		y1 = tpcWorldEdit_Copy_Pos[1],
+		y2 = tpcWorldEdit_Copy_Pos[4],
+		y3 = floor(ThisEntity->Physics.PosY),
+		z1 = tpcWorldEdit_Copy_Pos[2],
+		z2 = tpcWorldEdit_Copy_Pos[5],
+		z3 = ThisEntity->Properties.Layer;
+	int	dx = x3 - x1,
+		dy = y3 - y1,
+		dz = z3 - z1;
+	if (x1 > x2) std::swap(x1, x2);
+	if (y1 > y2) std::swap(y1, y2);
+	if (z1 > z2) std::swap(z1, z2);
+	std::vector<Entity*>	cpVec;
+	cpVec.clear();
+	MainMap->RemoveEntityPended(ThisEntity);
+	NetmgrRemoveEntity(ThisEntity);
+//	Finding the objects satisfies the prerequisites to move
+	for (auto itert : MainMap->EntityList) {
+		Entity*	EntFind = itert.second;
+//		A worldedit block should **NEVER** appear here as another fill object...
+		if (!EntFind->DataIntact()) continue;
+		if (tpcWorldEdit_IsWorldEditBlock(EntFind)) {
+			MainMap->RemoveEntityPended(EntFind);
+			NetmgrRemoveEntity(EntFind);
+			continue;
+		}
+		if (EntFind->Physics.PosX < x1) continue;
+		if (EntFind->Physics.PosX > x2) continue;
+		if (EntFind->Physics.PosY < y1) continue;
+		if (EntFind->Physics.PosY > y2) continue;
+		if (EntFind->Properties.Layer < z1) continue;
+		if (EntFind->Properties.Layer > z2) continue;
+		if (EntFind->Properties.Type->Properties.Type != "Block") continue;
+		cpVec.push_back(EntFind);
+	}
+//	Applying move operations to the objects
+	for (Entity* cpEnt : cpVec) {
+		Entity*	EntMake = new Entity;
+		EntMake->InheritFrom(cpEnt);
+		EntMake->Physics.PosX = (double)(cpEnt->Physics.PosX + dx);
+		EntMake->Physics.PosY = (double)(cpEnt->Physics.PosY + dy);
+		EntMake->Properties.Layer = cpEnt->Properties.Layer + dz;
+		if (!EntMake->DataIntact())
+			throw RuntimeErrorException();
+		MainMap->InsertEntity(EntMake);
+		NetmgrInsertEntity(EntMake);
+	}
+	return true;
+}
+
 bool	Trigger::ProcessConsequence(
 		std::vector<void*>	Args)
 {
@@ -341,6 +493,14 @@ bool	Trigger::ProcessConsequence(
 		return this->tpcWorldEdit_Fill_Begin(vMainMap, vThisEntity);
 	if (ConsequentialAction == "WorldEdit.Fill.End")
 		return this->tpcWorldEdit_Fill_End(vMainMap, vThisEntity);
+	if (ConsequentialAction == "WorldEdit.Copy.Begin")
+		return this->tpcWorldEdit_Copy_Begin(vMainMap, vThisEntity);
+	if (ConsequentialAction == "WorldEdit.Copy.End")
+		return this->tpcWorldEdit_Copy_End(vMainMap, vThisEntity);
+	if (ConsequentialAction == "WorldEdit.Copy.ApplyCopy")
+		return this->tpcWorldEdit_Copy_ApplyCopy(vMainMap, vThisEntity);
+	if (ConsequentialAction == "WorldEdit.Copy.ApplyMove")
+		return this->tpcWorldEdit_Copy_ApplyMove(vMainMap, vThisEntity);
 	return false;
 }
 

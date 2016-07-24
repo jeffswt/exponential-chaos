@@ -163,12 +163,12 @@ bool	GameMap::InsertEntityPended(
 		return false;
 	triple_pair<int, double, double>	InsPair;
 	InsPair = make_triple_pair(NewLayer, NewX, NewY);
-	PendInsertList[InsEnt] = InsPair;
 	if (InsEnt->Properties.Guid == 0) {
 		do {
 			InsEnt->Properties.Guid = GenerateGuid();
 		} while (EntityList[InsEnt->Properties.Guid] != NULL);
 	}
+	PendInsertList[InsEnt] = InsPair;
 	return true;
 }
 

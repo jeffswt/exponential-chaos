@@ -3,6 +3,13 @@
 
 ## 0.12.x Community Update
 
+### 0.12.4.36 | 24/07/16
+ * Worldedit now supports copy and paste.
+ * Added trigger function `WorldEdit.Copy.Begin`.
+ * Added trigger function `WorldEdit.Copy.End`.
+ * Added trigger function `WorldEdit.Copy.ApplyCopy`.
+ * Added trigger function `WorldEdit.Copy.ApplyMove`.
+
 ### 0.12.4.21 | 24/07/16
  * Add block filling functions by providing structure blocks.
  * Added trigger function `WorldEdit.Fill.Begin`.
