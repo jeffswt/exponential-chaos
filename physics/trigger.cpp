@@ -207,13 +207,15 @@ bool	Trigger::tpcTeleportEntity(
 }
 
 int		tpcWorldEdit_Fill_Pos[3];
+int		tpcWorldEdit_Fill_Grant = 0;
+Entity*	tpcWorldEdit_Fill_Choice = NULL;
 int		tpcWorldEdit_Copy_Pos[6];
-bool	tpcWorldEdit_Fill_Grant;
-int		tpcWorldEdit_Copy_Grant;
+int		tpcWorldEdit_Copy_Grant = 0;
 
 bool	tpcWorldEdit_IsWorldEditBlock(
 		Entity*	tEntity)
 {
+	if (tEntity->Properties.TypeName == "WorldEdit::Fill.Pick") return true;
 	if (tEntity->Properties.TypeName == "WorldEdit::Fill.Begin") return true;
 	if (tEntity->Properties.TypeName == "WorldEdit::Fill.End") return true;
 	if (tEntity->Properties.TypeName == "WorldEdit::Copy.Begin") return true;
@@ -223,12 +225,34 @@ bool	tpcWorldEdit_IsWorldEditBlock(
 	return false;
 }
 
+bool	Trigger::tpcWorldEdit_Fill_Pick(
+		void*	vMainMap,
+		void*	vThisEntity)
+{
+	GameMap*	MainMap = (GameMap*)vMainMap;
+	Entity*		ThisEntity = (Entity*)vThisEntity;
+	tpcWorldEdit_Fill_Choice = NULL;
+	for (auto itert : MainMap->EntityList) {
+		Entity*	fndEnt = itert.second;
+		if (tpcWorldEdit_IsWorldEditBlock(fndEnt)) continue;
+		if (abs(ThisEntity->Physics.PosX - fndEnt->Physics.PosX) > 0.2) continue;
+		if (abs(ThisEntity->Physics.PosY - fndEnt->Physics.PosY) > 0.2) continue;
+		if (ThisEntity->Properties.Layer != fndEnt->Properties.Layer) continue;
+		tpcWorldEdit_Fill_Choice = fndEnt;
+	}
+	tpcWorldEdit_Fill_Grant = 1;
+	return true;
+}
+
 bool	Trigger::tpcWorldEdit_Fill_Begin(
 		void*	vMainMap,
 		void*	vThisEntity)
 {
 	Entity*		ThisEntity = (Entity*)vThisEntity;
-	tpcWorldEdit_Fill_Grant = true;
+	if (tpcWorldEdit_Fill_Grant != 1
+			&& tpcWorldEdit_Fill_Grant != 2)
+		return false;
+	tpcWorldEdit_Fill_Grant = 2;
 	tpcWorldEdit_Fill_Pos[0] = (int)ceil(ThisEntity->Physics.PosX);
 	tpcWorldEdit_Fill_Pos[1] = (int)ceil(ThisEntity->Physics.PosY);
 	tpcWorldEdit_Fill_Pos[2] = ThisEntity->Properties.Layer;
@@ -241,9 +265,9 @@ bool	Trigger::tpcWorldEdit_Fill_End(
 {
 	GameMap*	MainMap = (GameMap*)vMainMap;
 	Entity*		ThisEntity = (Entity*)vThisEntity;
-	if (!tpcWorldEdit_Fill_Grant)
+	if (tpcWorldEdit_Fill_Grant != 2)
 		return false;
-	tpcWorldEdit_Fill_Grant = false;
+	tpcWorldEdit_Fill_Grant = 1;
 //	Pre-define options to make code shorter (I know my code is long...)
 	int	x1 = tpcWorldEdit_Fill_Pos[0],
 		x2 = floor(ThisEntity->Physics.PosX),
@@ -255,14 +279,7 @@ bool	Trigger::tpcWorldEdit_Fill_End(
 	if (y1 > y2) std::swap(y1, y2);
 	if (z1 > z2) std::swap(z1, z2);
 //	Find an appropriate block to use...
-	Entity*		EntInherit = NULL;
-	MainMap->RemoveEntityPended(ThisEntity);
-	NetmgrRemoveEntity(ThisEntity);
-#define my_get_arr_pos(a,b,c) (((a)-x1)*(y2-y1+1)*(z2-z1+1)+((b)-y1)*(z2-z1+1)+((c)-z1))
-#define my_get_arr_size() ((x2-x1+1)*(y2-y1+1)*(z2-z1+1))
-//	It might be astonishing, but short takes less memory than bool
-	short*	IndexArr = new short[my_get_arr_size()];
-	memset(IndexArr, 0, sizeof(short) * my_get_arr_size());
+	Entity*	EntInherit = tpcWorldEdit_Fill_Choice;
 	for (auto itert : MainMap->EntityList) {
 		Entity*	EntFind = itert.second;
 //		A worldedit block should **NEVER** appear here as another fill object...
@@ -279,22 +296,17 @@ bool	Trigger::tpcWorldEdit_Fill_End(
 		if (EntFind->Properties.Layer < z1) continue;
 		if (EntFind->Properties.Layer > z2) continue;
 		if (EntFind->Properties.Type->Properties.Type != "Block") continue;
-		IndexArr[my_get_arr_pos((int)EntFind->Physics.PosX,
-				(int)EntFind->Physics.PosY,
-				EntFind->Properties.Layer)] = 1;
-		if (EntInherit == NULL)
-			EntInherit = EntFind;
+//		As everything would be filled, what would be the meaning to stay here?
+		MainMap->RemoveEntityPended(EntFind);
+		NetmgrRemoveEntity(EntFind);
 	}
-	if (!EntInherit) {
-		delete IndexArr;
+	if (!EntInherit)
 		return false; // I've found nothing! How am I supposed to do it?
-	}
 //	Now it's time to fill up our area!
+	if (EntInherit != NULL)
 	for (int x = (int)ceil(x1); x <= x2; x++)
 		for (int y = (int)ceil(y1); y <= y2; y++)
 			for (int z = z1; z <= z2; z++) {
-				if (IndexArr[my_get_arr_pos(x, y, z)])
-					continue; // Marked used
 				Entity*	EntMake = new Entity;
 				EntMake->InheritFrom(EntInherit);
 				EntMake->Physics.PosX = (double)x;
@@ -306,7 +318,6 @@ bool	Trigger::tpcWorldEdit_Fill_End(
 				NetmgrInsertEntity(EntMake);
 			}
 //	What a nice, happy ending!
-	delete IndexArr;
 	return true;
 }
 
@@ -327,7 +338,8 @@ bool	Trigger::tpcWorldEdit_Copy_End(
 		void*	vThisEntity)
 {
 	Entity*		ThisEntity = (Entity*)vThisEntity;
-	if (tpcWorldEdit_Copy_Grant != 1)
+	if (tpcWorldEdit_Copy_Grant != 1
+			&& tpcWorldEdit_Copy_Grant != 2)
 		return false;
 	tpcWorldEdit_Copy_Grant = 2;
 	tpcWorldEdit_Copy_Pos[3] = (int)floor(ThisEntity->Physics.PosX);
@@ -489,6 +501,8 @@ bool	Trigger::ProcessConsequence(
 		return this->tpcDeployProjectile(vMainMap, vThisEntity);
 	if (ConsequentialAction == "TeleportEntity")
 		return this->tpcTeleportEntity(vMainMap, vThisEntity);
+	if (ConsequentialAction == "WorldEdit.Fill.Pick")
+		return this->tpcWorldEdit_Fill_Pick(vMainMap, vThisEntity);
 	if (ConsequentialAction == "WorldEdit.Fill.Begin")
 		return this->tpcWorldEdit_Fill_Begin(vMainMap, vThisEntity);
 	if (ConsequentialAction == "WorldEdit.Fill.End")

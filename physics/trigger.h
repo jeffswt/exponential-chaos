@@ -39,6 +39,7 @@ protected:
 	bool	tpcDeductPlayerLife(void*, void*);
 	bool	tpcDeployProjectile(void*, void*);
 	bool	tpcTeleportEntity(void*, void*);
+	bool	tpcWorldEdit_Fill_Pick(void*, void*);
 	bool	tpcWorldEdit_Fill_Begin(void*, void*);
 	bool	tpcWorldEdit_Fill_End(void*, void*);
 	bool	tpcWorldEdit_Copy_Begin(void*, void*);

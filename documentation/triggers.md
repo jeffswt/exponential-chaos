@@ -84,31 +84,43 @@ arguments of the actions.
     * Argument 1 : Number, ```Physics.PosX```.
     * Argument 2 : Number, ```Physics.PosY```.
 
+ * WorldEdit.Fill.Pick (no argument)
+    * Takes no arguments, the block in this area would be considered the block to
+      be used to be filled with. If no block present, 'fill' command would become
+      'erase' command.
+    * For security reasons, this trigger can only be used by the server operator.
+
  * WorldEdit.Fill.Begin (no argument)
     * Takes no arguments, pended fill operation will begin here.
 
  * WorldEdit.Fill.End (no argument)
     * Takes no arguments, pended fill operation will start upon this trigger. The
-      worldedit manager will consider the first occured block in this area as
-      the fill object. Therefore it is wise to have only one block in this area.
+      worldedit manager will consider the chosen block as the object to choose.
+      All blocks would be **replaced** with the chosen block, instead of its area
+      begin ignored by WorldEdit.
+    * For security reasons, this trigger can only be used by the server operator.
 
  * WorldEdit.Copy.Begin (no argument)
     * Takes no arguments, pended copy / move operation will begin here.
+    * For security reasons, this trigger can only be used by the server operator.
 
  * WorldEdit.Copy.End (no argument)
     * Takes no arguments, pended copy / move operation will stop sampling here.
       Id est, this area would be marked as the target to be copied.
+    * For security reasons, this trigger can only be used by the server operator.
 
  * WorldEdit.Copy.ApplyCopy (no argument)
     * Takes no arguments, pended copy operation will start upon this trigger. The
       worldedit manager will consider this point positional equivalent to the
       'begin' position. Areas shall not overlap, otherwise the operation would
       be cancelled.
+    * For security reasons, this trigger can only be used by the server operator.
 
  * WorldEdit.Copy.ApplyMove (no argument)
     * Takes no arguments, pended move operation will start upon this trigger. The
       worldedit manager will consider this point positional equivalent to the
       'begin' position. Areas may overlap.
+    * For security reasons, this trigger can only be used by the server operator.
 
 ## Techniques
 

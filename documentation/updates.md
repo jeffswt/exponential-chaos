@@ -3,6 +3,11 @@
 
 ## 0.12.x Community Update
 
+### 0.12.4.41 | 24/07/16
+ * Filling blocks needs to manually pick the entity type.
+ * Added trigger function `WorldEdit.Fill.Pick`.
+ * Only the server operator can use WorldEdit in multiplayer mode.
+
 ### 0.12.4.36 | 24/07/16
  * Worldedit now supports copy and paste.
  * Added trigger function `WorldEdit.Copy.Begin`.
