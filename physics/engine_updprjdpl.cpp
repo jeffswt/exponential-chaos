@@ -69,6 +69,19 @@ bool	PhEngine::UpdateProjectileDeployment(
 			if (MainMap->CurTime - Object->Properties.GenTime < ProjTyp->DeployDelay)
 				continue;
 			/*
+			 * Now the projectile has all properties defined, then we should take
+			 * care about what is about to happen next. All the objects / entities
+			 * that the projectile literally destructed, will return to the player
+			 * who created the projectile's pocket.
+			 */
+			std::string	SentPlyrNam = Object->Properties.Owner;
+			Entity*		SentPlyrEnt = NULL;
+			for (auto itert : MainMap->PlayerEntityList)
+				if (itert.second->Properties.Name == SentPlyrNam) {
+					SentPlyrEnt = itert.second;
+					break;
+				}
+			/*
 			 * For every entity in the world / chunk, we assume that it is in simple state that
 			 * it might be injected or blasted away. We call him the victim. The victim is thrown
 			 * away if and only if:
@@ -82,6 +95,7 @@ bool	PhEngine::UpdateProjectileDeployment(
 				for (auto jtert : ChkChnk->EntityList) {
 					Entity*	Victim = jtert.second;
 					if (!Victim->DataIntact()) continue;
+					if (Victim == Object) continue; // That's so weird...
 //					Calculate the distance and define whether to process
 					double	distX = Victim->Physics.PosX - Object->Physics.PosX;
 					double	distY = Victim->Physics.PosY - Object->Physics.PosY;
@@ -106,6 +120,19 @@ bool	PhEngine::UpdateProjectileDeployment(
 							(ProjTyp->DeployRadius - distCombine) / ProjTyp->DeployRadius &&
 							Victim->Properties.Type->Properties.Type != "Player" &&
 							Victim->Properties.Type->Properties.Type != "Particle") {
+//						Inventory of the set player should be filled with this item
+						if (SentPlyrEnt->DataIntact()) {
+							PlayerEntity*	SentPlyrExt = (PlayerEntity*)SentPlyrEnt->Physics.ExtendedTags;
+							for (auto itert_pair = SentPlyrExt->Inventory.begin();
+									itert_pair != SentPlyrExt->Inventory.end();
+									itert_pair++) {
+								EntityType*	EntTyp = itert_pair->first;
+								if (!EntTyp->DataIntact()) continue;
+								if (EntTyp != Victim->Properties.Type) continue;
+								itert_pair->second++;
+							}
+						}
+//						Now to pend the removal of this entity
 						MainMap->RemoveEntityPended(Victim);
 						NetmgrRemoveEntity(Victim);
 					}

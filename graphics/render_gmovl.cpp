@@ -174,38 +174,31 @@ namespace graphicsRenderInventoryInternals
 	}
 }
 
+std::vector<GuiFont*>	gRCM_FVec;
 bool	graphicsRenderChatMsg(
 		void)
 {
-	return true;
-#define	my_define_font(_x, _y)\
-	GuiDeclareObject(GuiFont, _x,\
-		-GameConfig.WindowWidth / 2 + 20, GameConfig.WindowHeight / 2 - _y * 28,\
-		0.251, 0.349, 0.596, 20, ANSI_CHARSET, "OCR A Std");
+	if (gRCM_FVec.size() < 6)
+		for (int i = 0; i < 6; i++)
+			gRCM_FVec.push_back(new GuiFont);
+	for (int i = 0; i < 6; i++)
+		if (gRCM_FVec[i]->RequireUpdate())
+			gRCM_FVec[i]->SetProperties(
+					-GameConfig.WindowWidth / 2 + 20, -GameConfig.WindowHeight / 2 + 64 + (i + 1) * 28,
+					0.251, 0.349, 0.596, 20, ANSI_CHARSET, "OCR A Std");
 	std::vector<std::string>	Vec;
 	chatRetrieveMessageList(Vec);
-	for (int i = 0; i < 5; i++) Vec.push_back("");
-	my_define_font(fontLine1, 1);
-	my_define_font(fontLine2, 2);
-	my_define_font(fontLine3, 3);
-	my_define_font(fontLine4, 4);
-	my_define_font(fontLine5, 5);
+	for (int i = 0; i < 6; i++) Vec.push_back("");
 //	Setting font content
-	fontLine1.SetContent(Vec[0]);
-	fontLine2.SetContent(Vec[1]);
-	fontLine3.SetContent(Vec[2]);
-	fontLine4.SetContent(Vec[3]);
-	fontLine5.SetContent(Vec[4]);
+	for (int i = 0; i < 6; i++)
+		gRCM_FVec[i]->SetContent(Vec[i]);
 //	Rendering objects...
-	fontLine1.RenderObject();
-	fontLine2.RenderObject();
-	fontLine3.RenderObject();
-	fontLine4.RenderObject();
-	fontLine5.RenderObject();
+	for (int i = 0; i < 6; i++)
+		gRCM_FVec[i]->RenderObject();
 	return true;
 }
 
-std::vector<GuiFont>	gRDM_FVec;
+std::vector<GuiFont*>	gRDM_FVec;
 bool					gRDM_Show = true;
 bool	graphicsRenderDebugMsg(
 		GameMap*	MainMap)
@@ -216,12 +209,13 @@ bool	graphicsRenderDebugMsg(
 	std::map<double, Entity*>	LifeIdx;
 //	Initializing initial font database
 	if (gRDM_FVec.size() < 11)
-		for (int i = 0; i < 11; i++) {
-			gRDM_FVec.push_back(GuiFont());
-			gRDM_FVec[i].SetProperties(
+		for (int i = 0; i < 11; i++)
+			gRDM_FVec.push_back(new GuiFont);
+	for (int i = 0; i < 11; i++)
+		if (gRDM_FVec[i]->RequireUpdate())
+			gRDM_FVec[i]->SetProperties(
 					-GameConfig.WindowWidth / 2 + 20, GameConfig.WindowHeight / 2 - (i + 1) * 28,
 					0.251, 0.349, 0.596, 20, ANSI_CHARSET, "OCR A Std");
-		}
 //	Loading player information
 	Entity*	SelfPlyr = MainMap->EntityList[InputControl.PlayerGuid];
 	if (!SelfPlyr) throw RuntimeErrorException(); // That should ultimately not happen!
@@ -276,13 +270,13 @@ bool	graphicsRenderDebugMsg(
 //	Projecting all pre-processed strings to display
 	for (int i = 0; i < 9; i++)
 		Vec.push_back("");
-	gRDM_FVec[0].SetContent("Player Name     Health     Relative Position");
-	gRDM_FVec[1].SetContent("==================================================");
+	gRDM_FVec[0]->SetContent("Player Name     Health     Relative Position");
+	gRDM_FVec[1]->SetContent("==================================================");
 	for (int i = 0; i < 9; i++)
-		gRDM_FVec[i + 2].SetContent(Vec[i]);
+		gRDM_FVec[i + 2]->SetContent(Vec[i]);
 //	Typesetting all pre-defined fonts
 	for (int i = 0; i < 11; i++)
-		gRDM_FVec[i].RenderObject();
+		gRDM_FVec[i]->RenderObject();
 	return true;
 }
 
@@ -448,7 +442,8 @@ bool	graphicsRenderGameOverlay(
 	for (int i = 0; i < hotBarItems; i++)
 		fontItemCount[i].RenderObject();
 	fontPlayerLife.RenderObject();
-//	graphicsRenderChatMsg();
+//	Render additional information
+	graphicsRenderChatMsg();
 	graphicsRenderDebugMsg(MainMap);
 //	Some useful shortcut keys
 	if (PhEngine::PhEngineState == PhEngine::InventoryOpen) {
@@ -468,5 +463,12 @@ bool	graphicsRenderGameOverlay(
 	if (PhEngine::PhEngineState == PhEngine::Running
 			&& kGetKeyOnpress(KNUM_F3))
 		gRDM_Show ^= 1;
+	if ((PhEngine::PhEngineState == PhEngine::Running
+			|| PhEngine::PhEngineState == PhEngine::Paused
+			|| PhEngine::PhEngineState == PhEngine::InventoryOpen
+			) && kGetKeyOnpress(KNUM_F10)) {
+		GameConfig.WindowFullScreen ^= 1;
+		glutFullScreenToggle();
+	}
 	return true;
 }

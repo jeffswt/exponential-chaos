@@ -19,10 +19,11 @@
 //	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "network/netsync.h"
-
 #include "graphics/render_private.h"
 
 #include <algorithm>
+
+#include "native/keyboard.h"
 
 namespace graphicsRenderServerGuiInternals
 {
@@ -294,5 +295,8 @@ bool	graphicsRenderServerGui(
 	fontNextPage.RenderObject();
 	for (int i = 0; i < CurPageCapacity; i++)
 		fontsGameMap[i].RenderObject();
+//	Some trivial shortcuts
+	if (kGetKeyOnpress(27))
+		GuiCtrl::GuiState = GuiCtrl::MainGui;
 	return true;
 }

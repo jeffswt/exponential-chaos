@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <thread>
 
+#include "native/keyboard.h"
+
 namespace graphicsRenderLocalSaveGuiInternals
 {
 	GuiButton				buttonsGameMap[20];
@@ -272,5 +274,8 @@ bool	graphicsRenderLocalSaveGui(
 		mapDesc += MainMap->Description[i];
 	}
 	GuiDrawTooltip(24, GameConfig.WindowHeight / 2 - 356, mapDesc);
+//	Some trivial shortcuts
+	if (kGetKeyOnpress(27))
+		GuiCtrl::GuiState = GuiCtrl::MainGui;
 	return true;
 }

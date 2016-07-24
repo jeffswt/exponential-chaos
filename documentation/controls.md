@@ -30,6 +30,7 @@ and therefore is vulnerable to hacks, lag and related events.
 | E               | Open inventory                  |
 | T               | Send chat message               |
 | F3              | Open debugging window           |
+| F10             | Toggle full screen              |
 | Escape          | Pause game                      |
 
 ## Inventory
@@ -39,3 +40,9 @@ and therefore is vulnerable to hacks, lag and related events.
 | A / Left Arrow  | Previous page  |
 | D / Right Arrow | Next page      |
 | Escape          | Return to game |
+
+## Main interface
+
+| Key    | Functions           |
+| :----- | :------------------ |
+| Escape | Return to main menu |

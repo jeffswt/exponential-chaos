@@ -20,6 +20,8 @@
 
 #include "graphics/render_private.h"
 
+#include "native/keyboard.h"
+
 namespace graphicsRenderOptionsGuiInternals
 {
 	template <typename TYPE>
@@ -259,5 +261,8 @@ bool	graphicsRenderOptionsGui(
 	fontFullscreen.RenderObject();
 	fontOpenToLan.RenderObject();
 	fontReturnToMenu.RenderObject();
+//	Some trivial shortcuts
+	if (kGetKeyOnpress(27))
+		GuiCtrl::GuiState = GuiCtrl::MainGui;
 	return true;
 }

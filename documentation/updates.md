@@ -3,6 +3,15 @@
 
 ## 0.12.x Community Update
 
+### 0.12.3.31 | 24/07/16
+ * Projectile destroyed items return to the players who deployed the projectile.
+ * Fixed projectiles could destroy themselves when deploying.
+
+### 0.12.3.26 | 24/07/16
+ * Restored chat window and moved to the lower part of the window.
+ * Fixed debug window not resizing and chat window not resizing according to the
+   resizing of the windows.
+
 ### 0.12.3.21 | 24/07/16
  * Adding "radar" debugging view for players to locate other players, sorted
    in the order of health points from high to low. (Activate with F3)
