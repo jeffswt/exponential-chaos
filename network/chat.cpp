@@ -35,35 +35,29 @@ bool	chatInitialise(
 		void)
 {
 #define my_def_msg(_x) MessageList.push_back(_x);
-	my_def_msg( "$PLAYER$ blamed lag for that death" );
-	my_def_msg( "$PLAYER$ faked that death for money" );
-	my_def_msg( "$PLAYER$ flipped the wall and drank tea." );
-	my_def_msg( "$PLAYER$ flipped the wall and drank coffee." );
-	my_def_msg( "$PLAYER$ pressed E" );
-	my_def_msg( "$PLAYER$ says that BOOST is not a good library." );
-	my_def_msg( "$PLAYER$ says that C++11 is not a good dialect." );
-	my_def_msg( "$PLAYER$ says that C98 was not a good dialect." );
-	my_def_msg( "$PLAYER$ urges developers to stop using std::map." );
-	my_def_msg( "$PLAYER$ urges developers to stop using std::string." );
-	my_def_msg( "$PLAYER$ urges developers to stop using STL." );
-	my_def_msg( "$PLAYER$ was told to use Java." );
-	my_def_msg( "$PLAYER$ was told to use CPython." );
-	my_def_msg( "$PLAYER$ was told to use Dalvik instead of ART." );
-	my_def_msg( "$PLAYER$ was given such a heavy shot." );
-	my_def_msg( "$PLAYER$ was dealt so much damage to death." );
-	my_def_msg( "Alas, how do we see the sky raining with $PLAYER$!" );
-	my_def_msg( "Alas, birds carrying $PLAYER$ down the sky!" );
-	my_def_msg( "Monday, $PLAYER$ was taken aback by the Chinese homework." );
-	my_def_msg( "Monday, $PLAYER$ was forced to say in classroom." );
-	my_def_msg( "Tuesday, $PLAYER$ was harvested." );
-	my_def_msg( "Tuesday, $PLAYER$ was flooded by homework." );
-	my_def_msg( "Wednesday, $PLAYER$ met the emperor." );
-	my_def_msg( "Wednesday, $PLAYER$ was given sufficient homework by the emperor." );
-	my_def_msg( "Thursday, $PLAYER$ exaggerated that there were no homework." );
-	my_def_msg( "Thursday, $PLAYER$ went to YJY for a cup of tea." );
-	my_def_msg( "Thursday, $PLAYER$ wrote a chairman tree." );
-	my_def_msg( "Thursday, $PLAYER$ gazed at 'Segment Tree Beats'." );
-	my_def_msg( "Friday, $PLAYER$ took an exam." );
+#define my_def_msg_cnt(_x,_y) for(int i=1;i<=_y;i++)my_def_msg(_x);
+	my_def_msg_cnt( "$PLAYER$ blamed lag for that death" , 15);
+	my_def_msg_cnt( "$PLAYER$ accidently ran into a lag" , 12);
+	my_def_msg_cnt( "$PLAYER$ was way too slow for his enemy" , 12);
+	my_def_msg_cnt( "$PLAYER$ seemed to run into a Blue Screen of Death" , 8);
+	my_def_msg_cnt( "$PLAYER$ underestimated his opponent" , 8);
+	my_def_msg_cnt( "$PLAYER$ did not like the Kernel Panic just now" , 6);
+	my_def_msg_cnt( "$PLAYER$ asked NVIDIA to be faster" , 6);
+	my_def_msg_cnt( "$PLAYER$ asked AMD to serve a faster FPS" , 6);
+	my_def_msg_cnt( "$PLAYER$ blamed @ht35268 for using STL" , 3);
+	my_def_msg_cnt( "$PLAYER$ blamed @ht35268 for brute force" , 3);
+	my_def_msg_cnt( "$PLAYER$ pressed E" , 3);
+	my_def_msg_cnt( "$PLAYER$ pressed T" , 3);
+	my_def_msg_cnt( "$PLAYER$ faked that death for spawn point" , 2);
+	my_def_msg_cnt( "$PLAYER$ fell from the sky to his end" , 2);
+	my_def_msg_cnt( "$PLAYER$ tried to swim in homework" , 2);
+	my_def_msg_cnt( "$PLAYER$ received his last blow" , 2);
+	my_def_msg_cnt( "$PLAYER$ was blown up by an invisible creeper" , 2);
+	my_def_msg_cnt( "$PLAYER$ was harvested" , 1);
+	my_def_msg_cnt( "$PLAYER$ saw the emperor" , 1);
+	my_def_msg_cnt( "$PLAYER$ has no quality (mass)" , 1);
+	my_def_msg_cnt( "$PLAYER$'s M was too large" , 1);
+	my_def_msg_cnt( "$PLAYER$ didn't read segment tree beats" , 1);
 	return true;
 }
 

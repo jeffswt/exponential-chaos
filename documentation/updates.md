@@ -3,6 +3,9 @@
 
 ## 0.12.x Community Update
 
+### 0.12.3.32 | 24/07/16
+ * Updated decease message list.
+
 ### 0.12.3.31 | 24/07/16
  * Projectile destroyed items return to the players who deployed the projectile.
  * Fixed projectiles could destroy themselves when deploying.
