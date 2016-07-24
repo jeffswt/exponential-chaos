@@ -231,6 +231,7 @@ bool	Trigger::tpcWorldEdit_Fill_Pick(
 {
 	GameMap*	MainMap = (GameMap*)vMainMap;
 	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (!MainMap->IsHost) return false; // This will lead to security problems
 	tpcWorldEdit_Fill_Choice = NULL;
 	for (auto itert : MainMap->EntityList) {
 		Entity*	fndEnt = itert.second;
@@ -248,7 +249,9 @@ bool	Trigger::tpcWorldEdit_Fill_Begin(
 		void*	vMainMap,
 		void*	vThisEntity)
 {
+	GameMap*	MainMap = (GameMap*)vMainMap;
 	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (!MainMap->IsHost) return false; // This will lead to security problems
 	if (tpcWorldEdit_Fill_Grant != 1
 			&& tpcWorldEdit_Fill_Grant != 2)
 		return false;
@@ -265,6 +268,7 @@ bool	Trigger::tpcWorldEdit_Fill_End(
 {
 	GameMap*	MainMap = (GameMap*)vMainMap;
 	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (!MainMap->IsHost) return false; // This will lead to security problems
 	if (tpcWorldEdit_Fill_Grant != 2)
 		return false;
 	tpcWorldEdit_Fill_Grant = 1;
@@ -325,7 +329,9 @@ bool	Trigger::tpcWorldEdit_Copy_Begin(
 		void*	vMainMap,
 		void*	vThisEntity)
 {
+	GameMap*	MainMap = (GameMap*)vMainMap;
 	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (!MainMap->IsHost) return false; // This will lead to security problems
 	tpcWorldEdit_Copy_Grant = 1;
 	tpcWorldEdit_Copy_Pos[0] = (int)ceil(ThisEntity->Physics.PosX);
 	tpcWorldEdit_Copy_Pos[1] = (int)ceil(ThisEntity->Physics.PosY);
@@ -337,7 +343,9 @@ bool	Trigger::tpcWorldEdit_Copy_End(
 		void*	vMainMap,
 		void*	vThisEntity)
 {
+	GameMap*	MainMap = (GameMap*)vMainMap;
 	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (!MainMap->IsHost) return false; // This will lead to security problems
 	if (tpcWorldEdit_Copy_Grant != 1
 			&& tpcWorldEdit_Copy_Grant != 2)
 		return false;
@@ -354,6 +362,7 @@ bool	Trigger::tpcWorldEdit_Copy_ApplyMove(
 {
 	GameMap*	MainMap = (GameMap*)vMainMap;
 	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (!MainMap->IsHost) return false; // This will lead to security problems
 	if (tpcWorldEdit_Copy_Grant != 2)
 		return false;
 //	Moving shall be allowed merely once
@@ -414,6 +423,7 @@ bool	Trigger::tpcWorldEdit_Copy_ApplyCopy(
 {
 	GameMap*	MainMap = (GameMap*)vMainMap;
 	Entity*		ThisEntity = (Entity*)vThisEntity;
+	if (!MainMap->IsHost) return false; // This will lead to security problems
 	if (tpcWorldEdit_Copy_Grant != 2
 			&& tpcWorldEdit_Copy_Grant != 3)
 		return false;

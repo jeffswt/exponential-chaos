@@ -237,7 +237,6 @@ bool	graphicsRenderDebugMsg(
 		PlayerExt = (PlayerEntity*)PlayerEnt->Physics.ExtendedTags;
 //		The default player which never ought to be discovered
 		if (PlayerEnt->Properties.Name == "__ZwDefaultEntity7Player") continue;
-		if (PlayerEnt == SelfPlyr) continue; // How funny 233333
 //		The disconnected players which should not by now discovered
 		if (!PlayerEnt->PhysicsEnabled() && !PlayerEnt->RenderEnabled()) continue;
 		std::stringstream	SStream, StreamTmp;
@@ -259,10 +258,16 @@ bool	graphicsRenderDebugMsg(
 			SName += "...";
 		}
 //		Send into pipeline to concatenate
+		int	defX = SelfPlyr->Physics.PosX,
+			defY = SelfPlyr->Physics.PosY,
+			defZ = SelfPlyr->Properties.Layer;
+		if (PlayerEnt != SelfPlyr) {
+			defX = PlayerEnt->Physics.PosX - defX;
+			defY = PlayerEnt->Physics.PosY - defY;
+			defZ = PlayerEnt->Properties.Layer - defZ;
+		}
 		SStream << std::left << std::setw(16) << SName << std::setw(11) << SOutput <<
-				"(" << (int)(PlayerEnt->Physics.PosX - SelfPlyr->Physics.PosX) <<
-				", " <<	(int)(PlayerEnt->Physics.PosY - SelfPlyr->Physics.PosY) <<
-				", " << (int)(PlayerEnt->Properties.Layer - SelfPlyr->Properties.Layer) << ")";
+				"(" << defX << ", " << defY << ", " << defZ << ")";
 		SOutput = "";
 		getline(SStream, SOutput);
 		Vec.push_back(SOutput);

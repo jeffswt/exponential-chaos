@@ -104,7 +104,7 @@ bool	PhEngine::UpdateProjectileSummon(
 			newEntity->Physics.PosY = distY;
 			newEntity->Physics.VelX = 0.0;
 			newEntity->Physics.VelY = 0.0;
-			if (projEntity->Graphics.LengthX == 1.0 && projEntity->Graphics.LengthY == 1.0) {
+			if (projEntity->Properties.Type == "Block") {
 				newEntity->Physics.PosX = trunc(distX >= 0 ? distX + 0.5 : distX - 0.5);
 				newEntity->Physics.PosY = trunc(distY >= 0 ? distY + 0.5 : distY - 0.5);
 			}

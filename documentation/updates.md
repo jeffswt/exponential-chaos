@@ -3,10 +3,16 @@
 
 ## 0.12.x Community Update
 
+### 0.12.5.1 | 25/07/16
+ * Updated textures for blocks `WorldEdit::*`.
+ * All blocks are now aligned to integer coordinates even if side lengths are not
+   all 1 metre long.
+ * Aboslute position (of the player himself) now shown in debug window.
+ * Only the server operator can use WorldEdit in multiplayer mode.
+
 ### 0.12.4.41 | 24/07/16
  * Filling blocks needs to manually pick the entity type.
  * Added trigger function `WorldEdit.Fill.Pick`.
- * Only the server operator can use WorldEdit in multiplayer mode.
 
 ### 0.12.4.36 | 24/07/16
  * Worldedit now supports copy and paste.
