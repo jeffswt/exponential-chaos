@@ -3,6 +3,21 @@
 
 ## 0.12.x Community Update
 
+### 0.12.5.21 | 25/07/16
+ * Added Python entity JSON compiler.
+ * Redefined properties for entities in resource pack `Minecraft2D`.
+ * Refreshed styling for all entities.
+ * Fixed the improper properties for the following entities:
+    * Minecraft2D::Leaves.Jungle: shouldn't have had collision
+    * Minecraft2D::Wheat: shouldn't have had collision
+ * Added the following entities:
+    * Minecraft2D::Furnace.Side/Top
+    * Minecraft2D::CraftingTable.Front/Top
+    * Minecraft2D::Log.(Acacia/BigOak/Birch/Jungle/Oak/Spruce).(Side.Horizontal/Top)
+    * Minecraft2D::Stone.Brick.(Carved/Cracked)
+    * Minecraft2D::Torch.(/Left/Right)
+    * Minecraft2D::Explosion.Huge
+
 ### 0.12.5.6 | 25/07/16
  * Fixed projectiles infinitely deploying after triggered deployment. This is a
    cause for inprecedent remove functions' failure.
