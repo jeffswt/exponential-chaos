@@ -27,6 +27,14 @@ namespace	GuiCtrl {
 	GameMap*		workMainMap;
 }
 
+// Some definitions that should have been defined but not.
+#ifndef GLUT_WHEEL_UP
+#define GLUT_WHEEL_UP 3
+#endif
+#ifndef GLUT_WHEEL_DOWN
+#define GLUT_WHEEL_DOWN 4
+#endif
+
 void	graphicsMouseClick(
 		int	button,
 		int	state,
@@ -40,6 +48,14 @@ void	graphicsMouseClick(
 		InputControl.RDown = state == GLUT_DOWN ? 1 : 0; break;
 	case GLUT_MIDDLE_BUTTON:
 		InputControl.MDown = state == GLUT_DOWN ? 1 : 0; break;
+	case GLUT_WHEEL_UP:
+		if (state == GLUT_DOWN)
+			InputControl.WheelUp = true;
+		break;
+	case GLUT_WHEEL_DOWN:
+		if (state == GLUT_DOWN)
+			InputControl.WheelDn = true;
+		break;
 	default:
 		break;
 	}
@@ -108,6 +124,9 @@ void	graphicsRender(
 	switch (GuiState) {
 	case LoadGui:
 		graphicsRenderLoadGui();
+		break;
+	case LoadTexGui:
+		graphicsRenderLoadTexGui();
 		break;
 	case MainGui:
 		graphicsRenderMainGui();

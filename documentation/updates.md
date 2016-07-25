@@ -3,6 +3,18 @@
 
 ## 0.12.x Community Update
 
+### 0.12.5.36 | 25/07/16
+ * Mouse wheels now usable to manipulate the inventory focus.
+ * Reduced inventory lag by adding a texture loader in the beginning of the load.
+   This function is disabled by default as it does not reduce lag as much as
+   expected on slow devices.
+ * Changed TNT size and added animation, shortened delay and increased motion power.
+ * Changed rocket item picture.
+ * Added the following entities:
+    * Minecraft2D::Portal
+    * Minecraft2D::Water
+ * Entering release period. Additional metadata updated.
+
 ### 0.12.5.21 | 25/07/16
  * Added Python entity JSON compiler.
  * Redefined properties for entities in resource pack `Minecraft2D`.

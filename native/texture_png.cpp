@@ -26,6 +26,7 @@
 #include <map>
 
 std::map<std::string, GLuint>	TextureIndex;
+int								CreatedTextures = 0;
 
 GLuint	LoadPNGTexture(
 		std::string	file_path,
@@ -153,5 +154,6 @@ GLuint	LoadPNGTexture(
 	free(row_pointers);
 	fclose(fp);
 	TextureIndex[file_path] = texture;
+	CreatedTextures++;
 	return texture;
 }

@@ -97,6 +97,19 @@ bool	PhEngine::UpdatePlayerActivity(
 			playerExt->InventoryFocus = procNum;
 			flagRequireUpdateDefinition = true;
 		}
+//	Switching slots according to mouse wheel
+	if (InputControl.WheelUp) {
+		playerExt->InventoryFocus--;
+		if (playerExt->InventoryFocus <= 0)
+			playerExt->InventoryFocus = 9;
+		InputControl.WheelUp = false;
+	}
+	if (InputControl.WheelDn) {
+		playerExt->InventoryFocus++;
+		if (playerExt->InventoryFocus >= 10)
+			playerExt->InventoryFocus = 1;
+		InputControl.WheelDn = false;
+	}
 //	Special buttons
 	if (kGetKeyOnpress(0x1b))
 		PhEngine::PhEngineState = PhEngine::Paused;

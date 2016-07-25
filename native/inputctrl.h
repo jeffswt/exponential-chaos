@@ -27,7 +27,7 @@ class InputCtrlType
 {
 public:
 	int			MouseX, MouseY, MouseEntry;
-	bool		LDown, MDown, RDown;
+	bool		LDown, MDown, RDown, WheelUp, WheelDn;
 	long long	PlayerGuid;
 	double		CameraX, CameraY;
 	InputCtrlType(void)

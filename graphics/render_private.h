@@ -41,6 +41,7 @@ namespace	GuiCtrl
 {
 	enum GuiStateType {
 		LoadGui,
+		LoadTexGui,
 		MainGui,
 		OptionsGui,
 		LocalSaveGui,
@@ -64,6 +65,9 @@ bool	graphicsRenderGame(
 		GameMap*	MainMap);
 
 bool	graphicsRenderLoadGui(
+		void);
+
+bool	graphicsRenderLoadTexGui(
 		void);
 
 bool	graphicsRenderLocalSaveGui(
