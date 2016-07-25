@@ -63,28 +63,34 @@ bool graphicsRenderGame(
 			Entity*		RenEnt = itrt.second;
 			if (!RenEnt->DataIntact()) continue;
 			EntityType*	RenTyp = RenEnt->Properties.Type;
+			EntityType::typeGraphics	nGraphics
+					= RenTyp->Graphics[RenEnt->Properties.TypeState];
 //			If hidden, do not render
 			if (!RenEnt->RenderEnabled()) continue;
 //			If out of render area, do not render.
-			if ((RenEnt->Physics.PosX - RenTyp->Graphics.LengthX - InputControl.CameraX) * GameConfig.PixelRatio > 0.5 * GameConfig.WindowWidth ||
-					(RenEnt->Physics.PosX + RenTyp->Graphics.LengthX - InputControl.CameraX) * GameConfig.PixelRatio < -0.5 * GameConfig.WindowWidth ||
-					(RenEnt->Physics.PosY - RenTyp->Graphics.LengthY - InputControl.CameraY) * GameConfig.PixelRatio > 0.5 * GameConfig.WindowHeight ||
-					(RenEnt->Physics.PosY + RenTyp->Graphics.LengthY - InputControl.CameraY) * GameConfig.PixelRatio < -0.5 * GameConfig.WindowHeight)
+			if ((RenEnt->Physics.PosX - nGraphics.LengthX - InputControl.CameraX) * GameConfig.PixelRatio > 0.5 * GameConfig.WindowWidth ||
+					(RenEnt->Physics.PosX + nGraphics.LengthX - InputControl.CameraX) * GameConfig.PixelRatio < -0.5 * GameConfig.WindowWidth ||
+					(RenEnt->Physics.PosY - nGraphics.LengthY - InputControl.CameraY) * GameConfig.PixelRatio > 0.5 * GameConfig.WindowHeight ||
+					(RenEnt->Physics.PosY + nGraphics.LengthY - InputControl.CameraY) * GameConfig.PixelRatio < -0.5 * GameConfig.WindowHeight)
 				continue;
 			glEnable(GL_TEXTURE_2D);
+//			After doing this, textures wouldn't look blurry even if it's small
+//			Thanks to http://stackoverflow.com (again)
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glColor3f(1.0, 1.0, 1.0);
 //			We are now processing an animation
-			if (RenTyp->Graphics.TextureList.size() > 1) {
+			if (nGraphics.TextureList.size() > 1) {
 				double	CurTexTime = MainMap->CurTime;
 				if (RenTyp->Properties.Type == "Particle")
 					CurTexTime -= RenEnt->Properties.GenTime;
-				double	TexTime = CurTexTime - (int)(CurTexTime / RenTyp->Graphics.AnimationInterval) *
-						RenTyp->Graphics.AnimationInterval;
-				int		TexIndex = TexTime / RenTyp->Graphics.AnimationInterval * RenTyp->Graphics.TextureList.size();
+				double	TexTime = CurTexTime - (int)(CurTexTime / nGraphics.AnimationInterval) *
+						nGraphics.AnimationInterval;
+				int		TexIndex = TexTime / nGraphics.AnimationInterval * nGraphics.TextureList.size();
 				if (TexIndex < 0 || TexIndex > 1048576) TexIndex = 0; // Some precautions...
-				glBindTexture(GL_TEXTURE_2D, RenTyp->Graphics.TextureList[TexIndex]);
-			} else if (RenTyp->Graphics.TextureList.size() == 1) {
-				glBindTexture(GL_TEXTURE_2D, RenTyp->Graphics.TextureList[0]);
+				glBindTexture(GL_TEXTURE_2D, nGraphics.TextureList[TexIndex]);
+			} else if (nGraphics.TextureList.size() == 1) {
+				glBindTexture(GL_TEXTURE_2D, nGraphics.TextureList[0]);
 			} else {
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
@@ -94,8 +100,8 @@ bool graphicsRenderGame(
 			double	RenderX, RenderY;
 			double	TexX, TexY;
 			for (double itX = 0.5, itY = 0.5; ; ) {
-				RenderSiX = itX * RenTyp->Graphics.LengthX + RenEnt->Physics.PosX - InputControl.CameraX;
-				RenderSiY = itY * RenTyp->Graphics.LengthY + RenEnt->Physics.PosY - InputControl.CameraY;
+				RenderSiX = itX * nGraphics.LengthX + RenEnt->Physics.PosX - InputControl.CameraX;
+				RenderSiY = itY * nGraphics.LengthY + RenEnt->Physics.PosY - InputControl.CameraY;
 				RenderX = RenderSiX * GameConfig.PixelRatio;
 				RenderY = RenderSiY * GameConfig.PixelRatio;
 				TexX = 0.5 + itX;

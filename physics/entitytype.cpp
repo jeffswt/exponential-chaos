@@ -55,14 +55,7 @@ EntityType::EntityType(void)
 	Physics.CollisionIgnoreName.clear();
 	Physics.CollisionIgnore.clear();
 	Physics.TriggerList.clear();
-//	Graphics properties
-	Graphics.RenderEnabled = false;
-	Graphics.AnimationInterval = 0.0;
-	Graphics.Luminosity = 0.0;
-	Graphics.LengthX = 1.0;
-	Graphics.LengthY = 1.0;
-	Graphics.TextureList.clear();
-	Graphics.TextureOnHand = 0;
+	Graphics.clear();
 	return ;
 }
 
@@ -125,11 +118,6 @@ bool	EntityType::ImportFromJson(
 //	Miscellaneous properties.
 	ImportJsonData(Physics.BlastResistance, ConfigData["Physics"]["BlastResistance"]);
 	ImportJsonData(Physics.CollisionIgnoreName, ConfigData["Physics"]["CollisionIgnore"]);
-	ImportJsonData(Graphics.RenderEnabled, ConfigData["Graphics"]["RenderEnabled"]);
-	ImportJsonData(Graphics.AnimationInterval, ConfigData["Graphics"]["AnimationInterval"]);
-	ImportJsonData(Graphics.Luminosity, ConfigData["Graphics"]["Luminosity"]);
-	ImportJsonData(Graphics.LengthX, ConfigData["Graphics"]["LengthX"]);
-	ImportJsonData(Graphics.LengthY, ConfigData["Graphics"]["LengthY"]);
 //	Importing general yet self-defined importing procedure properties
 //	Entity class specific properties
 	if (Properties.Type == "Player") {
@@ -153,25 +141,63 @@ bool	EntityType::ImportFromJson(
 		ImportJsonData(SubData->LifeTime, ConfigData["Properties"]["SpecificProperties"]["LifeTime"]);
 		Properties.SpecificProperties = (void*)SubData;
 	}
-//	Import textures list of PNGs
-	if (ConfigData["Graphics"]["TextureList"].IsArray()) {
-		std::vector<std::string> TexturePath;
-		ImportJsonData(TexturePath, ConfigData["Graphics"]["TextureList"]);
-		for (auto i = TexturePath.begin(); i != TexturePath.end(); i++) {
-			GLuint		Texture;
-			std::string	Path = CurrentTextureDirectory + (*i);
-			Texture = LoadPNGTexture(Path.c_str(), NULL, NULL);
-			Graphics.TextureList.push_back(Texture);
+//	Import textures list of PNGs, defined by whether is array or not.
+	if (!ConfigData["Graphics"].IsArray()) {
+		typeGraphics	nGraphics;
+		ImportJsonData(nGraphics.RenderEnabled, ConfigData["Graphics"]["RenderEnabled"]);
+		ImportJsonData(nGraphics.AnimationInterval, ConfigData["Graphics"]["AnimationInterval"]);
+		ImportJsonData(nGraphics.Luminosity, ConfigData["Graphics"]["Luminosity"]);
+		ImportJsonData(nGraphics.LengthX, ConfigData["Graphics"]["LengthX"]);
+		ImportJsonData(nGraphics.LengthY, ConfigData["Graphics"]["LengthY"]);
+		if (ConfigData["Graphics"]["TextureList"].IsArray()) {
+			std::vector<std::string> TexturePath;
+			ImportJsonData(TexturePath, ConfigData["Graphics"]["TextureList"]);
+			for (auto i = TexturePath.begin(); i != TexturePath.end(); i++) {
+				GLuint		Texture;
+				std::string	Path = CurrentTextureDirectory + (*i);
+				Texture = LoadPNGTexture(Path.c_str(), NULL, NULL);
+				nGraphics.TextureList.push_back(Texture);
+			}
 		}
-	}
-	if (ConfigData["Graphics"]["TextureOnHand"].IsString()) {
-		std::string	OnHandTex;
-		std::string	Path;
-		ImportJsonData(OnHandTex, ConfigData["Graphics"]["TextureOnHand"]);
-		Path = CurrentTextureDirectory + OnHandTex;
-		Graphics.TextureOnHand = LoadPNGTexture(Path.c_str(), NULL, NULL);
-	} else if (Graphics.TextureList.size() > 0){
-		Graphics.TextureOnHand = Graphics.TextureList[0];
+		if (ConfigData["Graphics"]["TextureOnHand"].IsString()) {
+			std::string	OnHandTex;
+			std::string	Path;
+			ImportJsonData(OnHandTex, ConfigData["Graphics"]["TextureOnHand"]);
+			Path = CurrentTextureDirectory + OnHandTex;
+			nGraphics.TextureOnHand = LoadPNGTexture(Path.c_str(), NULL, NULL);
+		} else if (nGraphics.TextureList.size() > 0){
+			nGraphics.TextureOnHand = nGraphics.TextureList[0];
+		}
+		Graphics.push_back(nGraphics);
+	} else {
+		for (int Indexer = 0; Indexer < (int)ConfigData["Graphics"].Size(); Indexer++) {
+			typeGraphics	nGraphics;
+			ImportJsonData(nGraphics.RenderEnabled, ConfigData["Graphics"][Indexer]["RenderEnabled"]);
+			ImportJsonData(nGraphics.AnimationInterval, ConfigData["Graphics"][Indexer]["AnimationInterval"]);
+			ImportJsonData(nGraphics.Luminosity, ConfigData["Graphics"][Indexer]["Luminosity"]);
+			ImportJsonData(nGraphics.LengthX, ConfigData["Graphics"][Indexer]["LengthX"]);
+			ImportJsonData(nGraphics.LengthY, ConfigData["Graphics"][Indexer]["LengthY"]);
+			if (ConfigData["Graphics"][Indexer]["TextureList"].IsArray()) {
+				std::vector<std::string> TexturePath;
+				ImportJsonData(TexturePath, ConfigData["Graphics"][Indexer]["TextureList"]);
+				for (auto i = TexturePath.begin(); i != TexturePath.end(); i++) {
+					GLuint		Texture;
+					std::string	Path = CurrentTextureDirectory + (*i);
+					Texture = LoadPNGTexture(Path.c_str(), NULL, NULL);
+					nGraphics.TextureList.push_back(Texture);
+				}
+			}
+			if (ConfigData["Graphics"][Indexer]["TextureOnHand"].IsString()) {
+				std::string	OnHandTex;
+				std::string	Path;
+				ImportJsonData(OnHandTex, ConfigData["Graphics"][Indexer]["TextureOnHand"]);
+				Path = CurrentTextureDirectory + OnHandTex;
+				nGraphics.TextureOnHand = LoadPNGTexture(Path.c_str(), NULL, NULL);
+			} else if (nGraphics.TextureList.size() > 0){
+				nGraphics.TextureOnHand = nGraphics.TextureList[0];
+			}
+			Graphics.push_back(nGraphics);
+		}
 	}
 //	Import trigger operators from JSON
 	if (ConfigData["Physics"]["TriggerList"].IsArray()) {
@@ -220,40 +246,4 @@ ParticleEntityType::ParticleEntityType(void)
 {
 	LifeTime = 0.0;
 	return ;
-}
-
-std::ostream&	operator << (
-		std::ostream&	Stream,
-		EntityType*		OutTyp)
-{
-	class_table_head(Stream);
-	class_table_body(Stream, "Debug object", "Entity type");
-	void*	ActualAddress = (void*)OutTyp;
-	if (!OutTyp->DataIntact()) {
-		class_table_body(Stream, "Memory address (unreadable)", ActualAddress);
-		goto ProcessEnd;
-	}
-	class_table_body(Stream, "Memory address", ActualAddress);
-	class_table_body(Stream, "Properties.Name", OutTyp->Properties.Name);
-	class_table_body(Stream, "Properties.Type", OutTyp->Properties.Type);
-	class_table_body(Stream, "Properties.Description", OutTyp->Properties.Description);
-	class_table_body(Stream, "Properties.ShowInCreative", OutTyp->Properties.ShowInCreative);
-	class_table_body(Stream, "Physics.LengthX", OutTyp->Physics.LengthX);
-	class_table_body(Stream, "Physics.LengthX", OutTyp->Physics.LengthX);
-	class_table_body(Stream, "Physics.Mass", OutTyp->Physics.Mass);
-	class_table_body(Stream, "Physics.BlastResistance", OutTyp->Physics.BlastResistance);
-	class_table_body(Stream, "Graphics.RenderEnabled", OutTyp->Graphics.RenderEnabled);
-	if (OutTyp->Graphics.TextureList.size() > 1)
-		class_table_body(Stream, "OutTyp->Graphics.AnimationInterval", OutTyp->Graphics.AnimationInterval);
-//	FIXME: Nothing to do when outputting entity type specific data...
-	if (OutTyp->Properties.Type == "Player") {
-
-	} else if (OutTyp->Properties.Type == "Projectile") {
-
-	} else if (OutTyp->Properties.Type == "Particle") {
-
-	}
-ProcessEnd:
-	class_table_end(Stream);
-	return Stream;
 }

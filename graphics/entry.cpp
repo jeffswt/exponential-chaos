@@ -31,6 +31,7 @@ void graphicsInit(void)
 //	Enable 2D textures
 	glEnable(GL_TEXTURE_2D);
 //	Alpha textures are enabled
+//	Thanks to http://stackoverflow.com
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //	Using Cartesian system

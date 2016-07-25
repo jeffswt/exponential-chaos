@@ -38,6 +38,7 @@ public:
 	public:
 		EntityType*	Type; // Pointer to the original type
 		std::string	TypeName; // Actual type name
+		int			TypeState; // The graphical block state of the entity type
 		long long	Guid; // Global Unique Identifier, used to pass over network
 		int			Layer; // Layer of this Entity.
 		double		GenTime; // Generation time
@@ -129,15 +130,5 @@ public:
 //	Constructors and destruction operators
 	PlayerEntity(void);
 };
-
-//	Debugging and other uses
-/**
- *  @brief  stream operators for entities
- *  This simplify the output of entities, for better reading of entities
- *  in debugging mode.
- */
-std::ostream&	operator << (
-		std::ostream&	Stream,
-		Entity*			OutEnt);
 
 #endif /* PHYSICS_ENTITY_H_ */

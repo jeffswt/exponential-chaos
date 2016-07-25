@@ -3,6 +3,12 @@
 
 ## 0.12.x Community Update
 
+### 0.12.6.7 | 25/07/16
+ * Updated the entity type JSON format to allow more than one block state per
+   entity type. This can be used to solve the overflowing of the creative
+   inventory and multi-directional block.
+ * Low-definition textures don't look blurry now.
+
 ### 0.12.5.36 | 25/07/16
  * Mouse wheels now usable to manipulate the inventory focus.
  * Reduced inventory lag by adding a texture loader in the beginning of the load.

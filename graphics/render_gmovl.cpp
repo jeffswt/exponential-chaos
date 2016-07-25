@@ -132,7 +132,7 @@ namespace graphicsRenderInventoryInternals
 				ItemPics[i].SetProperties(
 					lBegin + (i % 9) * 72, lBegin + (i % 9 + 1) * 72 - 8,
 					uBegin - (i / 9) * 72, uBegin - (i / 9 + 1) * 72 + 8,
-					itert->second->Graphics.TextureOnHand);
+					itert->second->Graphics[PlayerEnt->Properties.TypeState].TextureOnHand);
 #ifdef RENDER_GMOVL_DISPLAY_ITEM_DESCRIPTION_
 				ItemDesc[i].SetContent(fontDesc);
 #endif
@@ -155,7 +155,7 @@ namespace graphicsRenderInventoryInternals
 				ItemPics[i].SetProperties(
 					lBegin + (i % 9) * 72, lBegin + (i % 9 + 1) * 72 - 8,
 					uBegin - (i / 9) * 72, uBegin - (i / 9 + 1) * 72 + 8,
-					PlayerExt->Inventory[cntBegin + i].first->Graphics.TextureOnHand);
+					PlayerExt->Inventory[cntBegin + i].first->Graphics[PlayerEnt->Properties.TypeState].TextureOnHand);
 #ifdef RENDER_GMOVL_DISPLAY_ITEM_DESCRIPTION_
 				ItemDesc[i].SetContent(fontDesc);
 #endif
@@ -400,7 +400,7 @@ bool	graphicsRenderGameOverlay(
 	for (int i = 0; i < hotBarItems; i++)
 		objHotbarItems[i].SetProperties(
 			-288 + i * 64 + 8, -224 + i * 64 - 8, hotBarTop - 8, hotBarBot + 8,
-			PlayerExt->Inventory[i].first->Graphics.TextureOnHand);
+			PlayerExt->Inventory[i].first->Graphics[PlayerEnt->Properties.TypeState].TextureOnHand);
 	static	GuiFont		fontItemCount[9];
 	if (RequireUpdate)
 		for (int i = 0; i < 9; i++)
