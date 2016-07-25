@@ -3,6 +3,11 @@
 
 ## 0.12.x Community Update
 
+### 0.12.5.6 | 25/07/16
+ * Fixed projectiles infinitely deploying after triggered deployment. This is a
+   cause for inprecedent remove functions' failure.
+ * Fixed `GameMap.RemoveEntityPended` does not remove existent entities.
+
 ### 0.12.5.1 | 25/07/16
  * Updated textures for blocks `WorldEdit::*`.
  * All blocks are now aligned to integer coordinates even if side lengths are not
