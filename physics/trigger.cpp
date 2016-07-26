@@ -196,7 +196,7 @@ bool	Trigger::tpcTeleportEntity(
 			Stream << ConsequentialObject[1];
 			Stream >> tgY;
 		}
-		if (OwnrEnt && OwnrEnt->DataIntact()) {
+		if (OwnrEnt->DataIntact()) {
 			PlayerEntity*	PlyrTyp = (PlayerEntity*)OwnrEnt->Physics.ExtendedTags;
 			PlyrTyp->LastJumpHeight = tgY;
 			MainMap->InsertEntityPended(OwnrEnt, tgX, tgY);
@@ -233,8 +233,13 @@ bool	Trigger::tpcWorldEdit_Fill_Pick(
 	Entity*		ThisEntity = (Entity*)vThisEntity;
 	if (!MainMap->IsHost) return false; // This will lead to security problems
 	tpcWorldEdit_Fill_Choice = NULL;
-	for (auto itert : MainMap->EntityList) {
+	int	ChnkPos = GetEntityChunkNum(ThisEntity->Physics.PosX);
+	Chunk*	WrkChnk = MainMap->ChunkList[ChnkPos];
+	if (!WrkChnk) return false;
+	if (WrkChnk->EntityLayerList.find(ThisEntity->Properties.Layer) == WrkChnk->EntityLayerList.end()) return false;
+	for (auto itert : WrkChnk->EntityLayerList[ThisEntity->Properties.Layer]) {
 		Entity*	fndEnt = itert.second;
+		if (!fndEnt->DataIntact()) continue;
 		if (tpcWorldEdit_IsWorldEditBlock(fndEnt)) continue;
 		if (abs(ThisEntity->Physics.PosX - fndEnt->Physics.PosX) > 0.2) continue;
 		if (abs(ThisEntity->Physics.PosY - fndEnt->Physics.PosY) > 0.2) continue;
@@ -284,28 +289,40 @@ bool	Trigger::tpcWorldEdit_Fill_End(
 	if (z1 > z2) std::swap(z1, z2);
 //	Find an appropriate block to use...
 	Entity*	EntInherit = tpcWorldEdit_Fill_Choice;
-	for (auto itert : MainMap->EntityList) {
-		Entity*	EntFind = itert.second;
-//		A worldedit block should **NEVER** appear here as another fill object...
-		if (!EntFind->DataIntact()) continue;
-		if (tpcWorldEdit_IsWorldEditBlock(EntFind)) {
-			MainMap->RemoveEntityPended(EntFind);
-			NetmgrRemoveEntity(EntFind);
-			continue;
+	int	cx1 = GetEntityChunkNum(x1 - 1);
+	int	cx2 = GetEntityChunkNum(x2 + 1);
+//	This seems more slower in the surface, but on most cases work faster, if not
+//	the player fills everything in one chunk in one layer. This would be certainly
+//	astonishing and unacceptable, merely disadvantaging, but will eventually occur
+//	if someone intends to test my codes. On this occasion this works slower, yet
+//	the time complexity stays same.
+	for (int x = cx1; x <= cx2; x++) {
+		Chunk*	WrkChnk = MainMap->ChunkList[x];
+		if (!WrkChnk) continue;
+		for (int z = z1; z <= z2; z++) {
+			if (WrkChnk->EntityLayerList.find(z) == WrkChnk->EntityLayerList.end()) continue;
+			for (auto itert : WrkChnk->EntityLayerList[z]) {
+				Entity*	EntFind = itert.second;
+				if (!EntFind->DataIntact()) continue;
+//				A worldedit block should **NEVER** appear here as another fill object...
+				if (tpcWorldEdit_IsWorldEditBlock(EntFind)) {
+					MainMap->RemoveEntityPended(EntFind);
+					NetmgrRemoveEntity(EntFind);
+					continue;
+				}
+				if (EntFind->Physics.PosX < x1) continue;
+				if (EntFind->Physics.PosX > x2) continue;
+				if (EntFind->Physics.PosY < y1) continue;
+				if (EntFind->Physics.PosY > y2) continue;
+				if (EntFind->Properties.Type->Properties.Type != "Block") continue;
+//				As everything would be filled, what would be the meaning to stay here?
+				MainMap->RemoveEntityPended(EntFind);
+				NetmgrRemoveEntity(EntFind);
+			}
 		}
-		if (EntFind->Physics.PosX < x1) continue;
-		if (EntFind->Physics.PosX > x2) continue;
-		if (EntFind->Physics.PosY < y1) continue;
-		if (EntFind->Physics.PosY > y2) continue;
-		if (EntFind->Properties.Layer < z1) continue;
-		if (EntFind->Properties.Layer > z2) continue;
-		if (EntFind->Properties.Type->Properties.Type != "Block") continue;
-//		As everything would be filled, what would be the meaning to stay here?
-		MainMap->RemoveEntityPended(EntFind);
-		NetmgrRemoveEntity(EntFind);
 	}
 	if (!EntInherit)
-		return false; // I've found nothing! How am I supposed to do it?
+		return false; // I've found nothing! Then I'll leave the other things alone.
 //	Now it's time to fill up our area!
 	if (EntInherit != NULL)
 	for (int x = (int)ceil(x1); x <= x2; x++)
@@ -387,32 +404,46 @@ bool	Trigger::tpcWorldEdit_Copy_ApplyMove(
 	MainMap->RemoveEntityPended(ThisEntity);
 	NetmgrRemoveEntity(ThisEntity);
 //	Finding the objects satisfies the prerequisites to move
-	for (auto itert : MainMap->EntityList) {
-		Entity*	EntFind = itert.second;
-//		A worldedit block should **NEVER** appear here as another fill object...
-		if (!EntFind->DataIntact()) continue;
-		if (tpcWorldEdit_IsWorldEditBlock(EntFind)) {
-			MainMap->RemoveEntityPended(EntFind);
-			NetmgrRemoveEntity(EntFind);
-			continue;
+	int	cx1 = GetEntityChunkNum(x1 - 1);
+	int	cx2 = GetEntityChunkNum(x2 + 1);
+	for (int x = cx1; x <= cx2; x++) {
+		Chunk*	WrkChnk = MainMap->ChunkList[x];
+		if (!WrkChnk) continue;
+		for (int z = z1; z <= z2; z++) {
+			if (WrkChnk->EntityLayerList.find(z) == WrkChnk->EntityLayerList.end()) continue;
+			for (auto itert : WrkChnk->EntityLayerList[z]) {
+				Entity*	EntFind = itert.second;
+//				A worldedit block should **NEVER** appear here as another fill object...
+				if (!EntFind->DataIntact()) continue;
+				if (tpcWorldEdit_IsWorldEditBlock(EntFind)) {
+					MainMap->RemoveEntityPended(EntFind);
+					NetmgrRemoveEntity(EntFind);
+					continue;
+				}
+				if (EntFind->Physics.PosX < x1) continue;
+				if (EntFind->Physics.PosX > x2) continue;
+				if (EntFind->Physics.PosY < y1) continue;
+				if (EntFind->Physics.PosY > y2) continue;
+				if (EntFind->Properties.Layer < z1) continue;
+				if (EntFind->Properties.Layer > z2) continue;
+				if (EntFind->Properties.Type->Properties.Type != "Block") continue;
+				mvVec.push_back(EntFind);
+			}
 		}
-		if (EntFind->Physics.PosX < x1) continue;
-		if (EntFind->Physics.PosX > x2) continue;
-		if (EntFind->Physics.PosY < y1) continue;
-		if (EntFind->Physics.PosY > y2) continue;
-		if (EntFind->Properties.Layer < z1) continue;
-		if (EntFind->Properties.Layer > z2) continue;
-		if (EntFind->Properties.Type->Properties.Type != "Block") continue;
-		mvVec.push_back(EntFind);
 	}
 //	Applying move operations to the objects
 	for (Entity* mvEnt : mvVec) {
-		MainMap->RemoveEntity(mvEnt);
 		mvEnt->Properties.Layer += dz;
 		mvEnt->Physics.PosX += dx;
 		mvEnt->Physics.PosY += dy;
 		NetmgrMoveEntity(mvEnt);
-		MainMap->InsertEntity(mvEnt);
+		mvEnt->Properties.Layer -= dz;
+		mvEnt->Physics.PosX -= dx;
+		mvEnt->Physics.PosY -= dy;
+		MainMap->InsertEntityPended(mvEnt,
+				mvEnt->Properties.Layer + dz,
+				mvEnt->Physics.PosX + dx,
+				mvEnt->Physics.PosY + dy);
 	}
 	return true;
 }
@@ -446,28 +477,40 @@ bool	Trigger::tpcWorldEdit_Copy_ApplyCopy(
 	if (x1 > x2) std::swap(x1, x2);
 	if (y1 > y2) std::swap(y1, y2);
 	if (z1 > z2) std::swap(z1, z2);
+//	To define the copy operation proper or not.
+//	if (!(dx <= x2 - x1 && dx >= x1 - x2)) return false;
+//	if (!(dy <= y2 - y1 && dy >= y1 - y2)) return false;
+//	if (!(dz <= z2 - z1 && dz >= z1 - z2)) return false;
+//	Now to proceed in the copy operation.
 	std::vector<Entity*>	cpVec;
 	cpVec.clear();
 	MainMap->RemoveEntityPended(ThisEntity);
 	NetmgrRemoveEntity(ThisEntity);
 //	Finding the objects satisfies the prerequisites to move
-	for (auto itert : MainMap->EntityList) {
-		Entity*	EntFind = itert.second;
-//		A worldedit block should **NEVER** appear here as another fill object...
-		if (!EntFind->DataIntact()) continue;
-		if (tpcWorldEdit_IsWorldEditBlock(EntFind)) {
-			MainMap->RemoveEntityPended(EntFind);
-			NetmgrRemoveEntity(EntFind);
-			continue;
+	int	cx1 = GetEntityChunkNum(x1 - 1);
+	int	cx2 = GetEntityChunkNum(x2 + 1);
+	for (int x = cx1; x <= cx2; x++) {
+		Chunk*	WrkChnk = MainMap->ChunkList[x];
+		if (!WrkChnk) continue;
+		for (int z = z1; z <= z2; z++) {
+			if (WrkChnk->EntityLayerList.find(z) == WrkChnk->EntityLayerList.end()) continue;
+			for (auto itert : WrkChnk->EntityLayerList[z]) {
+				Entity*	EntFind = itert.second;
+				if (!EntFind->DataIntact()) continue;
+//				A worldedit block should **NEVER** appear here as another fill object...
+				if (tpcWorldEdit_IsWorldEditBlock(EntFind)) {
+					MainMap->RemoveEntityPended(EntFind);
+					NetmgrRemoveEntity(EntFind);
+					continue;
+				}
+				if (EntFind->Physics.PosX < x1) continue;
+				if (EntFind->Physics.PosX > x2) continue;
+				if (EntFind->Physics.PosY < y1) continue;
+				if (EntFind->Physics.PosY > y2) continue;
+				if (EntFind->Properties.Type->Properties.Type != "Block") continue;
+				cpVec.push_back(EntFind);
+			}
 		}
-		if (EntFind->Physics.PosX < x1) continue;
-		if (EntFind->Physics.PosX > x2) continue;
-		if (EntFind->Physics.PosY < y1) continue;
-		if (EntFind->Physics.PosY > y2) continue;
-		if (EntFind->Properties.Layer < z1) continue;
-		if (EntFind->Properties.Layer > z2) continue;
-		if (EntFind->Properties.Type->Properties.Type != "Block") continue;
-		cpVec.push_back(EntFind);
 	}
 //	Applying move operations to the objects
 	for (Entity* cpEnt : cpVec) {
@@ -478,7 +521,7 @@ bool	Trigger::tpcWorldEdit_Copy_ApplyCopy(
 		EntMake->Properties.Layer = cpEnt->Properties.Layer + dz;
 		if (!EntMake->DataIntact())
 			throw RuntimeErrorException();
-		MainMap->InsertEntity(EntMake);
+		MainMap->InsertEntityPended(EntMake);
 		NetmgrInsertEntity(EntMake);
 	}
 	return true;

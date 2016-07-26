@@ -1,6 +1,23 @@
 
 # Version History
 
+### 0.12.6.61 | 27/07/16
+ * Optimized physics renderer for a greatly improved performance. This disables
+   the necessity to re-insert an entity even after its position has a small and
+   humble change. Now merely the chunk update requires re-insertion.
+ * Optimized WorldEdit for a greatly improved performance. This requires the
+   entity scanner to discover only entities in the given chunks and given layers
+   instead of the entire world map. Practically this would improve performance
+   greatly, however frequent the editor is used.
+ * Added timestamps in pended operations. This can directly solve the bug that
+   entities could never be inserted if imposed by triggers in the meantime the
+   PendOperation function is working.
+ * Fixed sometimes ender pearls don't detonate / teleport the players.
+ * Fixed no animation ever appearing from fire charges. (A direct consequence
+   from another bug fixed this version update)
+ * Fixed WorldEdit copies could overlap. This is fixed by adding a limit.
+ * Fixed particles never disappearing.
+
 ### 0.12.6.42 | 26/07/16
  * Added rendering for item on hand. If the player is himself holding this item,
    the item would be shown as the entity actually to be placed on the ground.

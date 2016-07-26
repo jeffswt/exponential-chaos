@@ -44,42 +44,42 @@ arguments of the actions.
 
 ### Preliminary Actions
 
- * BeforeDestruction
+ * ```BeforeDestruction```
    * Argument 1 : Number, time before estimated destruction.
 
- * OnDestruction
+ * ```OnDestruction```
     * Takes no arguments.
 
- * OnCollision
+ * ```OnCollision```
     * Takes no arguments.
 
- * OnGeneration
+ * ```OnGeneration```
     * Takes no arguments.
 
 ### Consequential Actions
 
- * CreateEntity (1 argument)
+ * ```CreateEntity (1 argument)```
     * Argument 1 : String, name of ```EntityType```. Will be created right here.
 
- * CreateEntity (3 arguments)
+ * ```CreateEntity (3 arguments)```
     * Argument 1 : String, name of ```EntityType```.
     * Argument 2 : Number, ```Physics.PosX```.
     * Argument 3 : Number, ```Physics.PosY```.
 
- * DeductPlayerLife
+ * ```DeductPlayerLife```
     * Argument 1 : Number, the life deducted every phase.
     * Argument 2 : String, name of player:
        * ```__ZwTrigger7All``` for all players
        * ```__ZwTrigger7Nearest``` for nearest player
        * Otherwise the name of the player
 
- * DeployProjectile
+ * ```DeployProjectile```
     * Takes no arguments, effective immediately if the entity is a projectile.
 
- * TeleportEntity (0 argument)
+ * ```TeleportEntity (0 argument)```
     * Takes no arguments, will teleport the owner here.
 
- * TeleportEntity (2 arguments)
+ * ```TeleportEntity (2 arguments)```
     * Teleports the owner to the **specified** destination.
     * Argument 1 : Number, ```Physics.PosX```.
     * Argument 2 : Number, ```Physics.PosY```.

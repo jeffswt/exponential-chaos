@@ -168,7 +168,7 @@ bool	GameMap::InsertEntityPended(
 			InsEnt->Properties.Guid = GenerateGuid();
 		} while (EntityList[InsEnt->Properties.Guid] != NULL);
 	}
-	PendInsertList[InsEnt] = InsPair;
+	PendInsertList[PendIndicator][InsEnt] = InsPair;
 	return true;
 }
 
@@ -218,7 +218,7 @@ bool	GameMap::InsertEntityPendedForce(
 			InsEnt->Properties.Guid = GenerateGuid();
 		} while (EntityList[InsEnt->Properties.Guid] != NULL);
 	}
-	PendInsertForceList.insert(InsEnt);
+	PendInsertForceList[PendIndicator].insert(InsEnt);
 	return true;
 }
 
@@ -228,12 +228,15 @@ bool	GameMap::RemoveEntityPended(
 	if (!InsEnt->DataIntact())
 		return false;
 //	It's in these lists does not necessarily mean it's not in the chunks
-	if (PendInsertList.find(InsEnt) != PendInsertList.end())
-		PendInsertList.erase(InsEnt);
-	if (PendInsertForceList.find(InsEnt) != PendInsertForceList.find(InsEnt))
-		PendInsertForceList.erase(InsEnt);
-	if (PendRemoveList.find(InsEnt) == PendRemoveList.end())
-		PendRemoveList.insert(InsEnt);
+	if (PendInsertList[PendIndicator].find(InsEnt) !=
+			PendInsertList[PendIndicator].end())
+		PendInsertList[PendIndicator].erase(InsEnt);
+	if (PendInsertForceList[PendIndicator].find(InsEnt) !=
+			PendInsertForceList[PendIndicator].find(InsEnt))
+		PendInsertForceList[PendIndicator].erase(InsEnt);
+	if (PendRemoveList[PendIndicator].find(InsEnt) ==
+			PendRemoveList[PendIndicator].end())
+		PendRemoveList[PendIndicator].insert(InsEnt);
 	return true;
 }
 
@@ -241,7 +244,9 @@ bool	GameMap::CommitPendedChanges(
 		void)
 {
 //	Update insertions
-	for (auto itert : PendInsertList) {
+	bool	actInd = PendIndicator;
+	PendIndicator ^= 1;
+	for (auto itert : PendInsertList[actInd]) {
 		Entity*	InsEnt = itert.first;
 		if (!InsEnt->DataIntact()) continue;
 		triple_pair<int, double, double>	thsPair = itert.second;
@@ -259,21 +264,22 @@ bool	GameMap::CommitPendedChanges(
 		} else {
 			itert.first->Physics.PosX = thsPair.second;
 			itert.first->Physics.PosY = thsPair.third;
+			itert.first->Properties.Layer = thsPair.first;
 			InsertEntity(itert.first);
 		}
 	}
 //	Update force new insertions
-	for (auto itert : PendInsertForceList) {
+	for (auto itert : PendInsertForceList[actInd]) {
 		InsertEntity(itert);
 	}
 //	Update removals
-	for (Entity* itert : PendRemoveList) {
+	for (Entity* itert : PendRemoveList[actInd]) {
 		RemoveEntity(itert);
 		delete itert;
 	}
-	PendInsertList.clear();
-	PendInsertForceList.clear();
-	PendRemoveList.clear();
+	PendInsertList[actInd].clear();
+	PendInsertForceList[actInd].clear();
+	PendRemoveList[actInd].clear();
 	return true;
 }
 
@@ -542,9 +548,12 @@ bool	GameMap::ResetEntityPositions(
 bool	GameMap::Clear(
 		void)
 {
-	PendInsertForceList.clear();
-	PendInsertList.clear();
-	PendRemoveList.clear();
+	PendInsertForceList[0].clear();
+	PendInsertForceList[1].clear();
+	PendInsertList[0].clear();
+	PendInsertList[1].clear();
+	PendRemoveList[0].clear();
+	PendRemoveList[1].clear();
 	std::vector<Entity*>	ErsWrkr;
 	for (auto itert : EntityList)
 		ErsWrkr.push_back(itert.second);
@@ -569,9 +578,13 @@ bool	GameMap::Clear(
 GameMap::GameMap(
 		void)
 {
-	PendInsertForceList.clear();
-	PendInsertList.clear();
-	PendRemoveList.clear();
+	PendInsertForceList[0].clear();
+	PendInsertForceList[1].clear();
+	PendInsertList[0].clear();
+	PendInsertList[1].clear();
+	PendRemoveList[0].clear();
+	PendRemoveList[1].clear();
+	PendIndicator = true;
 	IsHost = false;
 	LevelPath = "";
 	Name = "Untitled";

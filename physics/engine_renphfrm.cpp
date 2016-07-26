@@ -63,7 +63,7 @@ bool	PhEngine::RenderPhysicsFrame(
 		double	lcB, rcB, ucB, dcB; // Boundaries of CollideObject (introduced later)
 		bool	GravityReversed = ObjType->Physics.Mass < 0;
 		bool	hasCollidedBottom = false;
-		int		nobjChunk; // Chunk position
+		int		objChunk, nobjChunk; // Chunk position
 		double	obj_move_dist_sqr = 0.0, cobj_dist_sqr = 0.0;
 //		A specialty on calculating gravity interaction
 		if (GravityReversed)
@@ -268,6 +268,7 @@ bool	PhEngine::RenderPhysicsFrame(
 					trig->ProcessConsequence(std::vector<void*>({
 						(void*)MainMap, (void*)CollideObject}));
 		}
+		objChunk = GetEntityChunkNum(sX);
 		sX += vX * dT, sY += vY * dT;
 		if (Object->Properties.Type->Properties.Type == "Player") {
 			PlayerEntity*	Confs = (PlayerEntity*)Object->Physics.ExtendedTags;
@@ -294,7 +295,12 @@ bool	PhEngine::RenderPhysicsFrame(
 //		Re-inserting into new chunk (might not have changed...)
 		nobjChunk = GetEntityChunkNum(sX);
 		MainMap->CreateChunk(nobjChunk);
-		MainMap->InsertEntityPended(Object, sX, sY);
+		if (nobjChunk != objChunk)
+			MainMap->InsertEntityPended(Object, sX, sY);
+		else {
+			Object->Physics.PosX = sX;
+			Object->Physics.PosY = sY;
+		}
 	}
 	return true;
 }

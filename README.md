@@ -94,10 +94,11 @@ crowd-based map creations and PvP events.
 
 ## Todo List
 
+ - [ ] Support crafting recipes.
+ - [ ] Game worlds support respawning.
  - [ ] Add key mapping for users to customize.
  - [ ] Typeset fonts without the reliability on native APIs.
  - [ ] Remove all platform-dependent functions to move to Linux.
- - [x] Fix multiplayer mode inaccessible on different computers.
 
 ## Special Thanks
 
