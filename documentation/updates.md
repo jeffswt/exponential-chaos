@@ -1,7 +1,15 @@
 
 # Version History
 
-## 0.12.x Community Update
+### 0.12.6.42 | 26/07/16
+ * Added rendering for item on hand. If the player is himself holding this item,
+   the item would be shown as the entity actually to be placed on the ground.
+   Otherwise it would be the displayed item.
+ * Completed projectile definitions for `Minecraft2D`.
+ * Changed 'scroll with key F' to 'scroll with key Ctrl'.
+ * Fixed physics enabled objects but collision enabled objects being stationary.
+ * Fixed entities marked as non-interactive with gravity interfered with gravity.
+ * Recoloured leaves and finished the texture pack.
 
 ### 0.12.6.37 | 26/07/16
  * When mining entities, if one wasn't in the inventory before, it would

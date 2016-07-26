@@ -65,9 +65,13 @@ bool	PhEngine::RenderPhysicsFrame(
 		bool	hasCollidedBottom = false;
 		int		nobjChunk; // Chunk position
 		double	obj_move_dist_sqr = 0.0, cobj_dist_sqr = 0.0;
-		vY -= GravityReversed ? ObjType->Physics.Mass * dT : g * dT;
+//		A specialty on calculating gravity interaction
+		if (GravityReversed)
+			vY -= ObjType->Physics.Mass * dT;
+		else
+			vY -= ObjType->Physics.Mass > 0 ? g * dT : 0.0;
 //		If this object has been marked to ignore simulation, we follow its deeds
-		if (!Object->PhysicsEnabled() || !Object->CollisionEnabled()) continue;
+		if (!Object->PhysicsEnabled()) continue;
 //		Calculate the move distance of the object
 		obj_move_dist_sqr = (vX * vX + vY * vY) * dT * dT;
 //		Pre-process potentially colliding objects in pended rendering chunks. All
@@ -79,6 +83,7 @@ bool	PhEngine::RenderPhysicsFrame(
 			MainMap->ChunkList[*PRChunkItertB]->QueryAdjacentEntities(Object, 2.0, PendCollision);
 		for (auto ItertCollideObject = PendCollision.begin(); ItertCollideObject != PendCollision.end(); ItertCollideObject++) {
 #else
+		if (Object->CollisionEnabled())
 		for (int PRChunkItertB : {PRChunkItertA - 1, PRChunkItertA, PRChunkItertA + 1})
 		for (auto ItertCollideObject : (MainMap->ChunkList[PRChunkItertB])->EntityList) {
 #endif

@@ -65,6 +65,63 @@ void	graphicsFuncRotateTexCoords(
 	return ;
 }
 
+void	graphicsFuncRenderEntity(
+		GameMap*	MainMap,
+		EntityType*	RenTyp,
+		Entity*		RenEnt,
+		EntityType::typeGraphics&
+					nGraphics,
+		bool		RenderItemOnHand,
+		double		CenterX,
+		double		CenterY,
+		double		Width,
+		double		Height,
+		double		PixelRatio)
+{
+	glEnable(GL_TEXTURE_2D);
+	glColor3f(1.0, 1.0, 1.0);
+//	We are now processing an animation
+	if (!RenderItemOnHand) {
+		if (nGraphics.TextureList.size() > 1) {
+			double	CurTexTime = MainMap->CurTime;
+			if (RenTyp->Properties.Type == "Particle"
+					&& RenEnt != NULL)
+				CurTexTime -= RenEnt->Properties.GenTime;
+			double	TexTime = CurTexTime - (int)(CurTexTime / nGraphics.AnimationInterval) *
+					nGraphics.AnimationInterval;
+			int		TexIndex = TexTime / nGraphics.AnimationInterval * nGraphics.TextureList.size();
+			if (TexIndex < 0 || TexIndex > 1048576) TexIndex = 0; // Some precautions...
+			glBindTexture(GL_TEXTURE_2D, nGraphics.TextureList[TexIndex]);
+		} else if (nGraphics.TextureList.size() == 1) {
+			glBindTexture(GL_TEXTURE_2D, nGraphics.TextureList[0]);
+		} else {
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	} else {
+		glBindTexture(GL_TEXTURE_2D, nGraphics.TextureOnHand);
+	}
+//	Draw the polygon of the entity
+	glBegin(GL_POLYGON);
+	int	TexCoordsX[4] = {1, 1, -1, -1},
+		TexCoordsY[4] = {1, -1, -1, 1},
+		RendCoordsX[4] = {1, 1, -1, -1},
+		RendCoordsY[4] = {1, -1, -1, 1};
+	graphicsFuncRotateTexCoords(TexCoordsX, TexCoordsY, nGraphics.TexRotation);
+	for (int i = 0; i < 4; i++) {
+		double	itX = 0.5 * RendCoordsX[i], itY = 0.5 * RendCoordsY[i];
+		double	RenderX = (CenterX + itX * Width) * PixelRatio,
+				RenderY = (CenterY + itY * Height) * PixelRatio;
+		glTexCoord2d(0.5 + 0.5 * TexCoordsX[i], 0.5 + 0.5 * TexCoordsY[i]);
+		glVertex2f(RenderX, RenderY);
+		if (itX == 0.5 && itY == 0.5) itY = -0.5;
+		else if (itX == 0.5 && itY == -0.5) itX = -0.5;
+		else if (itX == -0.5 && itY == -0.5) itY = 0.5;
+		else break;
+	}
+	glEnd();
+	return ;
+}
+
 bool	graphicsRenderGame(
 		GameMap*	MainMap)
 {
@@ -116,53 +173,49 @@ bool	graphicsRenderGame(
 					(RenEnt->Physics.PosY - nGraphics.LengthY - InputControl.CameraY) * GameConfig.PixelRatio > 0.5 * GameConfig.WindowHeight ||
 					(RenEnt->Physics.PosY + nGraphics.LengthY - InputControl.CameraY) * GameConfig.PixelRatio < -0.5 * GameConfig.WindowHeight)
 				continue;
-			glEnable(GL_TEXTURE_2D);
-			glColor3f(1.0, 1.0, 1.0);
-//			We are now processing an animation
-			if (nGraphics.TextureList.size() > 1) {
-				double	CurTexTime = MainMap->CurTime;
-				if (RenTyp->Properties.Type == "Particle")
-					CurTexTime -= RenEnt->Properties.GenTime;
-				double	TexTime = CurTexTime - (int)(CurTexTime / nGraphics.AnimationInterval) *
-						nGraphics.AnimationInterval;
-				int		TexIndex = TexTime / nGraphics.AnimationInterval * nGraphics.TextureList.size();
-				if (TexIndex < 0 || TexIndex > 1048576) TexIndex = 0; // Some precautions...
-				glBindTexture(GL_TEXTURE_2D, nGraphics.TextureList[TexIndex]);
-			} else if (nGraphics.TextureList.size() == 1) {
-				glBindTexture(GL_TEXTURE_2D, nGraphics.TextureList[0]);
-			} else {
-				glBindTexture(GL_TEXTURE_2D, 0);
-			}
-//			Draw the polygon of the entity
-			glBegin(GL_POLYGON);
-			int	TexCoordsX[4] = {1, 1, -1, -1},
-				TexCoordsY[4] = {1, -1, -1, 1},
-				RendCoordsX[4] = {1, 1, -1, -1},
-				RendCoordsY[4] = {1, -1, -1, 1};
-			double	RenderX, RenderY;
-			graphicsFuncRotateTexCoords(TexCoordsX, TexCoordsY, nGraphics.TexRotation);
-			for (int i = 0; i < 4; i++) {
-				double	itX = 0.5 * RendCoordsX[i], itY = 0.5 * RendCoordsY[i];
-				double	RenderSiX = itX * nGraphics.LengthX + RenEnt->Physics.PosX - InputControl.CameraX,
-						RenderSiY = itY * nGraphics.LengthY + RenEnt->Physics.PosY - InputControl.CameraY;
-				RenderX = RenderSiX * GameConfig.PixelRatio,
-				RenderY = RenderSiY * GameConfig.PixelRatio;
-				glTexCoord2d(0.5 + 0.5 * TexCoordsX[i], 0.5 + 0.5 * TexCoordsY[i]);
-				glVertex2f(RenderX, RenderY);
-				if (itX == 0.5 && itY == 0.5) itY = -0.5;
-				else if (itX == 0.5 && itY == -0.5) itX = -0.5;
-				else if (itX == -0.5 && itY == -0.5) itY = 0.5;
-				else break;
-			}
-			glEnd();
+			graphicsFuncRenderEntity(MainMap, RenTyp, RenEnt, nGraphics, false,
+					RenEnt->Physics.PosX - InputControl.CameraX,
+					RenEnt->Physics.PosY - InputControl.CameraY,
+					nGraphics.LengthX,
+					nGraphics.LengthY,
+					GameConfig.PixelRatio);
 //			Render player entities, this is an exception.
 			if (RenTyp->Properties.Type == "Player") {
+//				Render things on the player's hand
+				PlayerEntity*	PlyEnt = (PlayerEntity*)RenEnt->Physics.ExtendedTags;
+				if (PlyEnt->InventoryFocus > 0 &&
+						PlyEnt->InventoryFocus <= (int)PlyEnt->Inventory.size() &&
+						PlyEnt->InventoryFocus <= 9) {
+//					That means there's something he is holding
+					auto		workPair = &PlyEnt->Inventory[PlyEnt->InventoryFocus - 1];
+					EntityType*	HldEnt = workPair->first;
+					EntityType::typeGraphics
+								hnGraphics = HldEnt->Graphics[workPair->second];
+//					To render its held item or not, this is a question.
+					bool	renderHeldItem = true;
+					if (RenEnt->Properties.Name == GameConfig.PlayerName
+							&& HldEnt->Properties.Type == "Block")
+						renderHeldItem = false;
+					double	scaleFactor = 0.6 / std::min(hnGraphics.LengthX, hnGraphics.LengthY);
+					graphicsFuncRenderEntity(MainMap, HldEnt, NULL, hnGraphics, renderHeldItem,
+							RenEnt->Physics.PosX + nGraphics.LengthX * 0.5 - InputControl.CameraX,
+							RenEnt->Physics.PosY - InputControl.CameraY,
+							hnGraphics.LengthX * scaleFactor,
+							hnGraphics.LengthY * scaleFactor,
+							GameConfig.PixelRatio);
+				}
+//				Render player name
+				double	RenderX = (- nGraphics.LengthX * 0.5 + RenEnt->Physics.PosX -
+						InputControl.CameraX) * GameConfig.PixelRatio;
+				double	RenderY = (nGraphics.LengthY * 0.5 + RenEnt->Physics.PosY -
+						InputControl.CameraY) * GameConfig.PixelRatio;
 				fontPlayerName.SetProperties(
 					RenderX, RenderY, 0.0, 0.0, 0.0,
 					20, ANSI_CHARSET, "OCR A Std");
 				fontPlayerName.SetContent(RenEnt->Properties.Name);
 				fontPlayerName.RenderObject();
 			}
+			continue;
 		}
 	}
 //	Rendering some overlays

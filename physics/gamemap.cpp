@@ -213,12 +213,12 @@ bool	GameMap::InsertEntityPendedForce(
 {
 	if (!InsEnt->DataIntact())
 		return false;
-	PendInsertForceList.insert(InsEnt);
 	if (InsEnt->Properties.Guid == 0) {
 		do {
 			InsEnt->Properties.Guid = GenerateGuid();
 		} while (EntityList[InsEnt->Properties.Guid] != NULL);
 	}
+	PendInsertForceList.insert(InsEnt);
 	return true;
 }
 

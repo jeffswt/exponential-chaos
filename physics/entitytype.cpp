@@ -154,18 +154,20 @@ bool	EntityType::ImportFromJson(
 		ImportJsonData(SubData->LifeTime, ConfigData["Properties"]["SpecificProperties"]["LifeTime"]);
 		Properties.SpecificProperties = (void*)SubData;
 	}
-//	Import textures list of PNGs, defined by whether is array or not.
-	if (!ConfigData["Graphics"].IsArray()) {
+//	Import textures list of PNGs and certain graphics properties.
+	if (!ConfigData["Graphics"].IsArray())
+		return false;
+	for (int Indexer = 0; Indexer < (int)ConfigData["Graphics"].Size(); Indexer++) {
 		typeGraphics	nGraphics;
-		ImportJsonData(nGraphics.RenderEnabled, ConfigData["Graphics"]["RenderEnabled"]);
-		ImportJsonData(nGraphics.TexRotation, ConfigData["Graphics"]["TexRotation"]);
-		ImportJsonData(nGraphics.AnimationInterval, ConfigData["Graphics"]["AnimationInterval"]);
-		ImportJsonData(nGraphics.Luminosity, ConfigData["Graphics"]["Luminosity"]);
-		ImportJsonData(nGraphics.LengthX, ConfigData["Graphics"]["LengthX"]);
-		ImportJsonData(nGraphics.LengthY, ConfigData["Graphics"]["LengthY"]);
-		if (ConfigData["Graphics"]["TextureList"].IsArray()) {
+		ImportJsonData(nGraphics.RenderEnabled, ConfigData["Graphics"][Indexer]["RenderEnabled"]);
+		ImportJsonData(nGraphics.TexRotation, ConfigData["Graphics"][Indexer]["TexRotation"]);
+		ImportJsonData(nGraphics.AnimationInterval, ConfigData["Graphics"][Indexer]["AnimationInterval"]);
+		ImportJsonData(nGraphics.Luminosity, ConfigData["Graphics"][Indexer]["Luminosity"]);
+		ImportJsonData(nGraphics.LengthX, ConfigData["Graphics"][Indexer]["LengthX"]);
+		ImportJsonData(nGraphics.LengthY, ConfigData["Graphics"][Indexer]["LengthY"]);
+		if (ConfigData["Graphics"][Indexer]["TextureList"].IsArray()) {
 			std::vector<std::string> TexturePath;
-			ImportJsonData(TexturePath, ConfigData["Graphics"]["TextureList"]);
+			ImportJsonData(TexturePath, ConfigData["Graphics"][Indexer]["TextureList"]);
 			for (auto i = TexturePath.begin(); i != TexturePath.end(); i++) {
 				GLuint		Texture;
 				std::string	Path = CurrentTextureDirectory + (*i);
@@ -173,46 +175,16 @@ bool	EntityType::ImportFromJson(
 				nGraphics.TextureList.push_back(Texture);
 			}
 		}
-		if (ConfigData["Graphics"]["TextureOnHand"].IsString()) {
+		if (ConfigData["Graphics"][Indexer]["TextureOnHand"].IsString()) {
 			std::string	OnHandTex;
 			std::string	Path;
-			ImportJsonData(OnHandTex, ConfigData["Graphics"]["TextureOnHand"]);
+			ImportJsonData(OnHandTex, ConfigData["Graphics"][Indexer]["TextureOnHand"]);
 			Path = CurrentTextureDirectory + OnHandTex;
 			nGraphics.TextureOnHand = LoadPNGTexture(Path.c_str(), NULL, NULL);
 		} else if (nGraphics.TextureList.size() > 0){
 			nGraphics.TextureOnHand = nGraphics.TextureList[0];
 		}
 		Graphics.push_back(nGraphics);
-	} else {
-		for (int Indexer = 0; Indexer < (int)ConfigData["Graphics"].Size(); Indexer++) {
-			typeGraphics	nGraphics;
-			ImportJsonData(nGraphics.RenderEnabled, ConfigData["Graphics"][Indexer]["RenderEnabled"]);
-			ImportJsonData(nGraphics.TexRotation, ConfigData["Graphics"][Indexer]["TexRotation"]);
-			ImportJsonData(nGraphics.AnimationInterval, ConfigData["Graphics"][Indexer]["AnimationInterval"]);
-			ImportJsonData(nGraphics.Luminosity, ConfigData["Graphics"][Indexer]["Luminosity"]);
-			ImportJsonData(nGraphics.LengthX, ConfigData["Graphics"][Indexer]["LengthX"]);
-			ImportJsonData(nGraphics.LengthY, ConfigData["Graphics"][Indexer]["LengthY"]);
-			if (ConfigData["Graphics"][Indexer]["TextureList"].IsArray()) {
-				std::vector<std::string> TexturePath;
-				ImportJsonData(TexturePath, ConfigData["Graphics"][Indexer]["TextureList"]);
-				for (auto i = TexturePath.begin(); i != TexturePath.end(); i++) {
-					GLuint		Texture;
-					std::string	Path = CurrentTextureDirectory + (*i);
-					Texture = LoadPNGTexture(Path.c_str(), NULL, NULL);
-					nGraphics.TextureList.push_back(Texture);
-				}
-			}
-			if (ConfigData["Graphics"][Indexer]["TextureOnHand"].IsString()) {
-				std::string	OnHandTex;
-				std::string	Path;
-				ImportJsonData(OnHandTex, ConfigData["Graphics"][Indexer]["TextureOnHand"]);
-				Path = CurrentTextureDirectory + OnHandTex;
-				nGraphics.TextureOnHand = LoadPNGTexture(Path.c_str(), NULL, NULL);
-			} else if (nGraphics.TextureList.size() > 0){
-				nGraphics.TextureOnHand = nGraphics.TextureList[0];
-			}
-			Graphics.push_back(nGraphics);
-		}
 	}
 //	Import trigger operators from JSON
 	if (ConfigData["Physics"]["TriggerList"].IsArray()) {

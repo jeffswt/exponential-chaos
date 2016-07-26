@@ -198,7 +198,7 @@ bool	Entity::ImportFromJson(
 				if (!Config["Physics"]["ExtendedTags"]["Inventory"][i].IsObject())
 					continue;
 				ImportJsonData(TypeName, Config["Physics"]["ExtendedTags"]["Inventory"][i]["Type"]);
-				ImportJsonData(TypeName, Config["Physics"]["ExtendedTags"]["Inventory"][i]["State"]);
+				ImportJsonData(TypeState, Config["Physics"]["ExtendedTags"]["Inventory"][i]["State"]);
 				ImportJsonData(TypeSize, Config["Physics"]["ExtendedTags"]["Inventory"][i]["Count"]);
 				TypePntr = EntityTypes[TypeName];
 				if (!TypePntr || TypeSize <= 0)
