@@ -192,16 +192,18 @@ bool	Entity::ImportFromJson(
 		if (Config["Physics"]["ExtendedTags"]["Inventory"].IsArray()) {
 			std::string TypeName;
 			int			TypeSize;
+			int			TypeState;
 			EntityType*	TypePntr;
 			for (unsigned int i = 0; i < Config["Physics"]["ExtendedTags"]["Inventory"].Size(); i++) {
 				if (!Config["Physics"]["ExtendedTags"]["Inventory"][i].IsObject())
 					continue;
 				ImportJsonData(TypeName, Config["Physics"]["ExtendedTags"]["Inventory"][i]["Type"]);
+				ImportJsonData(TypeName, Config["Physics"]["ExtendedTags"]["Inventory"][i]["State"]);
 				ImportJsonData(TypeSize, Config["Physics"]["ExtendedTags"]["Inventory"][i]["Count"]);
 				TypePntr = EntityTypes[TypeName];
 				if (!TypePntr || TypeSize <= 0)
 					continue;
-				Confs->Inventory.push_back(std::make_pair(TypePntr, TypeSize));
+				Confs->Inventory.push_back(make_triple_pair(TypePntr, TypeState, TypeSize));
 			}
 		}
 		ImportJsonData(Confs->InventoryFocus, Config["Physics"]["ExtendedTags"]["InventoryFocus"]);
@@ -260,7 +262,8 @@ bool	Entity::ExportToJson(
 				rapidjson::Value	invItem;
 				invItem.SetObject();
 				invItem.AddMember("Type", Confs->Inventory[i].first->Properties.Name, CAlloc);
-				invItem.AddMember("Count", Confs->Inventory[i].second, CAlloc);
+				invItem.AddMember("State", Confs->Inventory[i].second, CAlloc);
+				invItem.AddMember("Count", Confs->Inventory[i].third, CAlloc);
 				Config["Physics"]["ExtendedTags"]["Inventory"].PushBack(invItem.Move(), CAlloc);
 			}
 		}

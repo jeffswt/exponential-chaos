@@ -62,12 +62,12 @@ namespace graphicsRenderInventoryInternals
 //			to insert into the inventory.
 			PlayerExt->InventoryFocus = 1;
 			PlayerExt->Inventory.insert(PlayerExt->Inventory.begin(),
-					std::make_pair(EntTyp, 64));
+					make_triple_pair(EntTyp, 0, 64));
 			while (PlayerExt->Inventory.size() > 9)
 				PlayerExt->Inventory.erase(--PlayerExt->Inventory.end());
 		} else {
 			auto	itert = PlayerExt->Inventory.begin();
-			auto	inspair = std::make_pair(EntTyp, 1);
+			auto	inspair = make_triple_pair(EntTyp, 0, 1);
 			for (; itert != PlayerExt->Inventory.end(); itert++)
 				if (itert->first == EntTyp)
 					break;
@@ -427,7 +427,7 @@ bool	graphicsRenderGameOverlay(
 		std::stringstream	Stream;
 		std::string			WorkStr;
 		int					CurCount;
-		CurCount = PlayerExt->Inventory[i].second;
+		CurCount = PlayerExt->Inventory[i].third;
 		if (CurCount > 999 || PlayerExt->IsCreative)
 			Stream << "INF";
 		else

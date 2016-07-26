@@ -122,6 +122,7 @@ bool	PhEngine::UpdateProjectileDeployment(
 							Victim->Properties.Type->Properties.Type != "Particle") {
 //						Inventory of the set player should be filled with this item
 						if (SentPlyrEnt->DataIntact()) {
+							bool			SentPlyrAdded = false;
 							PlayerEntity*	SentPlyrExt = (PlayerEntity*)SentPlyrEnt->Physics.ExtendedTags;
 							for (auto itert_pair = SentPlyrExt->Inventory.begin();
 									itert_pair != SentPlyrExt->Inventory.end();
@@ -129,7 +130,13 @@ bool	PhEngine::UpdateProjectileDeployment(
 								EntityType*	EntTyp = itert_pair->first;
 								if (!EntTyp->DataIntact()) continue;
 								if (EntTyp != Victim->Properties.Type) continue;
-								itert_pair->second++;
+								itert_pair->third++;
+								SentPlyrAdded = true;
+								break;
+							}
+							if (!SentPlyrAdded) {
+								EntityType*	EntTyp = Victim->Properties.Type;
+								SentPlyrExt->Inventory.push_back(make_triple_pair(EntTyp, 0, 1));
 							}
 						}
 //						Now to pend the removal of this entity

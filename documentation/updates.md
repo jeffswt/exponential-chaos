@@ -3,6 +3,20 @@
 
 ## 0.12.x Community Update
 
+### 0.12.6.37 | 26/07/16
+ * When mining entities, if one wasn't in the inventory before, it would
+   create a new slot in the inventory which wouldn't in the previous versions.
+ * Re-updated inventory structure to contain entity block type states.
+ * Added texture mirroring support for entities. This is integrated into the
+   `TexRotation` property by adding 4 to the value.
+ * Added block state switching support for both creative and survival mode.
+   However, the 'scroll with key F' method would be soon deprecated in the near
+   future in favour of other methods.
+ * Fixed different slots of same items would be incremented if destroyed by
+   projectiles deployed by this very player.
+ * Fixed items could be injected as entities into the world.
+ * Fixed texture rotation could not be loaded.
+
 ### 0.12.6.22 | 26/07/16
  * Entity graphics supports rotation for now.
  * Updated a pack of textures and entities in `Minecraft2D` to comply to certain

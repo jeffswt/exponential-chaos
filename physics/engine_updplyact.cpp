@@ -98,17 +98,43 @@ bool	PhEngine::UpdatePlayerActivity(
 			flagRequireUpdateDefinition = true;
 		}
 //	Switching slots according to mouse wheel
-	if (InputControl.WheelUp) {
-		playerExt->InventoryFocus--;
-		if (playerExt->InventoryFocus <= 0)
-			playerExt->InventoryFocus = 9;
-		InputControl.WheelUp = false;
+	if (!kGetKeyState('F')) {
+//		If F is not being pushed, then it should be assigned to this procedure
+		if (InputControl.WheelUp) {
+			playerExt->InventoryFocus--;
+			if (playerExt->InventoryFocus <= 0)
+				playerExt->InventoryFocus = 9;
+			InputControl.WheelUp = false;
+		}
+		if (InputControl.WheelDn) {
+			playerExt->InventoryFocus++;
+			if (playerExt->InventoryFocus >= 10)
+				playerExt->InventoryFocus = 1;
+			InputControl.WheelDn = false;
+		}
 	}
-	if (InputControl.WheelDn) {
-		playerExt->InventoryFocus++;
-		if (playerExt->InventoryFocus >= 10)
-			playerExt->InventoryFocus = 1;
-		InputControl.WheelDn = false;
+//	Switch block state according to mouse wheel
+	if (kGetKeyState('F')) {
+		if (InputControl.WheelUp) {
+			if (playerExt->InventoryFocus <= (int)playerExt->Inventory.size()) {
+				auto		workPair = &playerExt->Inventory[playerExt->InventoryFocus - 1];
+				EntityType*	SwitchEnt = workPair->first;
+				workPair->second--;
+				if (workPair->second < 0)
+					workPair->second = SwitchEnt->Graphics.size() - 1;
+			}
+			InputControl.WheelUp = false;
+		}
+		if (InputControl.WheelDn) {
+			if (playerExt->InventoryFocus <= (int)playerExt->Inventory.size()) {
+				auto		workPair = &playerExt->Inventory[playerExt->InventoryFocus - 1];
+				EntityType*	SwitchEnt = workPair->first;
+				workPair->second++;
+				if (workPair->second >= (int)SwitchEnt->Graphics.size())
+					workPair->second = 0;
+			}
+			InputControl.WheelDn = false;
+		}
 	}
 //	Special buttons
 	if (kGetKeyOnpress(0x1b))

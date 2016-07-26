@@ -22,17 +22,46 @@
 
 #include <set>
 
-void	my_proc_rotate(
+void	my_proc_tex_rotate(
 		int*	tcx,
 		int*	tcy)
 {
-//	Unprotected function, call from graphicsRenderGame please.
+//	Unprotected function, call from graphicsFuncRotateTexCoords please.
 	int	ntcx[4], ntcy[4];
 	ntcx[0] = tcx[3], ntcy[0] = tcy[3];
 	for (int i = 0; i < 3; i++)
 		ntcx[i + 1] = tcx[i], ntcy[i + 1] = tcy[i];
 	for (int i = 0; i < 4; i++)
 		tcx[i] = ntcx[i], tcy[i] = ntcy[i];
+	return ;
+}
+
+void	my_proc_tex_mirror(
+		int*	tcx,
+		int*	tcy)
+{
+//	Unprotected function, call from graphicsFuncRotateTexCoords please.
+	std::swap(tcx[3], tcx[0]);
+	std::swap(tcx[2], tcx[1]);
+	std::swap(tcy[3], tcy[0]);
+	std::swap(tcy[2], tcy[1]);
+	return ;
+}
+
+void	graphicsFuncRotateTexCoords(
+		int*	tcx,
+		int*	tcy,
+		int		tr)
+{
+	if (tr <= 0 || tr >= 8)
+		return ; // There's nothing to do, as it's not possible
+	if (tr >= 4) {
+//		Proceed mirroring first, which is the deal
+		my_proc_tex_mirror(tcx, tcy);
+		tr -= 4;
+	}
+	for (int i = 0; i < tr; i++)
+		my_proc_tex_rotate(tcx, tcy);
 	return ;
 }
 
@@ -111,8 +140,7 @@ bool	graphicsRenderGame(
 				RendCoordsX[4] = {1, 1, -1, -1},
 				RendCoordsY[4] = {1, -1, -1, 1};
 			double	RenderX, RenderY;
-			for (int i = 0; i < nGraphics.TexRotation; i++)
-				my_proc_rotate(TexCoordsX, TexCoordsY);
+			graphicsFuncRotateTexCoords(TexCoordsX, TexCoordsY, nGraphics.TexRotation);
 			for (int i = 0; i < 4; i++) {
 				double	itX = 0.5 * RendCoordsX[i], itY = 0.5 * RendCoordsY[i];
 				double	RenderSiX = itX * nGraphics.LengthX + RenEnt->Physics.PosX - InputControl.CameraX,

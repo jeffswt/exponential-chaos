@@ -50,7 +50,9 @@ bool	PhEngine::UpdateProjectileSummon(
 	if (!projEntity)
 		throw NullPointerException();
 //	Defining whether to throw the projectile or not
-	if (projEntity->Properties.Type == "Projectile") {
+	if (projEntity->Properties.Type == "Item") {
+		return true;
+	} else if (projEntity->Properties.Type == "Projectile") {
 		projEnttyp = (ProjectileEntityType*)projEntity->Properties.SpecificProperties;
 		if (!projEnttyp)
 			throw NullPointerException();
@@ -59,9 +61,12 @@ bool	PhEngine::UpdateProjectileSummon(
 			Entity *newEntity = new Entity;
 			newEntity->InheritFrom(projEntity);
 //			Editing general data for generated entity
+			newEntity->Properties.TypeState = playerExt->Inventory[playerExt->InventoryFocus - 1].second;
 			newEntity->Properties.Layer = playerEntity->Properties.Layer;
 			newEntity->Properties.Name = "__ZwProgramGeneratedEntity7";
 			newEntity->Properties.Owner = playerEntity->Properties.Name;
+			if (!newEntity->DataIntact())
+				throw NullPointerException();
 //			Defining position for this entity class
 			double	distX = (double)(InputControl.MouseX - GameConfig.WindowWidth / 2) /
 					GameConfig.PixelRatio + InputControl.CameraX - playerEntity->Physics.PosX;
@@ -81,8 +86,8 @@ bool	PhEngine::UpdateProjectileSummon(
 			newEntity->Physics.VelY = playerEntity->Physics.VelY + projEnttyp->LaunchSpeed * distY / distCombine;
 //			Consuming this item in player inventory
 			if (!playerExt->IsCreative)
-				playerExt->Inventory[playerExt->InventoryFocus - 1].second--;
-			if (playerExt->Inventory[playerExt->InventoryFocus - 1].second <= 0)
+				playerExt->Inventory[playerExt->InventoryFocus - 1].third--;
+			if (playerExt->Inventory[playerExt->InventoryFocus - 1].third <= 0)
 				playerExt->Inventory.erase(playerExt->Inventory.begin() + playerExt->InventoryFocus - 1);
 //			Inserting to main structure
 			MainMap->InsertEntityPendedForce(newEntity);
@@ -95,6 +100,7 @@ bool	PhEngine::UpdateProjectileSummon(
 //			We create this in the mood of letting it interact with the outer world more profoundly.
 			Entity*	newEntity = new Entity;
 			newEntity->InheritFrom(projEntity);
+			newEntity->Properties.TypeState = playerExt->Inventory[playerExt->InventoryFocus - 1].second;
 			newEntity->Properties.Layer = playerEntity->Properties.Layer;
 			double	distX = (double)(InputControl.MouseX - GameConfig.WindowWidth / 2) /
 					GameConfig.PixelRatio + InputControl.CameraX;
@@ -110,8 +116,8 @@ bool	PhEngine::UpdateProjectileSummon(
 			}
 //			Consuming this item in player inventory
 			if (!playerExt->IsCreative)
-				playerExt->Inventory[playerExt->InventoryFocus - 1].second--;
-			if (playerExt->Inventory[playerExt->InventoryFocus - 1].second <= 0)
+				playerExt->Inventory[playerExt->InventoryFocus - 1].third--;
+			if (playerExt->Inventory[playerExt->InventoryFocus - 1].third <= 0)
 				playerExt->Inventory.erase(playerExt->Inventory.begin() + playerExt->InventoryFocus - 1);
 //			Inserting to main structure
 			MainMap->InsertEntityPendedForce(newEntity);

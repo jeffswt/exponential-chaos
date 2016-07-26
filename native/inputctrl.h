@@ -34,6 +34,7 @@ public:
 	{
 		MouseX = MouseY = MouseEntry = 0;
 		LDown = MDown = RDown = false;
+		WheelUp = WheelDn = false;
 		PlayerGuid = 0;
 		CameraX = CameraY = 0.0;
 		return ;

@@ -55,6 +55,11 @@ namespace	GuiCtrl
 	extern	GameMap*		workMainMap;
 }
 
+void	graphicsFuncRotateTexCoords(
+		int*	TexCoordsX,
+		int*	TexCoordsY,
+		int		TexRotation);
+
 bool	graphicsRenderGamePausedGui(
 		void);
 

@@ -187,7 +187,7 @@ bool	EntityType::ImportFromJson(
 		for (int Indexer = 0; Indexer < (int)ConfigData["Graphics"].Size(); Indexer++) {
 			typeGraphics	nGraphics;
 			ImportJsonData(nGraphics.RenderEnabled, ConfigData["Graphics"][Indexer]["RenderEnabled"]);
-			ImportJsonData(nGraphics.TexRotation, ConfigData["Graphics"]["TexRotation"]);
+			ImportJsonData(nGraphics.TexRotation, ConfigData["Graphics"][Indexer]["TexRotation"]);
 			ImportJsonData(nGraphics.AnimationInterval, ConfigData["Graphics"][Indexer]["AnimationInterval"]);
 			ImportJsonData(nGraphics.Luminosity, ConfigData["Graphics"][Indexer]["Luminosity"]);
 			ImportJsonData(nGraphics.LengthX, ConfigData["Graphics"][Indexer]["LengthX"]);

@@ -102,6 +102,10 @@ bool	ImportGameEntityTypes(
 			continue;
 		EntityType *newEntity = new EntityType;
 		if (!newEntity->ImportFromJson(Stream)) {
+			std::string	FailureTitle = "Exponential Chaos: Fatal Error";
+			std::string	FailureMessage = "JSON Grammar error while importing entity: \"" +
+					i + "\".";
+			MessageBox(0, FailureMessage.c_str(), FailureTitle.c_str(), MB_ICONERROR | MB_OK);
 			delete newEntity;
 			continue;
 		}

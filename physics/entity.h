@@ -27,6 +27,7 @@
 #include <map>
 #include <rapidjson/document.h>
 
+#include "algo/triple_pair.h"
 #include "physics/entitytype.h"
 #include "physics/trigger.h"
 
@@ -125,8 +126,8 @@ public:
 	double	Life;
 	int		InventoryFocus;
 	bool	IsCreative;
-	std::vector<std::pair<
-			EntityType*, int> >	Inventory;
+	std::vector<triple_pair<
+			EntityType*, int, int> >	Inventory;
 //	Constructors and destruction operators
 	PlayerEntity(void);
 };

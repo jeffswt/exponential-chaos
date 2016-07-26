@@ -58,7 +58,8 @@ for nm in range(1, len(lst)):
         }
     ]
 }""" % (idx['Name'], idx['Type'], idx['Description'], idx['ShowInCreative'], idx['PhysicsEnabled'], idx['CollisionEnabled'], idx['pLengthX'], idx['pLengthY'], idx['Mass'], idx['FrictionFactorTop'], idx['FrictionFactorBottom'], idx['FrictionFactorLeft'], idx['FrictionFactorRight'], idx['ElasticFactorTop'], idx['ElasticFactorBottom'], idx['ElasticFactorLeft'], idx['ElasticFactorRight'], idx['BlastResistance'], idx['RenderEnabled'], idx['gLengthX'], idx['gLengthY'], idx['AnimationInterval'], idx['TextureOnHand'], idx['Texture'])
-    ofn = './output/' + idx['Texture'].replace('.png', '.json')
+    # ofn = './output/' + idx['Texture'].replace('.png', '.json')
+    ofn = './output/%s/%s.json' % (idx['Type'].lower(), idx['Name'].lower().replace('.', ''))
     dirs = re.sub('/[^/]*\\.json', '', ofn)
     print('Writing to file: %s' % ofn)
     try:
