@@ -34,6 +34,10 @@ void graphicsInit(void)
 //	Thanks to http://stackoverflow.com
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//	After doing this, textures wouldn't look blurry even if it's small
+//	Thanks to http://stackoverflow.com (again)
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 //	Using Cartesian system
 	glMatrixMode(GL_PROJECTION);
 //	Miscellaneous

@@ -3,6 +3,12 @@
 
 ## 0.12.x Community Update
 
+### 0.12.6.22 | 26/07/16
+ * Entity graphics supports rotation for now.
+ * Updated a pack of textures and entities in `Minecraft2D` to comply to certain
+   changes in the entity type JSON format.
+ * Fixed low-definition textures blurry in inventory.
+
 ### 0.12.6.7 | 25/07/16
  * Updated the entity type JSON format to allow more than one block state per
    entity type. This can be used to solve the overflowing of the creative

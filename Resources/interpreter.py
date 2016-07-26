@@ -10,6 +10,7 @@ for row in cw:
     lst.append(row)
 fin.close()
 first_line = lst[0]
+req_edit = list()
 
 def mproc(a):
     if a == 'TRUE': return 'true'
@@ -44,16 +45,18 @@ for nm in range(1, len(lst)):
         "ElasticFactorRight": %s,
         "BlastResistance": %s
     },
-    "Graphics": {
-        "RenderEnabled": %s,
-        "LengthX": %s,
-        "LengthY": %s,
-        "AnimationInterval": %s,
-        "TextureOnHand": "%s",
-        "TextureList": [
-            "%s"
-        ]
-    }
+    "Graphics": [
+        {
+            "RenderEnabled": %s,
+            "LengthX": %s,
+            "LengthY": %s,
+            "AnimationInterval": %s,
+            "TextureOnHand": "%s",
+            "TextureList": [
+                "%s"
+            ]
+        }
+    ]
 }""" % (idx['Name'], idx['Type'], idx['Description'], idx['ShowInCreative'], idx['PhysicsEnabled'], idx['CollisionEnabled'], idx['pLengthX'], idx['pLengthY'], idx['Mass'], idx['FrictionFactorTop'], idx['FrictionFactorBottom'], idx['FrictionFactorLeft'], idx['FrictionFactorRight'], idx['ElasticFactorTop'], idx['ElasticFactorBottom'], idx['ElasticFactorLeft'], idx['ElasticFactorRight'], idx['BlastResistance'], idx['RenderEnabled'], idx['gLengthX'], idx['gLengthY'], idx['AnimationInterval'], idx['TextureOnHand'], idx['Texture'])
     ofn = './output/' + idx['Texture'].replace('.png', '.json')
     dirs = re.sub('/[^/]*\\.json', '', ofn)
@@ -65,5 +68,10 @@ for nm in range(1, len(lst)):
     fout = open(ofn, 'w', encoding='utf-8')
     fout.write(nstr)
     fout.close()
+    if idx['RequireEdit'] == 'true':
+        req_edit.append(ofn)
 
 print('done')
+print('These JSONs requires your manual edit:')
+for i in req_edit:
+    print('    %s' % i)

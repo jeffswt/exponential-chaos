@@ -22,7 +22,21 @@
 
 #include <set>
 
-bool graphicsRenderGame(
+void	my_proc_rotate(
+		int*	tcx,
+		int*	tcy)
+{
+//	Unprotected function, call from graphicsRenderGame please.
+	int	ntcx[4], ntcy[4];
+	ntcx[0] = tcx[3], ntcy[0] = tcy[3];
+	for (int i = 0; i < 3; i++)
+		ntcx[i + 1] = tcx[i], ntcy[i + 1] = tcy[i];
+	for (int i = 0; i < 4; i++)
+		tcx[i] = ntcx[i], tcy[i] = ntcy[i];
+	return ;
+}
+
+bool	graphicsRenderGame(
 		GameMap*	MainMap)
 {
 	if (PhEngine::PhEngineState == PhEngine::Stopped) {
@@ -74,10 +88,6 @@ bool graphicsRenderGame(
 					(RenEnt->Physics.PosY + nGraphics.LengthY - InputControl.CameraY) * GameConfig.PixelRatio < -0.5 * GameConfig.WindowHeight)
 				continue;
 			glEnable(GL_TEXTURE_2D);
-//			After doing this, textures wouldn't look blurry even if it's small
-//			Thanks to http://stackoverflow.com (again)
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glColor3f(1.0, 1.0, 1.0);
 //			We are now processing an animation
 			if (nGraphics.TextureList.size() > 1) {
@@ -96,17 +106,20 @@ bool graphicsRenderGame(
 			}
 //			Draw the polygon of the entity
 			glBegin(GL_POLYGON);
-			double	RenderSiX, RenderSiY;
+			int	TexCoordsX[4] = {1, 1, -1, -1},
+				TexCoordsY[4] = {1, -1, -1, 1},
+				RendCoordsX[4] = {1, 1, -1, -1},
+				RendCoordsY[4] = {1, -1, -1, 1};
 			double	RenderX, RenderY;
-			double	TexX, TexY;
-			for (double itX = 0.5, itY = 0.5; ; ) {
-				RenderSiX = itX * nGraphics.LengthX + RenEnt->Physics.PosX - InputControl.CameraX;
-				RenderSiY = itY * nGraphics.LengthY + RenEnt->Physics.PosY - InputControl.CameraY;
-				RenderX = RenderSiX * GameConfig.PixelRatio;
+			for (int i = 0; i < nGraphics.TexRotation; i++)
+				my_proc_rotate(TexCoordsX, TexCoordsY);
+			for (int i = 0; i < 4; i++) {
+				double	itX = 0.5 * RendCoordsX[i], itY = 0.5 * RendCoordsY[i];
+				double	RenderSiX = itX * nGraphics.LengthX + RenEnt->Physics.PosX - InputControl.CameraX,
+						RenderSiY = itY * nGraphics.LengthY + RenEnt->Physics.PosY - InputControl.CameraY;
+				RenderX = RenderSiX * GameConfig.PixelRatio,
 				RenderY = RenderSiY * GameConfig.PixelRatio;
-				TexX = 0.5 + itX;
-				TexY = 0.5 + itY;
-				glTexCoord2d(TexX, TexY);
+				glTexCoord2d(0.5 + 0.5 * TexCoordsX[i], 0.5 + 0.5 * TexCoordsY[i]);
 				glVertex2f(RenderX, RenderY);
 				if (itX == 0.5 && itY == 0.5) itY = -0.5;
 				else if (itX == 0.5 && itY == -0.5) itX = -0.5;

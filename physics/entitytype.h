@@ -67,7 +67,9 @@ public:
 	class typeGraphics
 	{
 	public:
+		typeGraphics();
 		bool	RenderEnabled;
+		int		TexRotation; // Texture rotation
 		double	AnimationInterval; // Time interval of each repetition
 		double	Luminosity;
 		double	LengthX, LengthY; // Length as displayed on screen

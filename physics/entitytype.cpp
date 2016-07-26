@@ -59,6 +59,19 @@ EntityType::EntityType(void)
 	return ;
 }
 
+EntityType::typeGraphics::typeGraphics(void)
+{
+	RenderEnabled = true;
+	TexRotation = 0; // 0 = None, 1 = 90 CW, 2 = 180 CW, 3 = 90 CCW / 270 CW
+	AnimationInterval = 1.0;
+	Luminosity = 0.0;
+	LengthX = 1.0;
+	LengthY = 1.0;
+	TextureList.clear();
+	TextureOnHand = 0;
+	return ;
+}
+
 bool	EntityType::DataIntact(void)
 {
 	if (!this) return false;
@@ -145,6 +158,7 @@ bool	EntityType::ImportFromJson(
 	if (!ConfigData["Graphics"].IsArray()) {
 		typeGraphics	nGraphics;
 		ImportJsonData(nGraphics.RenderEnabled, ConfigData["Graphics"]["RenderEnabled"]);
+		ImportJsonData(nGraphics.TexRotation, ConfigData["Graphics"]["TexRotation"]);
 		ImportJsonData(nGraphics.AnimationInterval, ConfigData["Graphics"]["AnimationInterval"]);
 		ImportJsonData(nGraphics.Luminosity, ConfigData["Graphics"]["Luminosity"]);
 		ImportJsonData(nGraphics.LengthX, ConfigData["Graphics"]["LengthX"]);
@@ -173,6 +187,7 @@ bool	EntityType::ImportFromJson(
 		for (int Indexer = 0; Indexer < (int)ConfigData["Graphics"].Size(); Indexer++) {
 			typeGraphics	nGraphics;
 			ImportJsonData(nGraphics.RenderEnabled, ConfigData["Graphics"][Indexer]["RenderEnabled"]);
+			ImportJsonData(nGraphics.TexRotation, ConfigData["Graphics"]["TexRotation"]);
 			ImportJsonData(nGraphics.AnimationInterval, ConfigData["Graphics"][Indexer]["AnimationInterval"]);
 			ImportJsonData(nGraphics.Luminosity, ConfigData["Graphics"][Indexer]["Luminosity"]);
 			ImportJsonData(nGraphics.LengthX, ConfigData["Graphics"][Indexer]["LengthX"]);
