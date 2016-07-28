@@ -480,8 +480,8 @@ bool	NetmgrRemoveEntity(
 {
 	std::stringstream	Stream;
 	std::string			Str;
-	if (RmEnt->Properties.Type->Properties.Type == "Projectile")
-		return true;
+//	if (RmEnt->Properties.Type->Properties.Type == "Projectile")
+//		return true;
 	Stream << "REM " << RmEnt->Properties.Guid;
 	getline(Stream, Str);
 	MsgLock.lock();

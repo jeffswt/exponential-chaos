@@ -48,6 +48,7 @@ public:
 	std::string	Description;
 	double		GravityConst;
 	double		RegenerationValue; // Lives in double per second
+	double		RespawnDelay; // The timer delay for a player to respawn.
 	int			ModifyTime; // Last save time
 	std::string	LevelPath; // Parent directory
 //	Basic and fundamental properties (dynamic)
@@ -74,6 +75,8 @@ public:
 			Entity*	RmEnt);
 	bool	RemoveEntity(
 			long long	RmGuid);
+	bool	RespawnPlayer(
+			Entity*	PlyEnt);
 	Entity*	CreatePlayer(
 			std::string	Name);
 //	Entity operations (cached versions)

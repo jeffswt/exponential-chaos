@@ -77,7 +77,8 @@ bool	PhEngine::UpdateProjectileDeployment(
 			std::string	SentPlyrNam = Object->Properties.Owner;
 			Entity*		SentPlyrEnt = NULL;
 			for (auto itert : MainMap->PlayerEntityList)
-				if (itert.second->Properties.Name == SentPlyrNam) {
+				if (itert.second->DataIntact() &&
+						itert.second->Properties.Name == SentPlyrNam) {
 					SentPlyrEnt = itert.second;
 					break;
 				}
@@ -116,7 +117,12 @@ bool	PhEngine::UpdateProjectileDeployment(
 								distCombine) / ProjTyp->DeployRadius * distY / distCombine * 0.1;
 					}
 //					But in any case it should have a blast resistance checker.
-					if (Victim->Properties.Type->Physics.BlastResistance < ProjTyp->DeployPowerBlast *
+//					As in multiplayer, one projectile need not and should not be deployed
+//					twice or many times depending on the joined players. Therefore we
+//					strictly affirm that such restrictions must be made so that one
+//					removal simulations are only done on the server.
+					if (MainMap->IsHost &&
+							Victim->Properties.Type->Physics.BlastResistance < ProjTyp->DeployPowerBlast *
 							(ProjTyp->DeployRadius - distCombine) / ProjTyp->DeployRadius &&
 							Victim->Properties.Type->Properties.Type != "Player" &&
 							Victim->Properties.Type->Properties.Type != "Particle") {
@@ -148,12 +154,18 @@ bool	PhEngine::UpdateProjectileDeployment(
 					if (Victim->Properties.Type->Properties.Type == "Player") {
 						PlayerEntity*	VicEnt = (PlayerEntity*)Victim->Physics.ExtendedTags;
 						if (!VicEnt) throw NullPointerException();
-						if (!VicEnt->IsCreative)
+						if (!VicEnt->IsCreative && Victim->Properties.Name != "__ZwDefaultEntity7Player") {
 							VicEnt->Life -= ProjTyp->DeployPowerDamage * (ProjTyp->DeployRadius -
 								distCombine) / ProjTyp->DeployRadius;
+							if (Object->Properties.Owner == GameConfig.PlayerName)
+								if (MainMap->IsHost)
+									NetmgrSetEntityLife(Victim);
+						}
 					}
 				}
 			}
+//			Hither does not need only server simulations. This is to keep the
+//			area clean and tidy - no muss, no fuss.
 			MainMap->RemoveEntityPended(Object);
 			NetmgrRemoveEntity(Object);
 			continue;

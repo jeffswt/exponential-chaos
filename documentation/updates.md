@@ -1,6 +1,17 @@
 
 # Version History
 
+### 0.12.7.26 | 28/07/16
+ * Added respawn support for players in both single player and multiplayer. The
+   time limit can be defined in the map description.
+ * Fixed default player could be dealt damage in projectile deployments.
+ * Fixed template player's life gaining even if it shouldn't.
+ * Fixed SIGSEGV when summoning projectiles in multiplayer, which is a flow which
+   did not check the entity intactness when iterating the map.
+ * Fixed dis-synchronization between server and clients.
+ * Fixed deployed projectiles would not detonate in clients.
+ * Fixed projectiles detonating twice in both server and clients.
+
 ### 0.12.6.61 | 27/07/16
  * Optimized physics renderer for a greatly improved performance. This disables
    the necessity to re-insert an entity even after its position has a small and

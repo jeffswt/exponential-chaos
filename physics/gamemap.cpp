@@ -115,29 +115,76 @@ bool	GameMap::RemoveEntity(
 	return true;
 }
 
+bool	GameMap::RespawnPlayer(
+		Entity*	PlyEnt)
+{
+	EntityType*		PlyTyp = NULL;
+	Entity*			defaultPlayer = NULL;
+	if (!PlyEnt->DataIntact())
+		return false;
+	PlyTyp = PlyEnt->Properties.Type;
+	if (PlyTyp->Properties.Type != "Player")
+		return false;
+//	Saving old properties.
+	std::string	origName = PlyEnt->Properties.Name;
+	double		origX = PlyEnt->Physics.PosX,
+				origY = PlyEnt->Physics.PosY;
+	int			origZ = PlyEnt->Properties.Layer;
+	long long	origGUID = PlyEnt->Properties.Guid;
+//	Finding the default player
+	for (auto itert : PlayerEntityList) {
+		Entity*	worker = itert.second;
+		if (!worker->DataIntact()) continue;
+		if (worker->Properties.Name == "__ZwDefaultEntity7Player") {
+			defaultPlayer = worker;
+			break;
+		}
+	}
+//	And if there's no default player?
+	if (!defaultPlayer->DataIntact())
+		return false;
+	if (!PlyEnt->DataIntact())
+		throw NullPointerException();
+	PlyEnt->InheritFrom(defaultPlayer);
+	PlyEnt->Properties.Name = origName;
+	PlyEnt->Properties.Guid = origGUID;
+	PlyEnt->Physics.PhysicsChanged = false;
+	PlyEnt->Physics.CollisionChanged = false;
+	PlyEnt->Physics.RenderDisabled = false;
+//	Processing smart re-insertion
+	double	newX = PlyEnt->Physics.PosX,
+			newY = PlyEnt->Physics.PosY;
+	int		newZ = PlyEnt->Properties.Layer;
+	PlyEnt->Physics.PosX = origX;
+	PlyEnt->Physics.PosY = origY;
+	PlyEnt->Properties.Layer = origZ;
+	InsertEntityPended(PlyEnt,
+			newZ, newX, newY);
+	return true;
+}
 Entity*	GameMap::CreatePlayer(
 		std::string	newName)
 {
 	EntityType*	undefPlayer = NULL;
 	Entity*		defaultPlayer = NULL;
-	Entity*		newPlayer = NULL;
-	for (auto itert : EntityList) {
+	Entity*		newPlayer = new Entity;
+//	To inherit from the default player if necessary
+	for (auto itert : PlayerEntityList) {
 		Entity*	worker = itert.second;
 		if (!worker->DataIntact()) continue;
 		if (worker->Properties.Name == "__ZwDefaultEntity7Player") {
 			defaultPlayer = worker;
-			newPlayer = new Entity;
 			newPlayer->InheritFrom(defaultPlayer);
 			break;
 		}
 	}
+//	But what if there's no default player?
 	if (defaultPlayer == NULL)
 	for (auto itert : EntityTypes) {
 		EntityType*	worker = itert.second;
 		if (!worker->DataIntact()) continue;
 		if (worker->Properties.Type == "Player") {
 			undefPlayer = worker;
-			newPlayer = new Entity;
 			newPlayer->InheritFrom(undefPlayer);
 			break;
 		}
@@ -145,7 +192,6 @@ Entity*	GameMap::CreatePlayer(
 	if (!newPlayer->DataIntact())
 		throw NullPointerException();
 	newPlayer->Properties.Name = newName;
-	newPlayer->Physics.PosX += newPlayer->Properties.Type->Physics.LengthX;
 	newPlayer->Physics.PhysicsChanged = false;
 	newPlayer->Physics.CollisionChanged = false;
 	newPlayer->Physics.RenderDisabled = false;
@@ -294,6 +340,7 @@ bool	GameMap::ImportHeaderFromJson(
 	ImportJsonData(Description, Config["Description"]);
 	ImportJsonData(GravityConst, Config["GravityConst"]);
 	ImportJsonData(RegenerationValue, Config["RegenerationValue"]);
+	ImportJsonData(RespawnDelay, Config["RespawnDelay"]);
 	ImportJsonData(ModifyTime, Config["ModifyTime"]);
 //	Import world boundaries
 	ImportJsonData(WorldBoundary[0], Config["WorldBoundaryLeft"]);
@@ -389,6 +436,7 @@ bool	GameMap::ExportToJson(
 	Config.AddMember("Description", Description, JAlloc);
 	Config.AddMember("GravityConst", GravityConst, JAlloc);
 	Config.AddMember("RegenerationValue", RegenerationValue, JAlloc);
+	Config.AddMember("RespawnDelay", RespawnDelay, JAlloc);
 	ModifyTime = GetSystemTime();
 	Config.AddMember("ModifyTime", ModifyTime, JAlloc);
 //	Generating world boundary configuration
@@ -590,6 +638,8 @@ GameMap::GameMap(
 	Name = "Untitled";
 	Description = "";
 	GravityConst = 9.8;
+	RegenerationValue = 1.0;
+	RespawnDelay = 1048576.0;
 //	Set world boundaries to a reasonable value
 	WorldBoundary[0] = -32767;
 	WorldBoundary[1] = 32767;

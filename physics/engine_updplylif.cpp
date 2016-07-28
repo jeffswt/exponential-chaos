@@ -34,20 +34,30 @@ bool	PhEngine::UpdatePlayerLife(
 			return false;
 		PlayerExt = (PlayerEntity*)PlayerEnt->Physics.ExtendedTags;
 		PlayerTyp = (PlayerEntityType*)PlayerEnt->Properties.Type->Properties.SpecificProperties;
+		if (PlayerEnt->Properties.Name == "__ZwDefaultEntity7Player")
+			continue;
 //		An already deceased entity... Why should we bother to mess up with it?
 		if (PlayerExt->Life < 0) {
 			if (!PlayerEnt->Physics.PhysicsChanged) {
 				PlayerEnt->Physics.PhysicsChanged = true;
 				PlayerEnt->Physics.CollisionChanged = true;
 				PlayerEnt->Physics.RenderDisabled = true;
+				PlayerExt->Life = -1.0;
+				PlayerExt->DeceaseTime = GetProcessTime();
 				NetmgrInsertEntity(PlayerEnt);
 				if (MainMap->IsHost) {
 					std::string PostMsg = chatGenDeceaseMessage(PlayerEnt->Properties.Name);
 					chatInsertMessage(PostMsg);
 					NetmgrPostMessage(PostMsg);
 				}
+			} else if (GetProcessTime() - PlayerExt->DeceaseTime >= MainMap->RespawnDelay) {
+//				That means the player needs to be respawned
+				if (MainMap->IsHost ||
+						PlayerEnt->Properties.Name == GameConfig.PlayerName) {
+					MainMap->RespawnPlayer(PlayerEnt);
+					NetmgrInsertEntity(PlayerEnt);
+				}
 			}
-			continue;
 		} else {
 //			The physics datum of the player should be properly updated, as to
 //			properly calculate the player life deduction as fall damage.
@@ -67,6 +77,8 @@ bool	PhEngine::UpdatePlayerLife(
 			else
 				PlayerExt->Life = PlayerTyp->MaxLife;
 		}
+//		A useless thing used to make the code look nicer...
+		continue;
 	}
 	return true;
 }

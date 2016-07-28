@@ -182,8 +182,6 @@ bool	Entity::ImportFromJson(
 			Physics.TriggerList.push_back(Worker);
 		}
 	}
-//	Cleanup something that hadn't been defined
-	Physics.VelX = Physics.VelY = 0.0;
 //	Building extended tags for specific items
 	if (Properties.Type->Properties.Type == "Player") {
 		PlayerEntity*	Confs = new PlayerEntity;
@@ -332,6 +330,7 @@ PlayerEntity::PlayerEntity(
 	LastJumpHeight = 0.0;
 	LastProjectileTime = 0.0;
 	Life = 20.0;
+	DeceaseTime = 0.0;
 	InventoryFocus = 1;
 	IsCreative = false;
 	Inventory.clear();
