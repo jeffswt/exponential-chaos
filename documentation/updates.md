@@ -1,6 +1,10 @@
 
 # Version History
 
+### 0.12.7.47 | 29/07/16
+ * Updated documentations and manuals. This documentation update included all the
+   changes (those which have not been documented) since version `0.12.1`.
+
 ### 0.12.7.45 | 28/07/16
  * Fixed server not accepting more clients if one of them disconnected for a
    considerably short time.

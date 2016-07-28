@@ -18,7 +18,7 @@ And the source code is shipped with the preconfigured Eclipse configuration. The
 standard environment is:
 
  * Eclipse IDE Mars.1
- * TDM-GCC 4.9.2 (all platforms)
+ * TDM-GCC 4.9.2 (on Windows)
 
 After setting up the environment, you may proceed to the compilation. Related
 libraries are required to link the program correctly. The default setting is
@@ -51,13 +51,9 @@ tab, which is contained in the installation packs.
 ## Installing from binaries
 
 Under the release tabs, you may find the installation packs useful. If you are
-new to Exponential Chaos, you can download the latest full installation pack.
-Minor updates are not provided with full installation packs, instead they only
-contain the updated files, from the given checkpoint, often the latest full
-release.
+new to Exponential Chaos, you can download the latest installation archive.
+You will have to extract the archive to the desired area by yourself.
 
-You would have to manually extract the archives to the program folder root to
-perform a quick update. Sometimes full installation packs are not archived
-with installers, instead only archives.
-
-Deal with this with precaution.
+Note that some binaries might not be completely optimized or compatible with all
+computers. Due to the lack of financial support, this project may not have the
+ability to test all computers for maximized compatibility.

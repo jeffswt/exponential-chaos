@@ -29,6 +29,7 @@ tag ```Physics.TriggerList``` if it does not require extra triggers.
 | Tags                     | Purposes                                                                                                                                     |
 | :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
 | Properties.TypeName      | The entity type's name of this entity. Formatted as ```ResourcePackName::EntityName```.                                                      |
+| Properties.TypeState     | The block state of this entity. Varies as an integer between different types of entities.                                                    |
 | Properties.Layer         | The layer containing this entity, could be theoretically any 32-bit integer if necessary.                                                    |
 | Properties.Name          | The given name of this entity, could be an arbitrary Unicode string, indicates the player name if the entity type's class is a ```Player```. |
 | Physics.PhysicsChanged   | Whether the original ```Physics.PhysicsEnabled``` has its value reversed.                                                                    |
@@ -47,14 +48,15 @@ example of extended properties. The following tags lie under ```Physics.Extended
 
 ### Players
 
-| Tags               | Purposes                                                                                        |
-| :----------------- | :---------------------------------------------------------------------------------------------- |
-| Inventory          | A list of inventory items, describing the player's inventory. Individual definitions see below. |
-| Inventory[i].Item  | The string of the type name of the entity, such as ```MyResourcePack::MyEntityType```.          |
-| Inventory[i].Count | A 32-bit integer which is larger than 0, describing the amount of such entities in the slot.    |
-| InventoryFocus     | The slot that the hotbar is pointing at at the moment.                                          |
-| Life               | A double precision number indicating the current health points of the player.                   |
-| IsCreative         | True if the player is currently creative and vice versa.                                        |
+| Tags               | Purposes                                                                                          |
+| :----------------- | :------------------------------------------------------------------------------------------------ |
+| Inventory          | A list of inventory items, describing the player's inventory. Individual definitions see below.   |
+| Inventory[i].Item  | The string of the type name of the entity, such as ```MyResourcePack::MyEntityType```.            |
+| Inventory[i].Count | A 32-bit integer which is larger than 0, describing the amount of such entities in the slot.      |
+| Inventory[i].State | A 32-bit integer which is larger than 0, describing the block state of such entities in the slot. |
+| InventoryFocus     | The slot that the hotbar is pointing at at the moment.                                            |
+| Life               | A double precision number indicating the current health points of the player.                     |
+| IsCreative         | True if the player is currently creative and vice versa.                                          |
 
 ## Examples
 
@@ -65,9 +67,10 @@ administrator for purposes that we don't know.
 ```JSON
 {
     "Properties": {
-        "TypeName": "Minecraft2D::Stone.Diorite",
+        "TypeName": "Minecraft2D::CraftingTable",
+        "TypeState": 1,
         "Layer": 4,
-        "Name": "Admin's Diorite"
+        "Name": "Lawyer's Crafting Table"
     },
     "Physics": {
         "PhysicsChanged": false,
@@ -86,6 +89,7 @@ abovementioned contains, but merely extended tags.
 {
     "Properties": {
         "TypeName": "Minecraft2D::Steve",
+        "TypeState": 0,
         "Layer": 5,
         "Name": "Administrator"
     },
@@ -98,12 +102,14 @@ abovementioned contains, but merely extended tags.
         "ExtendedTags": {
             "Inventory": [
                 {
-                    "Type": "Minecraft2D::Bedrock",
-                    "Count": 64
+                    "Type": "Minecraft2D::Bed",
+                    "Count": 64,
+                    "State": 2
                 },
                 {
-                    "Type": "Minecraft2D::SugerCane",
-                    "Count": 64
+                    "Type": "Minecraft2D::Stone",
+                    "Count": 64,
+                    "State": 0
                 }
             ],
             "InventoryFocus": 2,

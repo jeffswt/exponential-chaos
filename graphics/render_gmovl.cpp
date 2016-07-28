@@ -342,16 +342,14 @@ bool	graphicsRenderInventory(
 	PendTooltips.clear();
 //	Some other things we need to take care about
 	if ((kGetKeyOnpress('A') ||
-			kGetKeyOnpress('W') ||
-			kGetKeyOnpress(VK_UP) ||
-			kGetKeyOnpress(VK_LEFT))
+			kGetKeyOnpress(KNUM_PGUP) ||
+			kGetKeyOnpress(KNUM_LEFT))
 			&& CurPage > 0) {
 		CurPage--;
 		PostUpdateInventoryView();
 	} else if (kGetKeyOnpress('D') ||
-			kGetKeyOnpress('S') ||
-			kGetKeyOnpress(VK_DOWN) ||
-			kGetKeyOnpress(VK_RIGHT)) {
+			kGetKeyOnpress(KNUM_PGDN) ||
+			kGetKeyOnpress(KNUM_RIGHT)) {
 		CurPage++;
 		PostUpdateInventoryView();
 	}

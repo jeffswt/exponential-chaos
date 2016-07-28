@@ -35,6 +35,7 @@ Players should appear here and only here, for the ease of editing players' data.
 | Description       | A small line of text, describing the purpose of the map (Only visible to the user, the program actively ignores this).                                                                                                                                                     |
 | GravityConst      | The gravitational constant, alias *'g'* in newton physics.                                                                                                                                                                                                                 |
 | RegenerationValue | A real number, by default this value would be added to all players every second if it has not deceased.                                                                                                                                                                    |
+| RespawnDelay      | A real number, by default which would be very large, is the time players have to wait before they respawn at the default player's position.                                                                                                                                |
 | ModifyTime        | 32-bit C style timestamp, the last time the user saved the map through the program. This defines the sequence of maps sorted in the menu.                                                                                                                                  |
 | WorldBoundary(.*) | After a physics enabled entity exceeds this limit, it would appear from the other side. Exempli gratis it would appear from the bottom if it exceeds the top limit.                                                                                                        |
 | ForbiddenLayers   | A list of 32-bit integers, marking the layers that a player should not move to (If a player is already at that layer, nothing would happen.), however, players could be arranged by code to stay in that layer. Using this mechanism can lock players in a specific layer. |
@@ -45,10 +46,11 @@ Players should appear here and only here, for the ease of editing players' data.
 
 ```JSON
 {
-    "Name": "A Hello World",
-    "Description": "This is a world meaning to say HELLO.",
+    "Name": "foo(bar)",
+    "Description": "import foo as bar",
     "GravityConst": 9.8,
     "RegenerationValue": 2.0,
+    "RespawnDelay": 30.0,
     "ModifyTime": 1464000000,
     "WorldBoundaryLeft": -32767.0,
     "WorldBoundaryRight": 32767.0,
@@ -64,6 +66,7 @@ Players should appear here and only here, for the ease of editing players' data.
         {
             "Properties": {
                 "TypeName": "Minecraft2D::Steve",
+                "TypeState": 0,
                 "Layer": 5,
                 "Name": "__ZwDefaultEntity7Player"
             },

@@ -19,26 +19,53 @@ documentation about trigger programming for details.**
 
 ## Standard Properties
 
-| Tag                         | Purpose                                                                                                                         |
-| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| Properties.Name             | The indexed name as TypeName in entities, typically used as ResourcePackName::EntityTypeName.                                   |
-| Properties.Type             | The entity type class, can be arbitrary string, but functional at a smaller set of strings.                                     |
-| Properties.Description      | The pretty name shown in inventory, does not affect other mechanisms.                                                           |
-| Properties.ShowInCreative   | Whether to display in creative inventory or not. If false, creative players would not be able to see this in their inventories. |
-| Physics.PhysicsEnabled      | If set to false, related entities would be by default static unless specially requested and vice versa.                         |
-| Physics.CollisionEnabled    | If set to true, related entities would calculate collision with potential entities and vice versa.                              |
-| Physics.LengthX             | The length of the collision box of the entity, centered at its position.                                                        |
-| Physics.LengthY             | The height of the collision box of the entity, centered at its position.                                                        |
-| Physics.Mass                | The mass of the entity, used to calculate collision between entities that are both static.                                      |
-| Physics.FrictionFactor(.*?) | The factor given to the described face, as a matter of friction.                                                                |
-| Physics.ElasticFactor(.*?)  | The factor given to the described face, as a matter of elasticity (the severity how it bounces back)                            |
-| Physics.BlastResistance     | If a projectile deployed nearby has a blast power larger than this, this entity would be destroyed.                             |
-| Graphics.RenderEnabled      | Whether to render graphics for this entity by default.                                                                          |
-| Graphics.LengthX            | The visual length of this entity.                                                                                               |
-| Graphics.LengthY            | The visual height of this entity.                                                                                               |
-| Graphics.AnimationInterval  | The time need to spend in rendering a round of animation.                                                                       |
-| Graphics.TextureOnHand      | The texture shown in inventories and hotbars.                                                                                   |
-| Graphics.TextureList        | The textures, given in sequence, displaying the animated texture sequence one by one.                                           |
+| Tag                           | Purpose                                                                                                                         |
+| :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| Properties.Name               | The indexed name as TypeName in entities, typically used as ResourcePackName::EntityTypeName.                                   |
+| Properties.Type               | The entity type class, can be arbitrary string, but functional at a smaller set of strings.                                     |
+| Properties.Description        | The pretty name shown in inventory, does not affect other mechanisms.                                                           |
+| Properties.ShowInCreative     | Whether to display in creative inventory or not. If false, creative players would not be able to see this in their inventories. |
+| Physics.PhysicsEnabled        | If set to false, related entities would be by default static unless specially requested and vice versa.                         |
+| Physics.CollisionEnabled      | If set to true, related entities would calculate collision with potential entities and vice versa.                              |
+| Physics.LengthX               | The length of the collision box of the entity, centered at its position.                                                        |
+| Physics.LengthY               | The height of the collision box of the entity, centered at its position.                                                        |
+| Physics.Mass                  | The mass of the entity, used to calculate collision between entities that are both static.                                      |
+| Physics.FrictionFactor(.*?)   | The factor given to the described face, as a matter of friction.                                                                |
+| Physics.ElasticFactor(.*?)    | The factor given to the described face, as a matter of elasticity (the severity how it bounces back)                            |
+| Physics.BlastResistance       | If a projectile deployed nearby has a blast power larger than this, this entity would be destroyed.                             |
+| Graphics[i].RenderEnabled     | Whether to render graphics for this entity by default.                                                                          |
+| Graphics[i].LengthX           | The visual length of this entity.                                                                                               |
+| Graphics[i].LengthY           | The visual height of this entity.                                                                                               |
+| Graphics[i].AnimationInterval | The time need to spend in rendering a round of animation.                                                                       |
+| Graphics[i].TextureOnHand     | The texture shown in inventories and hotbars.                                                                                   |
+| Graphics[i].TextureList       | The textures, given in sequence, displaying the animated texture sequence one by one.                                           |
+| Graphics[i].TexRotation       | The texture's rotation, for details see the appendix in this section.                                                           |
+
+### Graphics Properties
+
+Since version `0.12.6.7`, the entity type JSON format officially starts to support
+varieties of graphical displays in one single entity. This allows players to
+reduce the size of the inventory view and be able to create simultaneously
+relative or principally similar entities at a scroll of the mouse wheel and the
+hold of Ctrl (for details see section *Controls*).
+
+Each *object* in the *array* Graphics represents a block state. The number
+indicating the block states are relevant to their absolute position in this array.
+The number is 0 for the first item in the array et cetera.
+
+To see texture rotations and mirrorings, see the following table for details on
+using the 8 states of texture rotations on the tag *TexRotation*.
+
+| Indicator | Purpose                                                          |
+| :-------- | :--------------------------------------------------------------- |
+| 0         | Do nothing.                                                      |
+| 1         | Rotate 90 degrees clockwise.                                     |
+| 2         | Rotate 180 degrees clockwise.                                    |
+| 3         | Rotate 90 degrees counter-clockwise.                             |
+| 4         | Mirror against y axis.                                           |
+| 5         | Mirror against y axis, then rotate 90 degrees clockwise.         |
+| 6         | Mirror against y axis, then rotate 180 degrees clockwise.        |
+| 7         | Mirror against y axis, then rotate 90 degrees counter-clockwise. |
 
 ## Extended Properties
 
@@ -79,39 +106,42 @@ procedure.
 Below is a basic entity type "Grass Block", containing no extra tags.
 
 ```JSON
+
 {
-    "Properties" : {
-        "Name" : "Grass",
-        "Type" : "Block",
-        "Description" : "Grass Block",
-        "ShowInCreative" : true
+    "Properties": {
+        "Name": "Grass",
+        "Type": "Block",
+        "Description": "Grass Block",
+        "ShowInCreative": true
     },
-    "Physics" : {
-        "PhysicsEnabled" : false,
-        "CollisionEnabled" : true,
-        "LengthX" : 1,
-        "LengthY" : 1,
-        "Mass" : 256,
-        "FrictionFactorTop" : 0.9,
-        "FrictionFactorBottom" : 1.2,
-        "FrictionFactorLeft" : 0.3,
-        "FrictionFactorRight" : 0.3,
-        "ElasticFactorTop" : 0.13,
-        "ElasticFactorBottom" : 0.26,
-        "ElasticFactorLeft" : 0.5,
-        "ElasticFactorRight" : 0.5,
-        "BlastResistance" : 3
+    "Physics": {
+        "PhysicsEnabled": false,
+        "CollisionEnabled": true,
+        "LengthX": 1,
+        "LengthY": 1,
+        "Mass": 2047,
+        "FrictionFactorTop": 1.65,
+        "FrictionFactorBottom": 0.4,
+        "FrictionFactorLeft": 0.12,
+        "FrictionFactorRight": 0.12,
+        "ElasticFactorTop": 0.08,
+        "ElasticFactorBottom": 0.3,
+        "ElasticFactorLeft": 0.04,
+        "ElasticFactorRight": 0.04,
+        "BlastResistance": 3
     },
-    "Graphics" : {
-        "RenderEnabled" : true,
-        "LengthX" : 1,
-        "LengthY" : 1,
-        "AnimationInterval" : 3,
-        "TextureOnHand" : "block/grass.png",
-        "TextureList" : [
-            "block/grass.png"
-        ]
-    }
+    "Graphics": [
+        {
+            "RenderEnabled": true,
+            "LengthX": 1,
+            "LengthY": 1,
+            "AnimationInterval": 1,
+            "TextureOnHand": "blocks/grass_side.png",
+            "TextureList": [
+                "blocks/grass_side.png"
+            ]
+        }
+    ]
 }
 ```
 
@@ -119,30 +149,34 @@ Following is an entity describing a TNT, which has extended tags associated
 with the class "Projectile". Need to mention that this entity type is one of
 the few built-in entity types that are equipped with trigger programming.
 
+Note that this entity also made use of the animation to simulate flashing when
+detonating, and successfully made use of the extensibility of graphical
+appearences regardless of the physical size.
+
 ```JSON
 {
-	"Properties" : {
-		"Name" : "TNT",
-		"Type" : "Projectile",
-		"Description" : "TNT",
-		"SpecificProperties" : {
+    "Properties": {
+        "Name": "TNT",
+        "Type": "Projectile",
+        "Description": "TNT",
+        "SpecificProperties" : {
 			"LaunchSpeed" : 9.0,
-			"LaunchInterval" : 4.0,
+			"LaunchInterval" : 1.6,
 			"DeployDelay" : 5.0,
 			"DeployRadius" : 4.0,
-			"DeployPowerDamage" : 700.0,
-			"DeployPowerMotion" : 32.0,
-			"DeployPowerBlast" : 15.0
+			"DeployPowerDamage" : 400.0,
+			"DeployPowerMotion" : 160.0,
+			"DeployPowerBlast" : 50.0
 		},
-		"ShowInCreative" : true
-	},
-	"Physics" : {
-		"PhysicsEnabled" : true,
-		"CollisionEnabled" : true,
-		"LengthX" : 0.4,
-		"LengthY" : 0.4,
-		"Mass" : 20.0,
-		"FrictionFactorLeft" : 0.8,
+		"ShowInCreative": true
+    },
+    "Physics": {
+        "PhysicsEnabled": true,
+        "CollisionEnabled": true,
+        "LengthX": 0.8,
+        "LengthY": 0.8,
+        "Mass": 20,
+        "FrictionFactorLeft" : 0.8,
 		"FrictionFactorRight" : 0.8,
 		"FrictionFactorTop" : 0.95,
 		"FrictionFactorBottom" : 0.95,
@@ -150,9 +184,9 @@ the few built-in entity types that are equipped with trigger programming.
 		"ElasticFactorRight" : 0.9,
 		"ElasticFactorTop" : 0.5,
 		"ElasticFactorBottom" : 0.5,
-		"BlastResistance" : 10000.0,
+		"BlastResistance" : 6000.0,
 		"TriggerList": [
-        	{
+            {
         		"DelayTime": 2.0,
         		"PreliminaryAction": "BeforeDestruction",
         		"PreliminaryObject": [
@@ -164,15 +198,20 @@ the few built-in entity types that are equipped with trigger programming.
         		]
         	}
         ]
-	},
-	"Graphics" : {
-		"RenderEnabled" : true,
-		"LengthX" : 0.4,
-		"LengthY" : 0.4,
-		"TextureList" : [
-			"item/tnt.png"
-		]
-	}
+    },
+    "Graphics": [
+        {
+            "RenderEnabled": true,
+            "LengthX": 1.6,
+            "LengthY": 1.6,
+            "AnimationInterval": 1.0,
+            "TextureOnHand": "blocks/tnt_side.png",
+            "TextureList": [
+                "blocks/edit/tnt_unignited.png",
+                "blocks/edit/tnt_ignited.png"
+            ]
+        }
+    ]
 }
 ```
 
@@ -182,43 +221,50 @@ may create player models with far more interesting interfaces.
 
 ```JSON
 {
-	"Properties" : {
-		"Name" : "Steve",
-		"Type" : "Player",
-		"SpecificProperties" : {
-			"MoveSpeed" : 15.0,
-			"JumpSpeed" : 4.5,
-			"MaxLife" : 10000.0
-		},
-		"ShowInCreative" : false
-	},
-	"Physics" : {
-		"PhysicsEnabled" : true,
-		"CollisionEnabled" : true,
-		"LengthX" : 0.8,
-		"LengthY" : 1.70,
-		"Mass" : 50.0,
-		"FrictionFactorLeft" : 0.7,
-		"FrictionFactorRight" : 0.7,
-		"FrictionFactorTop" : 0.1,
-		"FrictionFactorBottom" : 0.9,
-		"ElasticFactorLeft" : 0.2,
-		"ElasticFactorRight" : 0.2,
-		"ElasticFactorTop" : 0.9,
-		"ElasticFactorBottom" : 0.9,
-		"BlastResistance" : 100000.0
-	},
-	"Graphics" : {
-		"RenderEnabled" : true,
-		"LengthX" : 0.84,
-		"LengthY" : 1.80,
-		"TextureList" : [
-			"player/steve.png"
-		]
-	}
+    "Properties": {
+        "Name": "Steve",
+        "Type": "Player",
+        "SpecificProperties": {
+            "MoveSpeed": 6.0,
+            "JumpSpeed": 2.0,
+            "MaxLife": 2000.0
+        },
+        "ShowInCreative": false
+    },
+    "Physics": {
+        "PhysicsEnabled": true,
+        "CollisionEnabled": true,
+        "LengthX": 0.8,
+        "LengthY": 1.70,
+        "Mass": 50.0,
+        "FrictionFactorLeft": 1.5,
+        "FrictionFactorRight": 1.5,
+        "FrictionFactorTop": 2.2,
+        "FrictionFactorBottom": 3.0,
+        "ElasticFactorLeft": 0.2,
+        "ElasticFactorRight": 0.2,
+        "ElasticFactorTop": 0.9,
+        "ElasticFactorBottom": 0.9,
+        "BlastResistance": 18000000.0
+    },
+    "Graphics": [
+        {
+            "RenderEnabled": true,
+            "LengthX": 0.84,
+            "LengthY": 1.80,
+            "TextureList": [
+                "player/steve.png"
+            ]
+        }
+    ]
 }
 ```
 
 Particles have few specific properties, and thus would not be shown hitherto,
 which is located in the resources folder, and is easy to access. Looking at
 **the source code** would also help understand the extended tags of particles.
+
+Those blocks with additional block states are also widely available in the
+resources folder, and is rather easy to access. Try on crafting tables for
+instance. You may have to need to write a script to gain access to the massive
+amount of data while filtering them.
