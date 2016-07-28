@@ -1,6 +1,11 @@
 
 # Version History
 
+### 0.12.7.45 | 28/07/16
+ * Fixed server not accepting more clients if one of them disconnected for a
+   considerably short time.
+ * Multi player mode is now **completely** playable.
+
 ### 0.12.7.43 | 28/07/16
  * Fixed respawn time irregularity.
  * Fixed clients would respawn immediately or never regardless of the time limit.

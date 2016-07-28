@@ -109,6 +109,7 @@ std::string	NetmgrGetEntityLifeStr(
 //	Network protocol definition
 //	NUL 0 (This message does nothing at all!)
 //	DON	0 (Tell newly joined clients that chunks have been loaded)
+//	RLD 0 (Sent by clients, requiring entire chunk reload)
 //	TIM 1678.635469 (Broadcast server time, server only)
 //	REM 123456789012 (Remove entity)
 //	MOV 123456789012 7 0.5456 0.879878 1.051 1.999 (Set position, velocity)
@@ -148,6 +149,7 @@ void	NetmgrInThread(
 			if (OpType == "DON") {
 //				Flush chunk data, in one time
 				if (MainMap->IsHost) continue; // Which should not have happened
+				if (!MainMap->ModifyTime) continue; // That means it's not completely loaded.
 #ifdef NETWORK_NETSYNC_DELETE_UNSYNCED_ENTITIES_
 				for (auto itert : MainMap->EntityList) {
 					if (EntBuffer.find(itert.second) == EntBuffer.end())
@@ -155,6 +157,9 @@ void	NetmgrInThread(
 				}
 #endif
 				break;
+			} else if (OpType == "RLD") {
+//				A crucial part in multi-part communication.
+				flagDatRequireBroadcast = true;
 			} else if (OpType == "TIM") {
 				std::stringstream	Stream;
 				Stream << OpCmd; Stream >> SvrTimeAhead;
@@ -274,6 +279,13 @@ void	NetmgrOutThread(
 	flagDatRequireBroadcast = false;
 	flagLastPlayerMsgTime.clear();
 	std::string	Output;
+//	Call on the server to initialize the chunks
+	if (MgrState == Client) {
+		std::string	Sender = "RLD 0";
+		MsgLock.lock();
+		MsgQueue.push(Sender);
+		MsgLock.unlock();
+	}
 	while (MainSock->Connected()) {
 		SleepForTime(valSleepTime);
 		Output.clear();
