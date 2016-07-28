@@ -100,7 +100,7 @@ std::string	NetmgrGetEntityLifeStr(
 	std::stringstream	Stream;
 	std::string			Result;
 	Stream << std::fixed << std::setprecision(8)
-		   << "LIF " << OutEnt->Properties.Guid << ((PlayerEntity*)
+		   << "LIF " << OutEnt->Properties.Guid << " " << ((PlayerEntity*)
 			(OutEnt->Physics.ExtendedTags))->Life;
 	getline(Stream, Result);
 	return Result;
@@ -115,6 +115,7 @@ std::string	NetmgrGetEntityLifeStr(
 //	DEF 123456789012 {"Data":{...JSON...}} (Define entity data)
 //	HED {...JSON...} (Define map headers, used only once)
 //	LIF 123456789012 168.36 (Define player life)
+//	RES 123456789012 (Resurrect player)
 //	MSG	Hello, world (Broadcast a chat message)
 
 void	NetmgrInThread(
@@ -167,10 +168,8 @@ void	NetmgrInThread(
 				if (RdGuid == 0) continue;
 				RmEnt = MainMap->EntityList[RdGuid];
 //				If the entity already existed, then we shall remove it
-				if (RmEnt->DataIntact()) {
-					if (RmEnt->Properties.Type->Properties.Type != "Projectile")
-						MainMap->RemoveEntityPended(RmEnt);
-				}
+				if (RmEnt->DataIntact())
+					MainMap->RemoveEntityPended(RmEnt);
 			} else if (OpType == "MOV") {
 				std::stringstream	Stream;
 				Stream << OpCmd;
@@ -237,6 +236,18 @@ void	NetmgrInThread(
 					continue;
 				PlayerEntity*		PlyExt = (PlayerEntity*)PlyEnt->Physics.ExtendedTags;
 				PlyExt->Life = RdLife;
+			} else if (OpType == "RES") {
+				std::stringstream	Stream;
+				long long			RdGuid;
+				Entity*				PlyEnt = NULL;
+				Stream << OpCmd;
+				Stream >> RdGuid;
+				if (RdGuid == 0) continue;
+				PlyEnt = MainMap->EntityList[RdGuid];
+				if (!PlyEnt->DataIntact() || PlyEnt->Properties.
+						Type->Properties.Type != "Player")
+					continue;
+				MainMap->RespawnPlayer(PlyEnt);
 			} else if (OpType == "MSG") {
 				chatInsertMessage(OpCmd);
 			}
@@ -480,8 +491,6 @@ bool	NetmgrRemoveEntity(
 {
 	std::stringstream	Stream;
 	std::string			Str;
-//	if (RmEnt->Properties.Type->Properties.Type == "Projectile")
-//		return true;
 	Stream << "REM " << RmEnt->Properties.Guid;
 	getline(Stream, Str);
 	MsgLock.lock();
@@ -500,20 +509,33 @@ bool	NetmgrMoveEntity(
 	return true;
 }
 
-bool	NetmgrPostMessage(
-		std::string	Msg)
+bool	NetmgrSetEntityLife(
+		Entity*	SetEnt)
 {
-	std::string	Str = "MSG " + Msg;
+	std::string	Str = NetmgrGetEntityLifeStr(SetEnt);
 	MsgLock.lock();
 	MsgQueue.push(Str);
 	MsgLock.unlock();
 	return true;
 }
 
-bool	NetmgrSetEntityLife(
+bool	NetmgrRespawnEntity(
 		Entity*	SetEnt)
 {
-	std::string	Str = NetmgrGetEntityLifeStr(SetEnt);
+	std::stringstream	Stream;
+	std::string			Str;
+	Stream << "RES " << SetEnt->Properties.Guid;
+	getline(Stream, Str);
+	MsgLock.lock();
+	MsgQueue.push(Str);
+	MsgLock.unlock();
+	return true;
+}
+
+bool	NetmgrPostMessage(
+		std::string	Msg)
+{
+	std::string	Str = "MSG " + Msg;
 	MsgLock.lock();
 	MsgQueue.push(Str);
 	MsgLock.unlock();

@@ -1,6 +1,15 @@
 
 # Version History
 
+### 0.12.7.43 | 28/07/16
+ * Fixed respawn time irregularity.
+ * Fixed clients would respawn immediately or never regardless of the time limit.
+ * Fixed blowing up things wouldn't cause clients to receive inventory expansion.
+ * Fixed switching inventory with mouse wheels wouldn't cause other clients or
+   servers to notice the change of it's handheld items.
+ * Fixed clients' health points not / never synchronizing.
+ * Reversed chat message display orientation / sequence.
+
 ### 0.12.7.26 | 28/07/16
  * Added respawn support for players in both single player and multiplayer. The
    time limit can be defined in the map description.

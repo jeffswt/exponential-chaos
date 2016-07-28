@@ -19,6 +19,7 @@
 //	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iomanip>
+#include <stack>
 
 #include "network/netsync.h"
 #include "graphics/render_private.h"
@@ -187,7 +188,17 @@ bool	graphicsRenderChatMsg(
 					-GameConfig.WindowWidth / 2 + 20, -GameConfig.WindowHeight / 2 + 64 + (i + 1) * 28,
 					0.251, 0.349, 0.596, 20, ANSI_CHARSET, "OCR A Std");
 	std::vector<std::string>	Vec;
+	std::stack<std::string>		VecStk;
 	chatRetrieveMessageList(Vec);
+//	Reverse sequence...
+	for (auto str : Vec)
+		VecStk.push(str);
+	Vec.clear();
+	while (!VecStk.empty()) {
+		auto	str = VecStk.top();
+		VecStk.pop();
+		Vec.push_back(str);
+	}
 	for (int i = 0; i < 6; i++) Vec.push_back("");
 //	Setting font content
 	for (int i = 0; i < 6; i++)

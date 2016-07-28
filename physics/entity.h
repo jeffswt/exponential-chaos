@@ -124,7 +124,6 @@ public:
 	double	LastJumpHeight;
 	double	LastProjectileTime;
 	double	Life;
-	double	DeceaseTime;
 	int		InventoryFocus;
 	bool	IsCreative;
 	std::vector<triple_pair<

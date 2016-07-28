@@ -330,7 +330,6 @@ PlayerEntity::PlayerEntity(
 	LastJumpHeight = 0.0;
 	LastProjectileTime = 0.0;
 	Life = 20.0;
-	DeceaseTime = 0.0;
 	InventoryFocus = 1;
 	IsCreative = false;
 	Inventory.clear();

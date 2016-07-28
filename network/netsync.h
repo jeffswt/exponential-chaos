@@ -80,6 +80,23 @@ bool	NetmgrMoveEntity(
 		Entity*	MvEnt);
 
 /**
+ *  @brief  post player life to the network
+ *  @param  SetEnt: the entity to be broadcasted
+ *  Tell the network that a certain player's life to be modified to its given
+ *  value. If the parameter is not intact, or is not a player, it returns false.
+ */
+bool	NetmgrSetEntityLife(
+		Entity*	SetEnt);
+
+/**
+ *  @brief  post a player respawn on the network
+ *  @param  SetEnt: the entity to be respawned
+ *  SetEnt must be a player. Otherwise it wouldn't work.
+ */
+bool	NetmgrRespawnEntity(
+		Entity*	SetEnt);
+
+/**
  *  @brief  post chat message to the network
  *  @param  Msg: the message to be broadcasted
  *  Does not display message locally. Only displays message to remote computers.
@@ -88,14 +105,6 @@ bool	NetmgrMoveEntity(
 bool	NetmgrPostMessage(
 		std::string	Msg);
 
-/**
- *  @brief  post player life to the network
- *  @param  SetEnt: the entity to be broadcasted
- *  Tell the network that a certain player's life to be modified to its given
- *  value. If the parameter is not intact, or is not a player, it returns false.
- */
-bool	NetmgrSetEntityLife(
-		Entity*	SetEnt);
 
 /**
  *  @brief  query whether the downloading of initial information is complete

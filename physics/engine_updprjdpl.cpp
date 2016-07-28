@@ -121,8 +121,7 @@ bool	PhEngine::UpdateProjectileDeployment(
 //					twice or many times depending on the joined players. Therefore we
 //					strictly affirm that such restrictions must be made so that one
 //					removal simulations are only done on the server.
-					if (MainMap->IsHost &&
-							Victim->Properties.Type->Physics.BlastResistance < ProjTyp->DeployPowerBlast *
+					if (Victim->Properties.Type->Physics.BlastResistance < ProjTyp->DeployPowerBlast *
 							(ProjTyp->DeployRadius - distCombine) / ProjTyp->DeployRadius &&
 							Victim->Properties.Type->Properties.Type != "Player" &&
 							Victim->Properties.Type->Properties.Type != "Particle") {
@@ -146,8 +145,10 @@ bool	PhEngine::UpdateProjectileDeployment(
 							}
 						}
 //						Now to pend the removal of this entity
-						MainMap->RemoveEntityPended(Victim);
-						NetmgrRemoveEntity(Victim);
+						if (MainMap->IsHost) {
+							MainMap->RemoveEntityPended(Victim);
+							NetmgrRemoveEntity(Victim);
+						}
 					}
 //					And in some particular cases it would make sure that if, the victims
 //					were players, it would certainly deduct life from the players

@@ -22,6 +22,8 @@
 
 #include "network/chat.h"
 
+std::map<std::string, double>	DeceaseTimeIdx;
+
 bool	PhEngine::UpdatePlayerLife(
 		GameMap*	MainMap,
 		double		DeltaTime)
@@ -43,19 +45,19 @@ bool	PhEngine::UpdatePlayerLife(
 				PlayerEnt->Physics.CollisionChanged = true;
 				PlayerEnt->Physics.RenderDisabled = true;
 				PlayerExt->Life = -1.0;
-				PlayerExt->DeceaseTime = GetProcessTime();
+				DeceaseTimeIdx[PlayerEnt->Properties.Name] = GetProcessTime();
 				NetmgrInsertEntity(PlayerEnt);
 				if (MainMap->IsHost) {
 					std::string PostMsg = chatGenDeceaseMessage(PlayerEnt->Properties.Name);
 					chatInsertMessage(PostMsg);
 					NetmgrPostMessage(PostMsg);
 				}
-			} else if (GetProcessTime() - PlayerExt->DeceaseTime >= MainMap->RespawnDelay) {
+			} else if (GetProcessTime() - DeceaseTimeIdx[PlayerEnt->Properties.Name] >=
+					MainMap->RespawnDelay) {
 //				That means the player needs to be respawned
-				if (MainMap->IsHost ||
-						PlayerEnt->Properties.Name == GameConfig.PlayerName) {
+				if (MainMap->IsHost) {
 					MainMap->RespawnPlayer(PlayerEnt);
-					NetmgrInsertEntity(PlayerEnt);
+					NetmgrRespawnEntity(PlayerEnt);
 				}
 			}
 		} else {
@@ -77,8 +79,9 @@ bool	PhEngine::UpdatePlayerLife(
 			else
 				PlayerExt->Life = PlayerTyp->MaxLife;
 		}
-//		A useless thing used to make the code look nicer...
-		continue;
+//		The main server has the right and the purpose of broadcasting information.
+		if (MainMap->IsHost)
+			NetmgrSetEntityLife(PlayerEnt);
 	}
 	return true;
 }

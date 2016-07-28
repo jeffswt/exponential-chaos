@@ -105,12 +105,14 @@ bool	PhEngine::UpdatePlayerActivity(
 			if (playerExt->InventoryFocus <= 0)
 				playerExt->InventoryFocus = 9;
 			InputControl.WheelUp = false;
+			flagRequireUpdateDefinition = true;
 		}
 		if (InputControl.WheelDn) {
 			playerExt->InventoryFocus++;
 			if (playerExt->InventoryFocus >= 10)
 				playerExt->InventoryFocus = 1;
 			InputControl.WheelDn = false;
+			flagRequireUpdateDefinition = true;
 		}
 	}
 //	Switch block state according to mouse wheel
