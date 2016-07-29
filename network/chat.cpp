@@ -58,6 +58,7 @@ bool	chatInitialise(
 	my_def_msg_cnt( "$PLAYER$ has no quality (mass)" , 1);
 	my_def_msg_cnt( "$PLAYER$'s M was too large" , 1);
 	my_def_msg_cnt( "$PLAYER$ didn't read segment tree beats" , 1);
+	eclogPost(1, "Done importing chat message templates");
 	return true;
 }
 
@@ -84,6 +85,7 @@ bool	chatInsertMessage(
 	MessageQueueTimestamp.push(
 			GetProcessTimeUnsynced());
 	MessageLock.unlock();
+	eclogPost(1, "Chat message: " + Msg);
 	return true;
 }
 

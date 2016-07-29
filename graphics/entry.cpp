@@ -72,5 +72,6 @@ bool graphicsEntry(int &argc, char** argv)
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 //	All done, finished initialisation
 	graphicsInit();
+	eclogPost(1, "Done setting graphics properties");
 	return true;
 }

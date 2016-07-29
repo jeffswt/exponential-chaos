@@ -156,6 +156,9 @@ void	NetmgrInThread(
 						MainMap->RemoveEntityPended(itert.second);
 				}
 #endif
+				MsgLock.lock();
+				MsgQueue.push("NUL 0");
+				MsgLock.unlock();
 				break;
 			} else if (OpType == "RLD") {
 //				A crucial part in multi-part communication.
@@ -283,7 +286,8 @@ void	NetmgrOutThread(
 	if (MgrState == Client) {
 		std::string	Sender = "RLD 0";
 		MsgLock.lock();
-		MsgQueue.push(Sender);
+		for (int i = 0; i < 10; i++)
+			MsgQueue.push(Sender);
 		MsgLock.unlock();
 	}
 	while (MainSock->Connected()) {

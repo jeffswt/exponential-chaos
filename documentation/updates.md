@@ -1,6 +1,9 @@
 
 # Version History
 
+### 0.12.7.51 | 29/07/16
+ * Added native logging support.
+
 ### 0.12.7.49 | 29/07/16
  * Fixed all moving entities sticking at the bottom of the map if program is not
    run in GDB (a safe place where bugs would be omitted).

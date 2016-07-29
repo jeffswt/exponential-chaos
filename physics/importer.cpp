@@ -78,6 +78,7 @@ bool	ImportGameEntityTypes(
 		JConfig.Parse(JStream.c_str());
 		if (!JConfig.IsObject()) continue;
 		ImportJsonData(ResourceName, JConfig["Name"]);
+		eclogPost(3, "Discovered resource pack " + ResourceName);
 //		Finished reading resource configuration.
 		EntityJsonTmp.clear();
 		IterateDirectory(12, false, PathPrefix + "entities/", EntityJsonTmp);
@@ -105,6 +106,7 @@ bool	ImportGameEntityTypes(
 			std::string	FailureTitle = "Exponential Chaos: Fatal Error";
 			std::string	FailureMessage = "JSON Grammar error while importing entity: \"" +
 					i + "\".";
+			eclogPost(0, FailureMessage);
 			MessageBox(0, FailureMessage.c_str(), FailureTitle.c_str(), MB_ICONERROR | MB_OK);
 			delete newEntity;
 			continue;
@@ -115,11 +117,13 @@ bool	ImportGameEntityTypes(
 		EntityTypes[newEntity->Properties.Name] = newEntity;
 		Stream.close();
 		LoadPercentage = (loadCounter++) / EntityJson.size();
+		eclogPost(3, "Loaded entity " + newEntity->Properties.Name);
 	}
 //	Post-processing entity additional datum...
 	for (auto i : EntityTypes)
 		i.second->PostProcessDatum();
 	LoadPercentage = 1.0;
+	eclogPost(1, "Imported game entities");
 	return true;
 }
 

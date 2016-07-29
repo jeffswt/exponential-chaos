@@ -79,6 +79,7 @@ bool	graphicsRenderLoadGui(
 		endImportGameEntityTypes();
 //		GuiCtrl::GuiState = GuiCtrl::LoadTexGui;
 		GuiCtrl::GuiState = GuiCtrl::MainGui;
+		eclogPost(1, "Main BUS started");
 	}
 	return true;
 }

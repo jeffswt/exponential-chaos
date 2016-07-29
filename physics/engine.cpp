@@ -131,6 +131,7 @@ bool	BeginPhysicsEngine(
 	PhEngine::PhEngineState = PhEngine::Running;
 	PhEngine::PhEngineRequireWait.try_lock();
 	std::thread*	hThread = new std::thread(PhysicsThread, MainMap);
+	eclogPost(1, "Physics ENGINE started");
 	return hThread != NULL;
 }
 
@@ -141,6 +142,7 @@ bool	TerminatePhysicsEngine(
 		return true;
 	PhEngine::PhEngineState = PhEngine::Stopped;
 	WaitForEngineEvent();
+	eclogPost(1, "Physics ENGINE terminated");
 	return true;
 }
 

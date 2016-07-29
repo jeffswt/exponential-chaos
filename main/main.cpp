@@ -53,6 +53,8 @@ HGLRC	hRenderContextShared = NULL;
 int main(int argc, char** argv)
 {
 //	To disable the console window, use "-mwindows" in MinGW-Linker.
+	eclogThreadStart();
+	eclogSetVerbosity(9);
 //	Some necessary initialisations, which are to fix the program.
 //	Environment definitions and initialisations
 	srand(GetProcessTime());
@@ -66,6 +68,7 @@ int main(int argc, char** argv)
 	hRenderContextShared = wglCreateContext(hDeviceContext);
 	wglShareLists(hRenderContextShared, hRenderContextMain);
 	wglMakeCurrent(hDeviceContext, hRenderContextMain);
+	eclogPost(1, "Updated rendering contexts");
 //	Entering main function, then the rest is given to separate functions
 	beginImportGameEntityTypes();
 	glutMainLoop();
@@ -74,5 +77,7 @@ int main(int argc, char** argv)
 	TerminatePhysicsEngine();
 //	Saving data to config files
 	GameConfig.ExportToJson();
+//	Final termination
+	eclogThreadEnd();
 	return 0;
 }

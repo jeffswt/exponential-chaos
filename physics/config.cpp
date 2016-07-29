@@ -55,6 +55,7 @@ bool	ConfigType::ImportFromJson(
 	ImportJsonData(OpenToLan, Config["OpenToLan"]);
 	ImportJsonData(PlayerName, Config["PlayerName"]);
 	ImportJsonData(ServerList, Config["ServerList"]);
+	eclogPost(1, "Imported game configuration");
 	return true;
 }
 
@@ -89,6 +90,7 @@ bool	ConfigType::ExportToJson(
 		return false;
 	Stream << JBuffer.GetString();
 	Stream.close();
+	eclogPost(1, "Exported game configuration");
 	return true;
 }
 
