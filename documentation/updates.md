@@ -1,6 +1,9 @@
 
 # Version History
 
+### 0.12.8 | 29/07/16
+ * Stable release.
+
 ### 0.12.7.52 | 29/07/16
  * Fixed copying blocks with WorldEdit does not work.
  * Made some minor changes to the inventory scrolling scheme.

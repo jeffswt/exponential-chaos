@@ -103,7 +103,7 @@ crowd-based map creations and PvP events.
 
 | Contributor    | Reason                                                                                           |
 | :------------- | :----------------------------------------------------------------------------------------------- |
-| **RDFZ/yjy**   | Well-known coach in *Informatics in Olympiad*, who led me to the world of coding.                |
+| **RDFZ/yjy**   | The honourable creator of the Sieve of Tsienyi Lawyer.                                           |
 | RDFZ/zsyzzsoft | For inspiring me of creating this game from his games ```Game01``` and ```Gravity Hazard```.     |
 | RDFZ/SkyWalker | For supporting me continuously of this project and providing first-hand test results.            |
 | RDFZ/BurstZero | For providing extensive support on algorithms in developing the network engine.                  |
