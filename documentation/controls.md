@@ -25,7 +25,7 @@ and therefore is vulnerable to hacks, lag and related events.
 | S / Down Arrow     | Move to adjacent covering layer |
 | D / Right Arrow    | Move rightwards                 |
 | Shift              | Sneak (or descend in creative)  |
-| Ctrl + A / D       | Sprint                          |
+| Ctrl + Horizontal  | Sprint                          |
 | Space Bar          | Jump (or arise in creative)     |
 | E                  | Open inventory                  |
 | 1-9                | Switch inventory focused item   |
@@ -38,8 +38,8 @@ and therefore is vulnerable to hacks, lag and related events.
 
 ## Inventory
 
-| Key                         | Functions      |
-| :-------------------------- | :------------- |
-| A / Left Arrow / Page Up    | Previous page  |
-| D / Right Arrow / Page Down | Next page      |
-| E / Escape                  | Return to game |
+| Key                        | Functions      |
+| :------------------------- | :------------- |
+| A / Page Up / Wheel Up     | Previous page  |
+| D / Page Down / Wheel Down | Next page      |
+| E / Escape                 | Return to game |

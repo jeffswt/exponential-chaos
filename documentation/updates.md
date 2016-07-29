@@ -1,6 +1,10 @@
 
 # Version History
 
+### 0.12.7.52 | 29/07/16
+ * Fixed copying blocks with WorldEdit does not work.
+ * Made some minor changes to the inventory scrolling scheme.
+
 ### 0.12.7.51 | 29/07/16
  * Added native logging support.
 

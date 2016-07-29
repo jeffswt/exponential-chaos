@@ -343,14 +343,16 @@ bool	graphicsRenderInventory(
 //	Some other things we need to take care about
 	if ((kGetKeyOnpress('A') ||
 			kGetKeyOnpress(KNUM_PGUP) ||
-			kGetKeyOnpress(KNUM_LEFT))
+			InputControl.WheelUp)
 			&& CurPage > 0) {
 		CurPage--;
+		InputControl.WheelUp = false;
 		PostUpdateInventoryView();
 	} else if (kGetKeyOnpress('D') ||
 			kGetKeyOnpress(KNUM_PGDN) ||
-			kGetKeyOnpress(KNUM_RIGHT)) {
+			InputControl.WheelDn) {
 		CurPage++;
+		InputControl.WheelDn = false;
 		PostUpdateInventoryView();
 	}
 	return true;

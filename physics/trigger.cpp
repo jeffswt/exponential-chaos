@@ -521,7 +521,7 @@ bool	Trigger::tpcWorldEdit_Copy_ApplyCopy(
 		EntMake->Properties.Layer = cpEnt->Properties.Layer + dz;
 		if (!EntMake->DataIntact())
 			throw RuntimeErrorException();
-		MainMap->InsertEntityPended(EntMake);
+		MainMap->InsertEntityPendedForce(EntMake);
 		NetmgrInsertEntity(EntMake);
 	}
 	return true;
