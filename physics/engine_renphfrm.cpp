@@ -279,7 +279,7 @@ bool	PhEngine::RenderPhysicsFrame(
 		}
 //		Simulate air friction
 		vX *= 0.991;
-		vY *= 0.997;
+		vY *= 0.998;
 //		Red-black tree defect: must re-insert after updating related values
 //		Also, the position update is strictly related to the red-black-tree
 //		structure, therefore must be pended for later batch process.

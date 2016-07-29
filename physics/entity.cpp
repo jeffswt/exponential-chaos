@@ -288,7 +288,7 @@ Entity::Entity(void)
 	Physics.PosX = 0.0;
 	Physics.PosY = 0.0;
 	Physics.VelX = 0.0;
-	Physics.VelX = 0.0;
+	Physics.VelY = 0.0;
 	Physics.TriggerList.clear();
 	Physics.ExtendedTags = NULL;
 	return ;

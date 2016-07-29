@@ -34,19 +34,19 @@ UnitCount=1
 [VersionInfo]
 Major=0
 Minor=12
-Release=1
+Release=8
 Build=0
 LanguageID=2057
 CharsetID=1252
 CompanyName=
-FileVersion=0.12.1.0
-FileDescription=Exponential Chaos 0.12.1
+FileVersion=0.12.8.0
+FileDescription=Exponential Chaos
 InternalName=
-LegalCopyright=Copyright (C) 2016, Geoffrey
+LegalCopyright=Copyright (C) 2016, Geoffrey Tang. Licensed under GNU GPL v3.
 LegalTrademarks=
 OriginalFilename=
-ProductName=Exponential Chaos 0.12.1
-ProductVersion=0.12.1.0
+ProductName=Exponential Chaos
+ProductVersion=0.12.8.0
 AutoIncBuildNr=0
 SyncProduct=1
 

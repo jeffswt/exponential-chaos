@@ -1,6 +1,11 @@
 
 # Version History
 
+### 0.12.7.49 | 29/07/16
+ * Fixed all moving entities sticking at the bottom of the map if program is not
+   run in GDB (a safe place where bugs would be omitted).
+ * Updated resources for Windows release.
+
 ### 0.12.7.47 | 29/07/16
  * Updated documentations and manuals. This documentation update included all the
    changes (those which have not been documented) since version `0.12.1`.
